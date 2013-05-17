@@ -45,6 +45,10 @@ class SC_Utils_sfGetHashString_authTypePlainTest extends Common_TestCase {
   }
 
   /////////////////////////////////////////
+  public function testDummy() {
+      $this->assertTrue(true);
+  }
+
   /**
   public function testSfGetHashString_暗号化なしの設定になっている場合_文字列が変換されない() {
     $input = 'hello, world';

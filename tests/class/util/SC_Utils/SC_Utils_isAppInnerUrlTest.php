@@ -46,6 +46,9 @@ class SC_Utils_isAppInnerUrlTest extends Common_TestCase {
   }
 
   /////////////////////////////////////////
+  public function testDummy() {
+      $this->assertTrue(true);
+  }
   /**
   public function testIsAppInnerUrl_非SSLかつアプリ内URLの場合_trueが返る() {
     $input = 'http://sample.eccube.jp/admin/';

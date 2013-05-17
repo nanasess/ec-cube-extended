@@ -43,6 +43,10 @@ class SC_Utils_sfPrintRTest extends Common_TestCase {
   }
 
   /////////////////////////////////////////
+  public function testDummy() {
+      $this->assertTrue(true);
+  }
+
   // TODO 環境により出力形式が異なるため、テスト不可(デバッグ用なので、テストしなくてもよさそう)
   /**
   public function testSfPrintR__指定したオブジェクトの情報が出力される() {

@@ -23,6 +23,7 @@ class SC_Product_setProductStatusTest extends SC_Product_TestBase {
         $this->setUpProducts();
         $this->setUpClassCategory();
         $this->setUpProductStatus();
+        $_SESSION['member_id'] = 1; 
         
         $this->objProducts->setProductStatus('1001', array('2','3','4'));
 

@@ -52,8 +52,6 @@ class SC_Helper_Purchase_registerOrderCompleteTest extends SC_Helper_Purchase_Te
       'order_id' => '1001',
       'status' => ORDER_PAY_WAIT,
       'mail_maga_flg' => '1',
-      'order_tax_rate' => '5',
-      'order_tax_rule' => '1'
     );
     $cartSession = new SC_CartSession_registerOrderCompleteMock();
     $_SESSION['site']['uniqid'] = '1001';
@@ -80,8 +78,6 @@ class SC_Helper_Purchase_registerOrderCompleteTest extends SC_Helper_Purchase_Te
             'point_rate' => '5',
             'price' => '1000',
             'quantity' => '10',
-            'tax_rate' => '5',
-            'tax_rule' => '1'
           )
         )
       ),
@@ -98,8 +94,6 @@ class SC_Helper_Purchase_registerOrderCompleteTest extends SC_Helper_Purchase_Te
     $orderParams = array(
       'order_id' => '1001',
     //  'status' => ORDER_PAY_WAIT,
-      'order_tax_rate' => '5',
-      'order_tax_rule' => '1'
     );
     $cartSession = new SC_CartSession_registerOrderCompleteMock();
     $_SESSION['site']['uniqid'] = '1001';

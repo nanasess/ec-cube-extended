@@ -480,7 +480,7 @@ class SC_Helper_Purchase_TestBase extends Common_TestCase {
         'customer_id' => '1002',
         'order_name01' => '受注情報02',
         'payment_id' => '1002',
-        'payment_method' => '支払方法1001'
+        'payment_method' => '支払方法1001',
       )
     );
 
@@ -507,8 +507,6 @@ class SC_Helper_Purchase_TestBase extends Common_TestCase {
        'price' => 3000,
        'quantity' => 10,
        'point_rate' => 5,
-       'tax_rate' => 5,
-       'tax_rule' => 0
      ),
      array(
        'order_detail_id' => '1002',
@@ -522,8 +520,6 @@ class SC_Helper_Purchase_TestBase extends Common_TestCase {
        'price' => 4000,
        'quantity' => 15,
        'point_rate' => 6,
-       'tax_rate' => 3,
-       'tax_rule' => 1
      ),
      array(
        'order_detail_id' => '1003',

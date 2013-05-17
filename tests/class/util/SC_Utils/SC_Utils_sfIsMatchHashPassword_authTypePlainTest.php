@@ -45,6 +45,9 @@ class SC_Utils_sfIsMatchHashPassword_authTypePlainTest extends Common_TestCase {
   }
 
   /////////////////////////////////////////
+  public function testDummy() {
+      $this->assertTrue(true);
+  }
   /**
   public function testSfIsMatchHashPassword_文字列が一致する場合_trueが返る() {
     $pass = 'ec-cube';
