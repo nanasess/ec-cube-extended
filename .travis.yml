@@ -17,3 +17,12 @@ before_script:
   - cat ./data/config/config.php
 script:
   - phpunit --bootstrap ./data/config/config.php --configuration tests/phpunit.xml.jenkins tests
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --no-interaction
+
+script:
+  - mkdir -p build/logs
+  - phpunit --coverage-clover build/logs/clover.xml --configuration tests/phpunit.xml tests
+
+after_script:
+  - php vendor/bin/coveralls -v
