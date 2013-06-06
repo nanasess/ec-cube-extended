@@ -1,3 +1,5 @@
+# for travis-ci
+# see also. https://travis-ci.org
 language: php
 
 php:
