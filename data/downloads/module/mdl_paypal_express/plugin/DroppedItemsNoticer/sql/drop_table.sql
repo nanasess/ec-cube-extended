@@ -1,0 +1,2 @@
+DROP TABLE plg_droppeditemsnoticer_order;
+DROP TABLE plg_droppeditemsnoticer_auth;

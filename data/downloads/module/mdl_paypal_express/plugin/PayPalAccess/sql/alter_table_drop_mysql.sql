@@ -1,0 +1,2 @@
+ALTER TABLE dtb_customer MODIFY COLUMN kana01 TEXT;
+ALTER TABLE dtb_customer MODIFY COLUMN kana02 TEXT;

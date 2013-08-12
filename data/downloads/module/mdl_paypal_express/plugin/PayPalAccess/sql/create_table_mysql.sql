@@ -1,0 +1,45 @@
+create table plg_paypalaccess_claims (
+    sub VARCHAR(255) NOT NULL,
+    name TEXT,
+    family_name TEXT,
+    given_name TEXT,
+    middle_name TEXT,
+    nickname TEXT,
+    preferred_username TEXT,
+    profile TEXT,
+    picture TEXT,
+    website TEXT,
+    gender TEXT,
+    birthdate datetime,
+    zoneinfo TEXT,
+    locale TEXT,
+    updated_time datetime,
+    email TEXT,
+    email_verified smallint,
+    address TEXT,
+    phone_number TEXT,
+    language TEXT,
+    account_creation_date datetime,
+    account_type TEXT,
+    verified_account smallint,
+    age_range TEXT,
+    customer_id int,
+    del_flg smallint NOT NULL DEFAULT 0,
+    create_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_date timestamp NOT NULL,
+    PRIMARY KEY (sub),
+    UNIQUE (customer_id)
+);
+
+
+create table plg_paypalaccess_token (
+    user_id VARCHAR(255) NOT NULL,
+    token_type TEXT NOT NULL,
+    id_token TEXT NOT NULL,
+    expires_in int,
+    access_token TEXT NOT NULL,
+    refresh_token TEXT,
+    create_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_date timestamp NOT NULL,
+    PRIMARY KEY (user_id)
+);

@@ -1,0 +1,1 @@
+<li id="navi-mail-droppeditems" class="<!--{if $tpl_mainno == 'mail' && $tpl_subno == 'dropped_items_template'}-->on<!--{/if}-->"><a href="<!--{$smarty.const.ROOT_URLPATH}--><!--{$smarty.const.ADMIN_DIR}-->mail/dropped_items_template_input.php"><span style="font-size: 10px">カゴ落ち通知テンプレート管理</span></a></li>
