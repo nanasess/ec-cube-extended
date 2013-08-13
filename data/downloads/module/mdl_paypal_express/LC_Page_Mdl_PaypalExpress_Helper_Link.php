@@ -150,9 +150,16 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
             $arrRequest['TOKEN'] = $_SESSION['token'];
             $arrResponse = SC_Helper_Paypal::sendNVPRequest('DoExpressCheckoutPayment', $arrRequest);
             if (SC_Helper_Paypal::isError($arrResponse)) {
-                $objPurchase->rollbackOrder($_SESSION['order_id'], ORDER_CANCEL, false);
-                $this->tpl_message = SC_Helper_Paypal::getErrorMessage($arrResponse);
-                $this->tpl_mainpage = SC_Helper_Paypal::getErrorTplPath();
+                // PDR 実行(ペイパル画面でエラーを表示する)
+                if (SC_Helper_Paypal::isPdrError($arrResponse)) {
+                    $_SESSION['token'] = $arrResponse['TOKEN'];
+                    header('Location: ' . $link_url . '&token=' . $_SESSION['token']);
+                    exit;
+                } else {
+                    $objPurchase->rollbackOrder($_SESSION['order_id'], ORDER_CANCEL, false);
+                    $this->tpl_message = SC_Helper_Paypal::getErrorMessage($arrResponse);
+                    $this->tpl_mainpage = SC_Helper_Paypal::getErrorTplPath();
+                }
                 break;
             }
             $objPurchase->sfUpdateOrderStatus($_SESSION['order_id'], ORDER_PRE_END);

@@ -276,6 +276,17 @@ class SC_Helper_Paypal {
         return $error;
     }
 
+    function isPdrError($arrResponse) {
+        $i = 0;
+        while ($arrResponse['L_ERRORCODE' . $i] != '') {
+            if ($arrResponse['L_ERRORCODE' . $i] == '10486') {
+                return true;
+            }
+            $i++;
+        }
+        return false;
+    }
+
     /**
      * PayPal Express Checkout で使用するセッションをクリアする.
      *

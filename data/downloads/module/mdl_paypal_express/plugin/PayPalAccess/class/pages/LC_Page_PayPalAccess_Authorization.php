@@ -254,7 +254,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                         SC_Response_Ex::actionExit();
                     }
                     $this->tpl_title = 'PayPalアカウントでログイン';
-                    $this->tpl_mainpage = 'mypage/login.tpl';
+                    $this->setTemplate('mypage/login.tpl');
                     $this->tpl_onload .= <<< __EOF__
 \$('form').attr('action', '?');
 \$('a[href\$="kiyaku.php"]').attr('href', '?mode=register');
