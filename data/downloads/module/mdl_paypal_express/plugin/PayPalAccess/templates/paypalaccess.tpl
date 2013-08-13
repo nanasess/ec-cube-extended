@@ -1,3 +1,15 @@
-<div class="block_outer">
-    <div style="margin: 10px auto 0 auto"><a href="<!--{$smarty.const.HTTPS_URL}-->plugin/PayPalAccess/"><img src="https://www.paypalobjects.com/en_US/Marketing/i/btn/login-with-paypal-button.png" /></a></div>
+<script src="https://www.paypalobjects.com/js/external/api.js"></script>
+<script>
+paypal.use( ["login"], function(login) {
+  login.render ({
+    "appid": "AQAkZBDY6wOQAbnscaKORCHqawapzrO13ffnosEyxQ3wuwmZPUszYoaSY5r3",
+    "scopes": "id_token profile email address phone https://uri.paypal.com/services/paypalattributes",
+    "containerid": "paypalaccess",
+    "locale": "ja-jp",
+    "returnurl": "http://version-213.k-4.local/plugin/PayPalAccess/"
+  });
+});
+</script>
+
+<div id="paypalaccess">
 </div>

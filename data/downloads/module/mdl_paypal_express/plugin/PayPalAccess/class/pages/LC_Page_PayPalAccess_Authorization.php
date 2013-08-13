@@ -156,7 +156,8 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     } else {
                         $this->gotoBackURL();
                     }
-                    SC_Response_Ex::actionExit();
+                    return;
+                    //SC_Response_Ex::actionExit();
                 } catch (OIDConnect_ClientException $e) {
                     SC_Response_Ex::sendRedirect($_SERVER['PHP_SELF']);
                     SC_Response_Ex::actionExit();
@@ -191,7 +192,8 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     $objClaims->setCustomerId($objCustomer->getValue('customer_id'));
                     SC_Helper_PayPalAccess::registerCustomer($objClaims);
                     $this->gotoBackURL($objCustomer);
-                    SC_Response_Ex::actionExit();
+                    return;
+                    //SC_Response_Ex::actionExit();
                 }
                 break;
             default:
@@ -236,7 +238,8 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     SC_Helper_PayPalAccess::registerCustomer($objClaims);
                     SC_Helper_PayPalAccess::doLogin(null, $customer_email);
                     $this->gotoBackURL($objCustomer);
-                    SC_Response_Ex::actionExit();
+                    return;
+                    //SC_Response_Ex::actionExit();
                 } else {
                     /*
                      * TODO 存在しない場合は, クレームを保存し, ログイン画面を表示
@@ -310,10 +313,17 @@ __EOF__;
         if (isset($_SESSION[self::SESSION_NAME_REFERER])) {
             $referer_url = $_SESSION[self::SESSION_NAME_REFERER];
             unset($_SESSION[self::SESSION_NAME_REFERER]);
-            SC_Response_Ex::sendRedirect($referer_url);
+            var_dump($referer_url);
+
+            //SC_Response_Ex::sendRedirect($referer_url);
+
         } else {
-            SC_Response_Ex::sendRedirect(HTTPS_URL);
+            var_dump(HTTPS_URL);
+            $referer_url = HTTPS_URL;
+            //SC_Response_Ex::sendRedirect(HTTPS_URL);
         }
+        $this->tpl_onload = "window.opener.location.href = '$referer_url';window.close();";
+
     }
 
     /**
