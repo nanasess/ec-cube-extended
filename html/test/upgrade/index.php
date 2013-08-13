@@ -41,7 +41,7 @@ $GLOBALS['productsList'] = array(
     // サンプルモジュール
     array(
         'name' => 'サンプルモジュール',
-        'code' => 'mdl_sample',
+        'code' => 'mdl_paypal_express',
         'main_list_comment' => 'モジュール開発テスト用です。',
         'main_list_image' => 'no_image.jpg',
         'version' => '開発版',
