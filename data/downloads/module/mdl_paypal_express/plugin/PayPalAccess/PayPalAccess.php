@@ -112,10 +112,9 @@ class PayPalAccess extends SC_Plugin_Base {
      */
     function disable($arrPlugin) {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
-        $objQuery->delete('dtb_bloc', 'plugin_id = ?', array($arrPlugin['plugin_id']));
         $objQuery->delete('dtb_blocposition', 'bloc_id IN (SELECT bloc_id FROM dtb_bloc WHERE plugin_id = ?)', array($arrPlugin['plugin_id']));
+        $objQuery->delete('dtb_bloc', 'plugin_id = ?', array($arrPlugin['plugin_id']));
     }
-
 
     /**
      * prefilterコールバック関数

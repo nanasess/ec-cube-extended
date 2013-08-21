@@ -87,6 +87,14 @@ $(function() {
       <p>※ PayPal アカウントから、会員の「カナ(姓/名)・性別」は取得できません。必須にした場合は、PayPal Access でログイン後、「カナ(姓/名)・性別」の入力を促します。</p>
     </td>
   </tr>
+  <tr>
+    <th><a href="https://www.paypal.jp/jp/contents/support/introduction/sandbox/" target="_blank">Sandbox<span class="fs14">(開発用テストツール)</span></a><br />の使用</th>
+    <td class="pad7">
+      <!--{assign var=key value="use_sandbox"}-->
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      <input type="checkbox" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> /><label for="use_sandbox">Sandboxを使用する</label>
+    </td>
+  </tr>
 </table>
 <!--{if $check_ssl}-->
 <div class="btn-area">

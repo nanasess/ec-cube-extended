@@ -19,6 +19,7 @@ implements OIDConnect_Client {
     var $key;
     var $secret;
     var $state;
+    var $use_sandbox;
 
     protected function __construct() {
     }
@@ -28,16 +29,18 @@ implements OIDConnect_Client {
      *
      * @param string $key App ID
      * @param string $secret App Secret
+     * @param boolean $use_sandbox Sandbox を使用する場合 true. デフォルト false.
      * @return PayPalAccessClient シングルトンのインスタンス.
      * @throw Exception $key または $secret が取得できなかった場合
      */
-    public function getInstance($key, $secret) {
+    public function getInstance($key, $secret, $use_sandbox = false) {
         if (is_null($key) || is_null($secret)) {
             throw new Exception('Can\'t get App ID and App Secret.');
         }
 
         if (is_null(self::$instance)) {
             self::$instance = new self();
+            self::$instance->setSandbox($use_sandbox);
             self::$instance->setReturnUrl(HTTPS_URL . 'plugin/PayPalAccess/');
             self::$instance->setKey($key);
             self::$instance->setSecret($secret);
@@ -51,42 +54,42 @@ implements OIDConnect_Client {
      * あらかじめ self::setState() で state を設定しておく必要があります.
      */
     public function getAuthUrl() {
-        return parent::getAuthUrl(self::AUTHORIZATION);
+        return parent::getAuthUrl($this->uriWrapper(self::AUTHORIZATION));
     }
 
     /**
      * Access Token を取得します.
      */
     public function getAccessToken($code) {
-        return parent::getAccessToken($code, self::ACCESS_TOKEN);
+        return parent::getAccessToken($code, $this->uriWrapper(self::ACCESS_TOKEN));
     }
 
     /**
      * Access Token を更新します.
      */
     public function refreshAccessToken($refresh_token) {
-        return parent::refreshAccessToken($refresh_token, self::ACCESS_TOKEN);
+        return parent::refreshAccessToken($refresh_token, $this->uriWrapper(self::ACCESS_TOKEN));
     }
 
     /**
      * Id Token を検証します.
      */
     public function validateToken($id_token) {
-        return parent::validateToken($id_token, self::VALIDATE);
+        return parent::validateToken($id_token, $this->uriWrapper(self::VALIDATE));
     }
 
     /**
      * プロフィールを取得します.
      */
     public function getProfile($access_token) {
-        return parent::getProfile($access_token, self::PROFILE);
+        return parent::getProfile($access_token, $this->uriWrapper(self::PROFILE));
     }
 
     /**
      * ログアウトします.
      */
     public function endSession($id_token) {
-        return parent::endSession($id_token, self::LOGOUT);
+        return parent::endSession($id_token, $this->uriWrapper(self::LOGOUT));
     }
 
     public function setKey($key) {
@@ -103,5 +106,16 @@ implements OIDConnect_Client {
 
     public function getSecret() {
         return $this->secret;
+    }
+
+    public function setSandbox($use_sandbox) {
+        $this->use_sandbox = $use_sandbox;
+    }
+
+    protected function uriWrapper($uri) {
+        if ($this->use_sandbox) {
+            $uri = str_replace('www.paypal.com', 'www.sandbox.paypal.com', $uri);
+        }
+        return $uri;
     }
 }

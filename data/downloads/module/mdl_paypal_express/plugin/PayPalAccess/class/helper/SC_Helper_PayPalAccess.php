@@ -272,6 +272,7 @@ class SC_Helper_PayPalAccess {
         $arrParams['free_field1'] = $arrConfig['app_id'];
         $arrParams['free_field2'] = $arrConfig['app_secret'];
         $arrParams['free_field3'] = $arrConfig['requires_revoke'];
+        $arrParams['free_field4'] = ($arrConfig['use_sandbox'] == 1) ? 1 : '';
         $objQuery =& SC_Query_Ex::getSingletonInstance();
         $objQuery->update(self::PLUGIN_TABLE, $arrParams,
                           "plugin_code = ?", array(PAYPAL_ACCESS_PLUGIN_NAME));
@@ -291,6 +292,7 @@ class SC_Helper_PayPalAccess {
             $arrConfig['app_id'] = $arrConfig['free_field1'];
             $arrConfig['app_secret'] = $arrConfig['free_field2'];
             $arrConfig['requires_revoke'] = $arrConfig['free_field3'];
+            $arrConfig['use_sandbox'] = isset($arrConfig['free_field4']) ? $arrConfig['free_field4'] : false;
         }
         return $arrConfig;
     }
@@ -304,6 +306,11 @@ class SC_Helper_PayPalAccess {
             return false;
         }
         return true;
+    }
+
+    public static function useSandbox() {
+        $arrConfig = self::getConfig();
+        return $arrConfig['use_sandbox'];
     }
 
     /**
