@@ -52,7 +52,8 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
         }
 
         $arrConfig = SC_Helper_PayPalAccess::getConfig();
-        $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret']);
+        $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret'],
+                                                     SC_Helper_PayPalAccess::useSandbox());
 
         $objClient->setScopesArray(array(PayPalAccessScope::OPENID,
                                          PayPalAccessScope::PROFILE,

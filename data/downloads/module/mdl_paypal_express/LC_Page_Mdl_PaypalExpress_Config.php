@@ -104,6 +104,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
                         $arrParams['free_field1'] = $objFormParam->getValue('app_id');
                         $arrParams['free_field2'] = $objFormParam->getValue('app_secret');
                         $arrParams['free_field3'] = $objFormParam->getValue('requires_revoke');
+                        $arrParams['free_field4'] = ($objFormParam->getValue('use_sandbox') == '1') ? '1' : '';
                         if ($this->paypalaccess_flg == true && !$this->registerPayPalAccessPlugin($arrParams)) {
                             break;
                         }

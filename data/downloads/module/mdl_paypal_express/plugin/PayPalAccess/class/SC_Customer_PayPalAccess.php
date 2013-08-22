@@ -55,7 +55,8 @@ class SC_Customer_PayPalAccess extends SC_Customer {
             if (is_object($objClaims)) {
                 $objToken = SC_Helper_PayPalAccess::getToken($objClaims->getUserId());
                 $arrConfig = SC_Helper_PayPalAccess::getConfig();
-                $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret']);
+                $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret'],
+                                                             SC_Helper_PayPalAccess::useSandbox());
                 $objClient->endSession($objToken->getIdToken());
             }
         } catch (OIDConnect_ClientException $e) {

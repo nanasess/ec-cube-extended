@@ -108,6 +108,11 @@ implements OIDConnect_Client {
         return $this->secret;
     }
 
+    /**
+     * Sandbox を使用するかどうか.
+     *
+     * @param boolean $use_sandbox Sandbox を使用する場合 true
+     */
     public function setSandbox($use_sandbox) {
         $this->use_sandbox = $use_sandbox;
     }

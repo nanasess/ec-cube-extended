@@ -111,7 +111,7 @@ class SC_Helper_PayPalAccess {
     public static function refreshToken($user_id) {
         $objToken = self::getToken($user_id);
         $arrConfig = self::getConfig();
-        $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret']);
+        $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret'], self::useSandbox());
         $objClient->setScopesArray(array(PayPalAccessScope::OPENID,
                                          PayPalAccessScope::PROFILE,
                                          PayPalAccessScope::ADDRESS,
@@ -243,7 +243,7 @@ class SC_Helper_PayPalAccess {
         } else {
             // 有効期限切れでなければ, トークンの妥当性チェック
             $arrConfig = self::getConfig();
-            $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret']);
+            $objClient = PayPalAccessClient::getInstance($arrConfig['app_id'], $arrConfig['app_secret'], self::useSandbox());
             try {
                 $id_token = $objToken->getIdToken();
                 $verification = $objClient->validateToken($id_token);
@@ -308,6 +308,9 @@ class SC_Helper_PayPalAccess {
         return true;
     }
 
+    /**
+     * Sandbox を使用するかどうか.
+     */
     public static function useSandbox() {
         $arrConfig = self::getConfig();
         return $arrConfig['use_sandbox'];
