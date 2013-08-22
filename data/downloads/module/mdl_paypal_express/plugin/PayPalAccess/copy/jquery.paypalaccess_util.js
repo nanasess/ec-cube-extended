@@ -37,7 +37,7 @@
                     return true;
                 },
                 error : function(jqXHR, textStatus, errorThrown) {
-                    alert('Can\'t get status. : ' + textStatus)
+                    alert('Can\'t get status. : ' + textStatus);
                 }
             });
         }
@@ -53,16 +53,16 @@
                 success : function(data, textStatus, jqXHR) {
                     if (data.success) {
                         alert(o.unlink_success);
-                        location.reload();
+                        window.location.reload();
                         return true;
                     } else {
                         alert(o.unlink_failure + "\n" + data.error);
-                        location.reload();
+                        window.location.reload();
                         return false;
                     }
                 },
                 error : function(jqXHR, textStatus, errorThrown) {
-                    alert('Unlink Error : ' + textStatus)
+                    alert('Unlink Error : ' + textStatus);
                 }
             });
         };
@@ -74,7 +74,7 @@
                    } else {
                        o = $.fn.paypalaccess_util.defaults;
                    }
-                   $this = $(this);
+                   var $this = $(this);
                    _status($this);
                });
     };
@@ -88,7 +88,7 @@
         paypal_btn : '<tr><th>PayPal アカウントとリンク</th><td><a href="{url}"><img src="https://www.paypalobjects.com/en_US/Marketing/i/btn/login-with-paypal-button.png" /></a><br />PayPal アカウントを利用して、簡単・安全にログインできます。<br />PayPal アカウントの情報でお買い物できますので、会員情報入力の手間が省けます。</td></tr>'
     };
 
-    paypalaccount_unlink = function() {
+    window.paypalaccount_unlink = function() {
         _unlink();
     };
 })(jQuery);
