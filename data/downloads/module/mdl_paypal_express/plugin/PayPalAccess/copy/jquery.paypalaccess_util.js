@@ -85,7 +85,7 @@
         transactionid : 'transactionid',
         unlink_success : 'PayPalアカウントとのリンクを解除しました。',
         unlink_failure : 'PayPalアカウントとのリンクを解除できませんでした。',
-        paypal_btn : '<tr><th>PayPal アカウントとリンク</th><td><a href="{url}"><img src="https://www.paypalobjects.com/en_US/Marketing/i/btn/login-with-paypal-button.png" /></a><br />PayPal アカウントを利用して、簡単・安全にログインできます。<br />PayPal アカウントの情報でお買い物できますので、会員情報入力の手間が省けます。</td></tr>'
+        paypal_btn : '<tr><th>PayPal アカウントとリンク</th><td><span id="paypalaccess"></span><br />PayPal アカウントを利用して、簡単・安全にログインできます。<br />PayPal アカウントの情報でお買い物できますので、会員情報入力の手間が省けます。</td></tr>'
     };
 
     window.paypalaccount_unlink = function() {
