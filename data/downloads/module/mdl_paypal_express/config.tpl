@@ -199,8 +199,8 @@ $(function() {
   </tr>
   <!--{if $paypalaccess_flg == true}-->
   <tr>
-    <th>PayPal Access の使用<br/>
-        <p class="alignC"><img src="https://www.paypalobjects.com/en_US/Marketing/i/btn/login-with-paypal-button.png" /></p>
+    <th>Log In with PayPal の使用<br/>
+        <p class="alignC" id="paypalaccess"></p>
     </th>
     <td class="pad7">
       <!--{if $check_ssl == true}-->
@@ -280,6 +280,17 @@ $(function() {
     </td>
   </tr>
   <!--{/if}-->
+  <tr>
+    <th>「PayPalが使えます」バナー<br />の使用</th>
+    <td class="pad7">
+      <!--{assign var=key value="use_paypal_banner"}-->
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      <input type="radio" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> />右ナビ
+      <input type="radio" name="<!--{$key}-->" value="2" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 2}-->checked="checked"<!--{/if}--> />左ナビ
+      <input type="radio" name="<!--{$key}-->" value="0" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 0}-->checked="checked"<!--{/if}--> />使用しない
+    </td>
+  </tr>
+
 </table>
 <div class="alignC btnArea">
 	<a class="" href="javascript:;" onclick="fnFormModeSubmit('form1', 'edit', '', ''); return false;"><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/btn_register.jpg" alt="入力した内容で登録する"></a>
