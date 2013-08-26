@@ -206,18 +206,18 @@ $(function() {
       <!--{if $check_ssl == true}-->
       <!--{assign var=key value="use_paypalaccess"}-->
       <span class="attention"><!--{$arrErr[$key]}--></span>
-      <input type="checkbox" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> /><label for="use_paypalaccess">PayPal Accessを使用する</label>
+      <input type="checkbox" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> /><label for="use_paypalaccess">Log In with PayPal を使用する</label>
       <!--{else}-->
-          <div class="attention">SSL が無効になっています。PayPal Access をご利用の際は、必ず SSL をご使用ください。(HTTPS_URL パラメータが https:// ではありません。)</div>
+          <div class="attention">SSL が無効になっています。Log In with PayPal をご利用の際は、必ず SSL をご使用ください。(HTTPS_URL パラメータが https:// ではありません。)</div>
       <!--{/if}-->
-      <p class="fs14 padT3 padB20">※PayPal Access プラグインをご利用頂く為には、PayPal DevPortal の登録が必要です。以下の手順で登録の上、ご利用ください。</p>
+      <p class="fs14 padT3 padB20">※Log In with PayPal プラグインをご利用頂く為には、PayPal DevPortal の登録が必要です。以下の手順で登録の上、ご利用ください。</p>
       <ol>
         <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico01.jpg" alt="1"><a href="https://devportal.x.com" target="_blank">https://devportal.x.com</a> へアクセスします。</li>
         <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico02.jpg" alt="2">PayPal アカウントでログインします。</li>
         <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico03.jpg" alt="3">「Manage Applications」ボタンをクリックします。</li>
         <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico04.jpg" alt="4">必要事項を入力し、「Register Application」ボタンをクリックします。<a href="javascript:;" id="devportal_guide">(詳細)</a>
         <ul class="guide" style="display:none">
-          <li><strong>Application Name</strong> - PayPal Accessへの登録名を入力します。(必須・半角英数字記号)</li>
+          <li><strong>Application Name</strong> - Log In with PayPal への登録名を入力します。(必須・半角英数字記号)</li>
           <li><strong>Display Name</strong> - 顧客への表示名を入力します。(必須)</li>
           <li><strong>Domain URL</strong> - <!--{$smarty.const.HTTPS_URL}--> を入力します。(必須)</li>
           <li><strong>Contact Email</strong> - 連絡先メールアドレスを入力します。 (必須)</li>
@@ -259,7 +259,7 @@ $(function() {
       <span class="attention"><!--{$arrErr[$key]}--></span>
       <input type="radio" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> />任意
       <input type="radio" name="<!--{$key}-->" value="2" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 2}-->checked="checked"<!--{/if}--> />必須
-      <p>※ PayPal アカウントから、会員の「カナ(姓/名)・性別」は取得できません。必須にした場合は、PayPal Access でログイン後、「カナ(姓/名)・性別」の入力を促します。</p>
+      <p>※ PayPal アカウントから、会員の「カナ(姓/名)・性別」は取得できません。必須にした場合は、Log In with PayPal でログイン後、「カナ(姓/名)・性別」の入力を促します。</p>
     </td>
   </tr>
   <!--{/if}-->
@@ -288,6 +288,16 @@ $(function() {
       <input type="radio" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> />右ナビ
       <input type="radio" name="<!--{$key}-->" value="2" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 2}-->checked="checked"<!--{/if}--> />左ナビ
       <input type="radio" name="<!--{$key}-->" value="0" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 0}-->checked="checked"<!--{/if}--> />使用しない
+    </td>
+  </tr>
+  <tr>
+    <th>PayPalログインページの設定</th>
+    <td class="pad7">
+      <!--{assign var=key value="use_corporate_logo"}-->
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      ショップロゴ画像のアップロード 
+      <input type="file" name="<!--{$key}-->" value="0" id="<!--{$key}-->"  />
+      枠色の設定
     </td>
   </tr>
 
