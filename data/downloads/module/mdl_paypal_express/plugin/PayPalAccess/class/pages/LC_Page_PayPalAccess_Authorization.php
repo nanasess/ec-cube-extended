@@ -6,6 +6,7 @@ require_once PLUGIN_UPLOAD_REALDIR . 'PayPalAccess/class/openid_connect/include.
 require_once PLUGIN_UPLOAD_REALDIR . 'PayPalAccess/class/PayPalAccessClaims.php';
 require_once PLUGIN_UPLOAD_REALDIR . 'PayPalAccess/class/PayPalAccessClient.php';
 require_once PLUGIN_UPLOAD_REALDIR . 'PayPalAccess/class/helper/SC_Helper_PayPalAccess.php';
+
 /**
  * PayPalAccessの認証クラス
  *
@@ -47,8 +48,8 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
 
         // エラーの場合は, トップページへリダイレクト
         if (isset($_GET['error']) && $_GET['error'] == 'access_denied') {
-            SC_Response_Ex::sendRedirect(HTTP_URL);
-            SC_Response_Ex::actionExit();
+            $this->tpl_onload = "window.opener.location.href = '" . HTTP_URL. "';window.close();";
+            return;
         }
 
         $arrConfig = SC_Helper_PayPalAccess::getConfig();
@@ -158,10 +159,9 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                         $this->gotoBackURL();
                     }
                     return;
-                    //SC_Response_Ex::actionExit();
                 } catch (OIDConnect_ClientException $e) {
-                    SC_Response_Ex::sendRedirect($_SERVER['PHP_SELF']);
-                    SC_Response_Ex::actionExit();
+                    $this->tpl_onload = "window.opener.location.href = '" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "';window.close();";
+                    return;
                 }
                 break;
 
@@ -183,6 +183,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                 if (is_null($_SESSION[self::SESSION_NAME_ACCESS_TOKEN])) {
                     SC_Response_Ex::sendRedirect($_SERVER['PHP_SELF']);
                     SC_Response_Ex::actionExit();
+                    return;
                 }
 
                 $objCustomer = new SC_Customer_Ex();
@@ -194,7 +195,6 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     SC_Helper_PayPalAccess::registerCustomer($objClaims);
                     $this->gotoBackURL($objCustomer);
                     return;
-                    //SC_Response_Ex::actionExit();
                 }
                 break;
             default:
@@ -240,7 +240,6 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     SC_Helper_PayPalAccess::doLogin(null, $customer_email);
                     $this->gotoBackURL($objCustomer);
                     return;
-                    //SC_Response_Ex::actionExit();
                 } else {
                     /*
                      * TODO 存在しない場合は, クレームを保存し, ログイン画面を表示
@@ -255,11 +254,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                         SC_Response_Ex::actionExit();
                     }
                     $this->tpl_title = 'PayPalアカウントでログイン';
-                    $this->setTemplate('mypage/login.tpl');
-                    $this->tpl_onload .= <<< __EOF__
-\$('form').attr('action', '?');
-\$('a[href\$="kiyaku.php"]').attr('href', '?mode=register');
-__EOF__;
+                    $this->setTemplate(PLUGIN_UPLOAD_REALDIR . '/PayPalAccess/templates/entry.tpl');
                 }
             } catch (OIDConnect_ClientException $e) {
                 switch ($e->getCode()) {
@@ -273,7 +268,8 @@ __EOF__;
                         break;
                     case OIDConnect_ClientException::BAD_REQUEST_ERROR_CODE:
                         GC_Utils_Ex::gfPrintLog(print_r($e, true));
-                        SC_Response_Ex::sendRedirect(HTTP_URL);
+                        $this->tpl_onload = "window.opener.location.href = '" . HTTP_URL. "';window.close();";
+                        return;
                     default:
                 }
                 throw new Exception($e);
@@ -306,7 +302,9 @@ __EOF__;
                 if (SC_Utils_Ex::isBlank($kana01)
                     || SC_Utils_Ex::isBlank($kana02)
                     || SC_Utils_Ex::isBlank($objCustomer->getValue('sex'))) {
-                    SC_Response_Ex::sendRedirect('/mypage/change.php');
+                    $referer_url = '/mypage/change.php';
+                    $this->tpl_onload = "window.opener.location.href = '$referer_url';window.close();";
+                    return;
                 }
             }
         }
@@ -314,14 +312,8 @@ __EOF__;
         if (isset($_SESSION[self::SESSION_NAME_REFERER])) {
             $referer_url = $_SESSION[self::SESSION_NAME_REFERER];
             unset($_SESSION[self::SESSION_NAME_REFERER]);
-            var_dump($referer_url);
-
-            //SC_Response_Ex::sendRedirect($referer_url);
-
         } else {
-            var_dump(HTTPS_URL);
             $referer_url = HTTPS_URL;
-            //SC_Response_Ex::sendRedirect(HTTPS_URL);
         }
         $this->tpl_onload = "window.opener.location.href = '$referer_url';window.close();";
 
