@@ -167,16 +167,16 @@ class SC_Helper_Paypal {
         $arrRequests['PWD'] = $arrConfig['api_pass'];
         $arrRequests['SIGNATURE'] = $arrConfig['api_signature'];
         $arrRequests['VERSION'] = PAYPAL_EXPRESS_API_VERSION;
-        $arrRequests['PAYMENTACTION'] = PAYPAL_EXPRESS_PAYMENTACTION;
-        $arrRequests['CURRENCYCODE'] = PAYPAL_EXPRESS_CURRENCY_CODE;
-        $arrRequests['LOCALECODE'] = PAYPAL_EXPRESS_COUNTRY_CODE;
+        $arrRequests['PAYMENTREQUEST_0_PAYMENTACTION'] = PAYPAL_EXPRESS_PAYMENTACTION;
+        $arrRequests['PAYMENTREQUEST_0_CURRENCYCODE'] = PAYPAL_EXPRESS_CURRENCY_CODE;
+        $arrRequests['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = PAYPAL_EXPRESS_COUNTRY_CODE;
         $arrRequests['RETURNURL'] = HTTPS_URL . 'shopping/load_payment_module.php?mode=express';
         if ($do_express_checkout) {
             $arrRequests['RETURNURL'] .= '&do_express_checkout=true';
         }
 
         $arrRequests['CANCELURL'] = HTTPS_URL . 'shopping/load_payment_module.php?mode=cancel';
-        $arrRequests['INVNUM'] = $_SESSION['order_id'];
+        $arrRequests['PAYMENTREQUEST_0_INVNUM'] = $_SESSION['order_id'];
         $arrRequests['METHOD'] = $method;
         if ($method == 'DoExpressCheckoutPayment') {
             if (SC_Utils_Ex::isBlank($_SESSION['BUTTONSOURCE'])) {
@@ -185,7 +185,22 @@ class SC_Helper_Paypal {
                 $arrRequests['BUTTONSOURCE'] = $_SESSION['BUTTONSOURCE'];
             }
         }
-
+        $arrRequests['LOGOIMG'] = HTTPS_URL . 'user_data/packages/default/img/common/logo.gif';
+        //if ($method == 'SetExpressCheckout') {
+        // DoExpressCheckoutPayment でも必要
+        /* 配送先自動入力
+            $arrRequests['ADDROVERRIDE'] = '1';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTONAME'] = '健太郎 大河内';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTOZIP'] = '444-0426';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTOSTATE'] = '愛知県';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTOCITY'] = '西尾市';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTOSTREET'] = '一色町治明';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTOSTREET2'] = '北ス2';
+            $arrRequests['EMAIL'] = 'nanasess@fsm.ne.jp';
+            $arrRequests['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = '090-1757-6327';
+        */
+        // }
+        $arrRequests['CARTBORDERCOLOR'] = 'FF0000';
         $arrRequests = array_merge($arrRequests, $arrParams);
 
         $logtext = "\n************ Start $method Request. ************";
@@ -359,7 +374,7 @@ __EOS__;
         }
 
         foreach ($arrDetails as $detail) {
-            $arrRequests['L_NUMBER' . $i] = $detail['product_code'];
+            $arrRequests['L_PAYMENTREQUEST_0_NUMBER' . $i] = $detail['product_code'];
             $name = $detail["product_name"];
             if (!SC_Utils_Ex::isBlank($detail["classcategory_name1"])) {
                 $name .= "/". $detail["classcategory_name1"];
@@ -367,20 +382,24 @@ __EOS__;
             if (!SC_Utils_Ex::isBlank($detail["classcategory_name2"])) {
                 $name .= "/" . $detail["classcategory_name2"];
             }
-            $arrRequests['L_DESC' . $i] = $name;
-            $arrRequests['L_QTY' . $i] = $detail['quantity'];
+            $arrRequests['L_PAYMENTREQUEST_0_DESC' . $i] = $name;
+            $arrRequests['L_PAYMENTREQUEST_0_QTY' . $i] = $detail['quantity'];
             // 手数料, 値引き, ポイント値引きは消費税加算を除外
             if ($detail['product_code'] == 'charge'
                 || $detail['product_code'] == 'discount'
                 || $detail['product_code'] == 'use_point') {
-                $arrRequests['L_AMT' . $i] = $detail['price'];
+                $arrRequests['L_PAYMENTREQUEST_0_AMT' . $i] = $detail['price'];
             } else {
-                $arrRequests['L_AMT' . $i] = SC_Utils_Ex::sfCalcIncTax($detail["price"], $arrInfo['tax'], $arrInfo['tax_rule']);
+                if (version_compare(ECCUBE_VERSION, '2.13', '>=')) {
+                    $arrRequests['L_PAYMENTREQUEST_0_AMT' . $i] = SC_Helper_TaxRule_Ex::sfCalcIncTax($detail["price"], $detail['product_id'], $detail['product_class_id']);
+                } else {
+                    $arrRequests['L_PAYMENTREQUEST_0_AMT' . $i] = SC_Utils_Ex::sfCalcIncTax($detail["price"], $arrInfo['tax'], $arrInfo['tax_rule']);
+                }
             }
-            $total += $arrRequests['L_AMT' . $i] * $detail['quantity'];
+            $total += $arrRequests['L_PAYMENTREQUEST_0_AMT' . $i] * $detail['quantity'];
             $i++;
         }
-        $arrRequests['ITEMAMT'] = $total;
+        $arrRequests['PAYMENTREQUEST_0_ITEMAMT'] = $total;
         return $arrRequests;
     }
 

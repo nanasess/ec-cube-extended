@@ -146,7 +146,7 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
         // 購入完了
         case 'confirm':
             $arrRequest['PAYERID'] = $_SESSION['PAYERID'];
-            $arrRequest['AMT'] = $arrOrder['payment_total'];
+            $arrRequest['PAYMENTREQUEST_0_AMT'] = $arrOrder['payment_total'];
             $arrRequest['TOKEN'] = $_SESSION['token'];
             $arrResponse = SC_Helper_Paypal::sendNVPRequest('DoExpressCheckoutPayment', $arrRequest);
             if (SC_Helper_Paypal::isError($arrResponse)) {
@@ -188,8 +188,8 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
             }
 
             $arrRequest['NOSHIPPING'] = 1;
-            $arrRequest['SHIPPINGAMT'] = $arrOrder['deliv_fee'];
-            $arrRequest['AMT'] = $arrOrder['payment_total'];
+            $arrRequest['PAYMENTREQUEST_0_SHIPPINGAMT'] = $arrOrder['deliv_fee'];
+            $arrRequest['PAYMENTREQUEST_0_AMT'] = $arrOrder['payment_total'];
             $arrDetails = $objPurchase->getOrderDetail($_SESSION['order_id'], false);
             $arrRequest = array_merge($arrRequest, SC_Helper_Paypal::createItemRequests($arrDetails, $arrOrder));
             $arrResponse = SC_Helper_Paypal::sendNVPRequest('SetExpressCheckout', $arrRequest);
@@ -220,11 +220,11 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
      * @return array 配送情報の配列
      */
     function getShippings($arrResponse) {
-        $arrShipping['shipping_name01'] = $arrResponse['SHIPTONAME'];
-        $arrShipping['shipping_addr02'] = $arrResponse['SHIPTOSTREET'] . ' ' . $arrResponse['SHIPTOSTREET2'];
-        $arrShipping['shipping_addr01'] = $arrResponse['SHIPTOCITY'];
-        $arrShipping['shipping_pref'] = SC_Helper_Paypal::getPrefId($arrResponse['SHIPTOSTATE']);
-        $arrZip = explode('-', $arrResponse['SHIPTOZIP']);
+        $arrShipping['shipping_name01'] = $arrResponse['PAYMENTREQUEST_0_SHIPTONAME'];
+        $arrShipping['shipping_addr02'] = $arrResponse['PAYMENTREQUEST_0_SHIPTOSTREET'] . ' ' . $arrResponse['PAYMENTREQUEST_0_SHIPTOSTREET2'];
+        $arrShipping['shipping_addr01'] = $arrResponse['PAYMENTREQUEST_0_SHIPTOCITY'];
+        $arrShipping['shipping_pref'] = SC_Helper_Paypal::getPrefId($arrResponse['PAYMENTREQUEST_0_SHIPTOSTATE']);
+        $arrZip = explode('-', $arrResponse['PAYMENTREQUEST_0_SHIPTOZIP']);
         $arrShipping['shipping_zip01'] = $arrZip[0];
         $arrShipping['shipping_zip02'] = $arrZip[1];
         return $arrShipping;
@@ -242,8 +242,14 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
     function calculateOrder($order_id, $arrOrder, $pref_id, $deliv_id) {
         // 配送業者の送料を加算
         if (OPTION_DELIV_FEE == 1) {
+            // 2.13系はSC_Helper_Delivery_Exを使用する
+
+            if (version_compare(ECCUBE_VERSION, '2.13', '>=')) {
+                $arrOrder['deliv_fee'] += SC_Helper_Delivery_Ex::getDelivFee($pref_id, $deliv_id);
+            }
             // 2.12系はSC_CartSession_Exを使用する
-            if (version_compare(ECCUBE_VERSION, '2.12.0', '>=')) {
+            else if (version_compare(ECCUBE_VERSION, '2.12.0', '>=')
+                       && version_compare(ECCUBE_VERSION, '2.13', '<')) {
                 $arrOrder['deliv_fee'] += SC_CartSession_Ex::sfGetDelivFee($pref_id, $deliv_id);
             } else {
                 $arrOrder['deliv_fee'] += SC_Helper_DB_Ex::sfGetDelivFee($pref_id, $deliv_id);

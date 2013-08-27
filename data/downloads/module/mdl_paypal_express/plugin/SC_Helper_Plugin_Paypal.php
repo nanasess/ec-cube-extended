@@ -117,9 +117,9 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                     $objPurchase->completeOrder(ORDER_PENDING);
 
                     // PayPal API から token を取得
-                    $arrRequest['SHIPPINGAMT'] = $arrParams['deliv_fee'];
+                    $arrRequest['PAYMENTREQUEST_0_SHIPPINGAMT'] = $arrParams['deliv_fee'];
                     $arrParams['payment_total'] += $arrParams['charge'];
-                    $arrRequest['AMT'] = $arrParams['payment_total'];
+                    $arrRequest['PAYMENTREQUEST_0_AMT'] = $arrParams['payment_total'];
                     $arrOrder = $objPurchase->getOrder($_SESSION['order_id']);
                     $arrDetails = $objPurchase->getOrderDetail($_SESSION['order_id'], false);
                     // ダウンロード商品の場合は配送先を表示しない
