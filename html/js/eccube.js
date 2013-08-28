@@ -87,18 +87,6 @@
         }
     };
 
-    eccube.chgImg = function(fileName,img){
-        if (typeof(img) === "object") {
-            img.src = fileName;
-        } else {
-            document.images[img].src = fileName;
-        }
-    };
-
-    eccube.chgImgImageSubmit = function(fileName,imgObj){
-        imgObj.src = fileName;
-    };
-
     // 郵便番号入力呼び出し.
     eccube.getAddress = function(php_url, tagname1, tagname2, input1, input2) {
         var zip1 = document['form1'][tagname1].value;
@@ -171,7 +159,6 @@
     };
 
     eccube.fnFormModeSubmit = function(form, mode, keyname, keyid) {
-        var formElement = $("form#" + form);
         switch(mode) {
             case 'delete':
                 if(!window.confirm('一度削除したデータは、元に戻せません。\n削除しても宜しいですか？')){
@@ -191,17 +178,25 @@
             default:
                 break;
         }
-        formElement.find("input[name='mode']").val(mode);
+        var values = {mode:mode};
         if(keyname !== undefined && keyname !== "" && keyid !== undefined && keyid !== "") {
-            formElement.find("*[name=" + keyname + "]").val(keyid);
+            values[keyname] = keyid;
         }
-        formElement.submit();
+        eccube.submitForm(values, form);
     };
 
-    eccube.setValueAndSubmit = function(form, key, val) {
-        var formElement = $("form#" + form);
-        formElement.find("*[name=" + key + "]").val(val);
-        formElement.submit();
+    eccube.setValueAndSubmit = function(form, key, val, msg) {
+        var ret;
+        if (msg !== undefined) {
+            ret = window.confirm(msg);
+        } else {
+            ret = true;
+        }
+        if (ret) {
+            var formElement = $("form#" + form);
+            formElement.find("*[name=" + key + "]").val(val);
+            formElement.submit();
+        }
         return false;
     };
 
@@ -219,22 +214,32 @@
 
     // ページナビで使用する。
     eccube.movePage = function(pageno, mode, form) {
-        if (typeof form === 'undefined') {
+        if (form === undefined) {
             form = eccube.defaults.formId;
         }
         var formElement = $("form#" + form);
         formElement.find("input[name=pageno]").val(pageno);
-        if (typeof mode !== 'undefined') {
-            formElement.find("input[name='mode']").val('search');
+        if (mode !== undefined) {
+            formElement.find("input[name='mode']").val(mode);
         }
         formElement.submit();
     };
 
-    eccube.submitForm = function(form){
-        if (typeof form === 'undefined') {
-            form = eccube.defaults.formId;
+    eccube.submitForm = function(values, form){
+        var formElement;
+        if (form !== undefined && typeof form === "string" && form !== "") {
+            formElement = $("form#" + form);
+        } else if (form !== undefined && typeof form === "object") {
+            formElement = form;
+        } else {
+            formElement = $("form#" + eccube.defaults.formId);
         }
-        $("form#" + form).submit();
+        if (values !== undefined && typeof values === "object") {
+            $.each(values, function(index, value) {
+                formElement.find("input,select").filter("[name='" + index + "']").val(value);
+            });
+        }
+        formElement.submit();
     };
 
     // ポイント入力制限。
@@ -543,5 +548,23 @@
                 var $sele2 = $(this);
                 eccube.checkStock($form, product_id, $sele1.val(), $sele2.val());
             });
+
+        // マウスオーバーで画像切り替え
+        $(".hover_change_image").each(function(){
+            var target = $(this);
+            var srcOrig = target.attr("src");
+            var srcOver = srcOrig.substr(0, srcOrig.lastIndexOf('.')) + '_on' + srcOrig.substr(srcOrig.lastIndexOf('.'));
+            target.hover(
+                function(){
+                    target.attr("src", srcOver);
+                },
+                function(){
+                    target.attr("src", srcOrig);
+                }
+            );
+        });
+
+        // モーダルウィンドウ
+        $("a.expansion").colorbox();
     });
 })(window);

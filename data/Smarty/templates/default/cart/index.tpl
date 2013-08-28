@@ -20,17 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *}-->
 
-<script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH|h}-->js/jquery.facebox/facebox.js"></script>
-<link rel="stylesheet" type="text/css" href="<!--{$smarty.const.ROOT_URLPATH|h}-->js/jquery.facebox/facebox.css" media="screen" />
-<script type="text/javascript">//<![CDATA[
-    $(document).ready(function() {
-        $('a.expansion').facebox({
-            loadingImage : '<!--{$smarty.const.ROOT_URLPATH|h}-->js/jquery.facebox/loading.gif',
-            closeImage   : '<!--{$smarty.const.ROOT_URLPATH|h}-->js/jquery.facebox/closelabel.png'
-        });
-    });
-//]]></script>
-
 <div id="undercolumn">
     <div id="undercolumn_cart">
         <h2 class="title"><!--{$tpl_title|h}--></h2>
@@ -118,7 +107,7 @@
                                     <!--{if $item.productsClass.main_image|strlen >= 1}-->
                                         <a class="expansion" target="_blank" href="<!--{$smarty.const.IMAGE_SAVE_URLPATH|h}--><!--{$item.productsClass.main_image|sfNoImageMainList|h}-->">
                                     <!--{/if}-->
-                                            <img src="<!--{$smarty.const.IMAGE_SAVE_URLPATH}--><!--{$item.productsClass.main_list_image|sfNoImageMainList|h}-->" style="max-width: 65px;max-height: 65;" alt="<!--{$item.productsClass.name|h}-->" />
+                                            <img src="<!--{$smarty.const.IMAGE_SAVE_URLPATH}--><!--{$item.productsClass.main_list_image|sfNoImageMainList|h}-->" style="max-width: 65px;max-height: 65px;" alt="<!--{$item.productsClass.name|h}-->" />
                                             <!--{if $item.productsClass.main_image|strlen >= 1}-->
                                         </a>
                                     <!--{/if}-->
@@ -171,13 +160,13 @@
                             <ul>
                                 <li>
                                     <!--{if $tpl_prev_url != ""}-->
-                                        <a href="<!--{$tpl_prev_url|h}-->" onmouseover="eccube.chgImg('<!--{$TPL_URLPATH|h}-->img/button/btn_back_on.jpg','back<!--{$key|h}-->');" onmouseout="eccube.chgImg('<!--{$TPL_URLPATH|h}-->img/button/btn_back.jpg','back<!--{$key|h}-->');">
-                                            <img src="<!--{$TPL_URLPATH|h}-->img/button/btn_back.jpg" alt="戻る" name="back<!--{$key|h}-->" /></a>
+                                        <a href="<!--{$tpl_prev_url|h}-->">
+                                            <img class="hover_change_image" src="<!--{$TPL_URLPATH|h}-->img/button/btn_back.jpg" alt="戻る" name="back<!--{$key|h}-->" /></a>
                                     <!--{/if}-->
                                 </li>
                                 <li>
                                     <!--{if strlen($tpl_error) == 0}-->
-                                        <input type="image" onmouseover="eccube.chgImgImageSubmit('<!--{$TPL_URLPATH|h}-->img/button/btn_buystep_on.jpg',this)" onmouseout="eccube.chgImgImageSubmit('<!--{$TPL_URLPATH|h}-->img/button/btn_buystep.jpg',this)" src="<!--{$TPL_URLPATH|h}-->img/button/btn_buystep.jpg" alt="購入手続きへ" name="confirm" />
+                                        <input type="image" class="hover_change_image" src="<!--{$TPL_URLPATH|h}-->img/button/btn_buystep.jpg" alt="購入手続きへ" name="confirm" />
                                     <!--{/if}-->
                                 </li>
                             </ul>

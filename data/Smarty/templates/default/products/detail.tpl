@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *}-->
 
-<script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.facebox/facebox.js"></script>
-<link rel="stylesheet" type="text/css" href="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.facebox/facebox.css" media="screen" />
 <script type="text/javascript">//<![CDATA[
     // 規格2に選択肢を割り当てる。
     function fnSetClassCategories(form, classcat_id2_selected) {
@@ -31,12 +29,6 @@
         var $sele2 = $form.find('select[name=classcategory_id2]');
         eccube.setClassCategories($form, product_id, $sele1, $sele2, classcat_id2_selected);
     }
-    $(document).ready(function() {
-        $('a.expansion').facebox({
-            loadingImage : '<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.facebox/loading.gif',
-            closeImage   : '<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.facebox/closelabel.png'
-        });
-    });
 //]]></script>
 
 <div id="undercolumn">
@@ -242,8 +234,9 @@
                             <div class="cartin_btn">
                                 <div id="cartbtn_default">
                                     <!--★カゴに入れる★-->
-                                    <a href="javascript:void(document.form1.submit())" onmouseover="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_cartin_on.jpg','cart');" onmouseout="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_cartin.jpg','cart');">
-                                        <img src="<!--{$TPL_URLPATH}-->img/button/btn_cartin.jpg" alt="カゴに入れる" name="cart" id="cart" /></a>
+                                    <a href="javascript:void(document.form1.submit())">
+                                        <img class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_cartin.jpg" alt="カゴに入れる" />
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -260,7 +253,7 @@
                                 <div class="attention"><!--{$arrErr[$add_favorite]}--></div>
                             <!--{/if}-->
                             <!--{if !$is_favorite}-->
-                                <a href="javascript:eccube.changeAction('?product_id=<!--{$arrProduct.product_id|h}-->'); eccube.setModeAndSubmit('add_favorite','favorite_product_id','<!--{$arrProduct.product_id|h}-->');" onmouseover="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_add_favorite_on.jpg','add_favorite_product');" onmouseout="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_add_favorite.jpg','add_favorite_product');"><img src="<!--{$TPL_URLPATH}-->img/button/btn_add_favorite.jpg" alt="お気に入りに追加" name="add_favorite_product" id="add_favorite_product" /></a>
+                                <a href="javascript:eccube.changeAction('?product_id=<!--{$arrProduct.product_id|h}-->'); eccube.setModeAndSubmit('add_favorite','favorite_product_id','<!--{$arrProduct.product_id|h}-->');"><img class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_add_favorite.jpg" alt="お気に入りに追加" /></a>
                             <!--{else}-->
                                 <img src="<!--{$TPL_URLPATH}-->img/button/btn_add_favorite_on.jpg" alt="お気に入り登録済" name="add_favorite_product" id="add_favorite_product" />
                                 <script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.tipsy.js"></script>
@@ -331,9 +324,9 @@
                     <!--★新規コメントを書き込む★-->
                     <a href="./review.php"
                         onclick="eccube.openWindow('./review.php?product_id=<!--{$arrProduct.product_id}-->','review','600','640'); return false;"
-                        onmouseover="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_comment_on.jpg','review');"
-                        onmouseout="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_comment.jpg','review');" target="_blank">
-                        <img src="<!--{$TPL_URLPATH}-->img/button/btn_comment.jpg" alt="新規コメントを書き込む" name="review" id="review" /></a>
+                        target="_blank">
+                        <img class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_comment.jpg" alt="新規コメントを書き込む" />
+                    </a>
                 <!--{/if}-->
             </div>
         </div>
@@ -360,7 +353,7 @@
                 <div class="product_item">
                     <div class="productImage">
                         <a href="<!--{$smarty.const.P_DETAIL_URLPATH}--><!--{$arrItem.product_id|u}-->">
-                            <img src="<!--{$smarty.const.IMAGE_SAVE_URLPATH}--><!--{$arrItem.main_list_image|sfNoImageMainList|h}-->" style="max-width: 65px;max-height: 65;" alt="<!--{$rrItem.name|h}-->" />
+                            <img src="<!--{$smarty.const.IMAGE_SAVE_URLPATH}--><!--{$arrItem.main_list_image|sfNoImageMainList|h}-->" style="max-width: 65px;max-height: 65px;" alt="<!--{$arrItem.name|h}-->" /></a>
                     </div>
                     <!--{assign var=price02_min value=`$arrItem.price02_min_inctax`}-->
                     <!--{assign var=price02_max value=`$arrItem.price02_max_inctax`}-->

@@ -37,7 +37,7 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
      *
      * @return void
      */
-    function init()
+    public function init()
     {
         parent::init();
     }
@@ -47,7 +47,7 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
      *
      * @return void
      */
-    function process($mode)
+    public function process($mode)
     {
         $objLog  = new LC_Upgrade_Helper_Log;
         $objJson = new LC_Upgrade_Helper_Json;
@@ -60,6 +60,7 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
             $objJson->setError(OSTORE_E_C_ADMIN_AUTH);
             $objJson->display();
             $objLog->error(OSTORE_E_C_ADMIN_AUTH);
+
             return;
         }
 
@@ -72,6 +73,7 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
             $objJson->setError(OSTORE_E_C_NO_KEY);
             $objJson->display();
             $objLog->error(OSTORE_E_C_NO_KEY);
+
             return;
         }
 
@@ -84,6 +86,7 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
             'ver'        => ECCUBE_VERSION
         );
         $objReq = $this->request('products_list', $arrPostData);
+        $response = $objReq->send();
 
         // リクエストチェック
         $objLog->log('* http request check start');
@@ -91,19 +94,22 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
             $objJson->setError(OSTORE_E_C_HTTP_REQ);
             $objJson->display();
             $objLog->error(OSTORE_E_C_HTTP_REQ, $objReq);
+
             return;
         }
 
         // レスポンスチェック
         $objLog->log('* http response check start');
-        if ($objReq->getResponseCode() !== 200) {
+
+        if ( $response->getStatus() !== 200) {
             $objJson->setError(OSTORE_E_C_HTTP_RESP);
             $objJson->display();
             $objLog->error(OSTORE_E_C_HTTP_RESP, $objReq);
+
             return;
         }
 
-        $body = $objReq->getResponseBody();
+        $body = $response->getBody();
         $objRet = $objJson->decode($body);
 
         // JSONデータのチェック
@@ -112,6 +118,7 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
             $objJson->setError(OSTORE_E_C_FAILED_JSON_PARSE);
             $objJson->display();
             $objLog->error(OSTORE_E_C_FAILED_JSON_PARSE, $objReq);
+
             return;
         }
 
@@ -140,11 +147,13 @@ class LC_Page_Upgrade_ProductsList extends LC_Page_Upgrade_Base
             $objJson->setSuccess(array(), $html);
             $objJson->display();
             $objLog->end();
+
             return;
         } else {
             // 配信サーバー側でエラーを補足
             echo $body;
             $objLog->error($objRet->errcode, $objReq);
+
             return;
         }
     }

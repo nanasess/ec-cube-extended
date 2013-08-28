@@ -28,7 +28,7 @@
         <p>内容によっては回答をさしあげるのにお時間をいただくこともございます。<br />
         また、休業日は翌営業日以降の対応となりますのでご了承ください。</p>
 
-        <form name="form1" method="post" action="?">
+        <form name="form1" id="form1" method="post" action="?">
             <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
             <input type="hidden" name="mode" value="confirm" />
 
@@ -123,7 +123,7 @@
             <div class="btn_area">
                 <ul>
                     <li>
-                        <input type="image" onmouseover="eccube.chgImgImageSubmit('<!--{$TPL_URLPATH}-->img/button/btn_confirm_on.jpg', this)" onmouseout="eccube.chgImgImageSubmit('<!--{$TPL_URLPATH}-->img/button/btn_confirm.jpg', this)" src="<!--{$TPL_URLPATH}-->img/button/btn_confirm.jpg" alt="確認ページへ" name="confirm" />
+                        <input type="image" class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_confirm.jpg" alt="確認ページへ" name="confirm" />
                     </li>
                 </ul>
             </div>

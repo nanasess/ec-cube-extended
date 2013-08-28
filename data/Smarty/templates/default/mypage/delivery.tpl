@@ -34,13 +34,13 @@
             <!--{* 退会時非表示 *}-->
             <!--{if $tpl_login}-->
                 <p class="add_address">
-                    <a href="<!--{$smarty.const.ROOT_URLPATH}-->mypage/delivery_addr.php" onclick="eccube.openWindow('./delivery_addr.php','delivadd','600','640',{menubar:'no'}); return false;" onmouseover="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_add_address_on.jpg','newadress');" onmouseout="eccube.chgImg('<!--{$TPL_URLPATH}-->img/button/btn_add_address.jpg','newadress');" target="_blank"><img src="<!--{$TPL_URLPATH}-->img/button/btn_add_address.jpg" alt="新しいお届け先を追加" border="0" name="newadress" /></a>
+                    <a href="<!--{$smarty.const.ROOT_URLPATH}-->mypage/delivery_addr.php" onclick="eccube.openWindow('./delivery_addr.php','delivadd','600','640',{menubar:'no'}); return false;" target="_blank"><img class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_add_address.jpg" alt="新しいお届け先を追加" /></a>
                 </p>
             <!--{/if}-->
         <!--{/if}-->
 
         <!--{if $tpl_linemax > 0}-->
-            <form name="form1" method="post" action="?" >
+            <form name="form1" id="form1" method="post" action="?" >
                 <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
                 <input type="hidden" name="mode" value="" />
                 <input type="hidden" name="other_deliv_id" value="" />

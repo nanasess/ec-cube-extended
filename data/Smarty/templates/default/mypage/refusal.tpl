@@ -27,7 +27,7 @@
     <!--{include file=$tpl_navi}-->
     <div id="mycontents_area">
         <h3><!--{$tpl_subtitle|h}--></h3>
-        <form name="form1" method="post" action="?">
+        <form name="form1" id="form1" method="post" action="?">
             <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
             <input type="hidden" name="mode" value="confirm" />
             <div id="complete_area">
@@ -39,7 +39,7 @@
                     <div class="btn_area">
                         <ul>
                             <li>
-                                <input type="image" onmouseover="eccube.chgImgImageSubmit('<!--{$TPL_URLPATH}-->img/button/btn_refuse_on.jpg',this);" onmouseout="eccube.chgImgImageSubmit('<!--{$TPL_URLPATH}-->img/button/btn_refuse.jpg',this);" src="<!--{$TPL_URLPATH}-->img/button/btn_refuse.jpg" alt="会員退会を行う" name="refusal" id="refusal" />
+                                <input type="image" src="<!--{$TPL_URLPATH}-->img/button/btn_refuse.jpg" alt="会員退会を行う" class="hover_change_image" name="refusal" id="refusal" />
                             </li>
                         </ul>
                     </div>
