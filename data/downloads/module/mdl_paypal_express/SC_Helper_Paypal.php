@@ -22,7 +22,11 @@
  */
 
 require_once(realpath(dirname( __FILE__)) . "/include.php");
-require_once(DATA_REALDIR . 'module/Request.php');
+if (version_compare(ECCUBE_VERSION, '2.12', '>=')) {
+    require_once(DATA_REALDIR . 'module/HTTP/Request.php');
+} else {
+    require_once(DATA_REALDIR . 'module/Request.php');
+}
 
 /**
  * PayPal Express Checkout のヘルパークラス
@@ -212,7 +216,9 @@ class SC_Helper_Paypal {
         GC_Utils::gfPrintLog($logtext);
 
         // 送信
-        $req->addPostDataArray($arrRequests);
+        foreach ($arrRequests as $name => $val) {
+            $req->addPostData($name, $val);
+        }
         $response = $req->sendRequest();
         $req->clearPostData();
 

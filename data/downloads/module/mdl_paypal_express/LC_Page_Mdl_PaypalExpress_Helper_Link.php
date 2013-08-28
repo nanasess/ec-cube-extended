@@ -26,7 +26,11 @@ require_once(CLASS_EX_REALDIR . "page_extends/LC_Page_Ex.php");
 require_once(realpath(dirname( __FILE__)) . "/include.php");
 require_once(realpath(dirname( __FILE__)) . '/LC_Page_Mdl_PaypalExpress_Config.php');
 require_once(realpath(dirname( __FILE__)) . "/SC_Helper_Paypal.php");
-require_once(DATA_REALDIR . 'module/Request.php');
+if (version_compare(ECCUBE_VERSION, '2.12', '>=')) {
+    require_once(DATA_REALDIR . 'module/HTTP/Request.php');
+} else {
+    require_once(DATA_REALDIR . 'module/Request.php');
+}
 
 class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
 
@@ -36,6 +40,7 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
      * @return void
      */
     function init() {
+        $this->skip_load_page_layout = true;
         parent::init();
         $masterData = new SC_DB_MasterData();
         $this->arrPref = $masterData->getMasterData("mtb_pref");
