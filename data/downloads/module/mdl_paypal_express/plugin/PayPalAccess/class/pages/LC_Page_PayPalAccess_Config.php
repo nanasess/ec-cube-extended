@@ -19,6 +19,7 @@ class LC_Page_PayPalAccess_Config extends LC_Page_Admin_Ex {
         parent::init();
         $this->tpl_mainpage =  PLUGIN_UPLOAD_REALDIR . PAYPAL_ACCESS_PLUGIN_NAME . "/templates/config.tpl";
         $this->tpl_subtitle = 'PayPal Access プラグイン';
+        $this->load_legacy_js = true;
     }
 
     /**

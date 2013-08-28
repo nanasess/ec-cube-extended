@@ -26,7 +26,12 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                 return;
             }
         }
+        if (version_compare(ECCUBE_VERSION, '2.13', '>=')) {
+            $objPage->load_legacy_js = true;
+        }
         $class_name = get_class($objPage);
+        $masterData = new SC_DB_MasterData_Ex();
+        $objPage->arrPref = $masterData->getMasterData('mtb_pref');
 
         switch ($class_name) {
             case 'LC_Page_Cart_Ex':
@@ -100,9 +105,22 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                     $arrParams['payment_id'] = $arrPayments['payment_id'];
                     $arrParams['charge'] = $arrPayments['charge'];
 
+                    $arrRequest = array();
                     // ログイン時は会員情報を受注データに反映
                     if ($objCustomer->isLoginSuccess()) {
                         $objPurchase->copyFromCustomer($arrParams, $objCustomer, 'shipping');
+                        // ログインしていた場合はPayPal会員登録の初期値を設定
+                        $arrRequest['ADDROVERRIDE'] = '1';
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTONAME'] = $objCustomer->getValue('name02') . ' ' . $objCustomer->getValue('name01');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOZIP'] = $objCustomer->getValue('zip01') . '-' . $objCustomer->getValue('zip02');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOSTATE'] = $objPage->arrPref[$objCustomer->getValue('pref')];
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOCITY'] = $objCustomer->getValue('addr1');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET'] = $objCustomer->getValue('addr2');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET2'] = '';
+                        $arrRequest['EMAIL'] = $objCustomer->getValue('email');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $objCustomer->getValue('tel01') . '-'
+                                                                         . $objCustomer->getValue('tel02') . '-'
+                                                                         . $objCustomer->getValue('tel03');
                     }
                     // 非会員の場合はダミーデータを登録しておく
                     else {
