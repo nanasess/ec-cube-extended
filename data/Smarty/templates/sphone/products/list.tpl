@@ -20,19 +20,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *}-->
 
-<script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/products.js"></script>
 <script type="text/javascript">//<![CDATA[
     // 並び順を変更
     function fnChangeOrderby(orderby) {
-        fnSetVal('orderby', orderby);
-        fnSetVal('pageno', 1);
-        fnSubmit();
+        eccube.setValue('orderby', orderby);
+        eccube.setValue('pageno', 1);
+        eccube.submitForm();
     }
     // 表示件数を変更
     function fnChangeDispNumber(dispNumber) {
-        fnSetVal('disp_number', dispNumber);
-        fnSetVal('pageno', 1);
-        fnSubmit();
+        eccube.setValue('disp_number', dispNumber);
+        eccube.setValue('pageno', 1);
+        eccube.submitForm();
     }
 //]]></script>
 

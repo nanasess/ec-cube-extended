@@ -22,7 +22,7 @@
 <script type="text/javascript">
 <!--
     // モードとキーを指定してSUBMITを行う。
-    function fnModeSubmit(mode) {
+    eccube.setModeAndSubmit = function(mode) {
         switch(mode) {
         case 'drop':
             if(!window.confirm('一度削除したデータは、元に戻せません。\n削除しても宜しいですか？')){
@@ -34,7 +34,7 @@
         }
         document.form1['mode'].value = mode;
         document.form1.submit();
-    }
+    };
 //-->
 </script>
 
@@ -67,7 +67,7 @@
                 <span class="attention top"><!--{$arrErr.all}--></span>
                 <!--{if $arrErr.all != ""}-->
                     <ul class="btn-area">
-                        <li><a class="btn-normal" href="javascript:;" onclick="fnModeSubmit('drop'); return false;">既存データを全て削除する</a></li>
+                        <li><a class="btn-normal" href="javascript:;" onclick="eccube.setModeAndSubmit('drop'); return false;">既存データを全て削除する</a></li>
                     </ul>
                 <!--{/if}-->
             <!--{/if}-->
