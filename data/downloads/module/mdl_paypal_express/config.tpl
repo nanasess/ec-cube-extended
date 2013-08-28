@@ -1,4 +1,8 @@
 <!--{include file="`$smarty.const.TEMPLATE_ADMIN_REALDIR`admin_popup_header.tpl"}-->
+<link rel="stylesheet" type="text/css" href="<!--{$TPL_URLPATH}-->paypal_express/spectrum.css">
+<script type="text/javascript" src="<!--{$TPL_URLPATH}-->paypal_express/spectrum.js"></script>
+<script type="text/javascript" src="<!--{$TPL_URLPATH}-->paypal_express/jquery.spectrum-ja.js"></script>
+
 <style type="text/css">
 
 ol {
@@ -131,6 +135,12 @@ $(function() {
             $('input[name=use_express_btn]').attr('disabled', false);
             $('#use_express_hidden').remove();
         }
+    });
+
+    $("#colorpicker").spectrum({
+        color: "#bbb",
+        showInput: true,
+        showInitial: true
     });
 });
 
@@ -297,7 +307,7 @@ $(function() {
       <span class="attention"><!--{$arrErr[$key]}--></span>
       ショップロゴ画像のアップロード 
       <input type="file" name="<!--{$key}-->" value="0" id="<!--{$key}-->"  />
-      枠色の設定
+      枠色の設定: <input id='colorpicker' />
     </td>
   </tr>
 

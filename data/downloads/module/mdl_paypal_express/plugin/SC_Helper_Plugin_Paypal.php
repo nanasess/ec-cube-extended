@@ -114,8 +114,8 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                         $arrRequest['PAYMENTREQUEST_0_SHIPTONAME'] = $objCustomer->getValue('name02') . ' ' . $objCustomer->getValue('name01');
                         $arrRequest['PAYMENTREQUEST_0_SHIPTOZIP'] = $objCustomer->getValue('zip01') . '-' . $objCustomer->getValue('zip02');
                         $arrRequest['PAYMENTREQUEST_0_SHIPTOSTATE'] = $objPage->arrPref[$objCustomer->getValue('pref')];
-                        $arrRequest['PAYMENTREQUEST_0_SHIPTOCITY'] = $objCustomer->getValue('addr1');
-                        $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET'] = $objCustomer->getValue('addr2');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOCITY'] = $objCustomer->getValue('addr01');
+                        $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET'] = $objCustomer->getValue('addr02');
                         $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET2'] = '';
                         $arrRequest['EMAIL'] = $objCustomer->getValue('email');
                         $arrRequest['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $objCustomer->getValue('tel01') . '-'

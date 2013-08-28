@@ -46,6 +46,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
      */
     function init() {
         parent::init();
+        $this->load_legacy_js = true;
         $this->tpl_mainpage = MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . "/config.tpl";
         $this->tpl_subtitle = 'PayPal Express Checkout 決済モジュール';
         if (version_compare(ECCUBE_VERSION, '2.12.0', '>=')) {
@@ -59,6 +60,13 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
                 require_once(realpath(dirname( __FILE__)) . "/plugin/" . self::DROPPED_ITEMS_NOTICER_NAME . '/define.php');
             }
         }
+        $libdir = USER_REALDIR . USER_PACKAGE_DIR . 'admin/paypal_express/';
+        if (!SC_Utils_Ex::recursiveMkdir($libdir)) {
+            $this->arrErr['err'] = $libdir . ' の作成に失敗しました';
+        }
+
+        // ライブラリをコピー
+        SC_Utils_Ex::copyDirectory(MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . '/lib/', $libdir);
     }
 
     /**

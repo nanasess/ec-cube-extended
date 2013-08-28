@@ -204,7 +204,7 @@ class SC_Helper_Paypal {
             $arrRequests['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = '090-1757-6327';
         */
         // }
-        $arrRequests['CARTBORDERCOLOR'] = 'FF0000';
+        $arrRequests['CARTBORDERCOLOR'] = 'cccccc';
         $arrRequests = array_merge($arrRequests, $arrParams);
 
         $logtext = "\n************ Start $method Request. ************";
