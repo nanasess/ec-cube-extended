@@ -182,14 +182,24 @@ class SC_Helper_Paypal {
         $arrRequests['CANCELURL'] = HTTPS_URL . 'shopping/load_payment_module.php?mode=cancel';
         $arrRequests['PAYMENTREQUEST_0_INVNUM'] = $_SESSION['order_id'];
         $arrRequests['METHOD'] = $method;
-        if ($method == 'DoExpressCheckoutPayment') {
-            if (SC_Utils_Ex::isBlank($_SESSION['BUTTONSOURCE'])) {
-                $arrRequests['BUTTONSOURCE'] = PAYPAL_EXPRESS_BUTTONSOURCE;
-            } else {
-                $arrRequests['BUTTONSOURCE'] = $_SESSION['BUTTONSOURCE'];
-            }
+        switch ($method) {
+            case 'SetExpressCheckout':
+                if (!SC_Utils_Ex::isBlank($arrConfig['corporate_logo'])) {
+                    $arrRequests['LOGOIMG'] = HTTPS_URL . IMAGE_SAVE_URLPATH . $arrConfig['corporate_logo'];
+                }
+                if (!SC_Utils_Ex::isBlank($arrConfig['border_color'])) {
+                    $arrRequests['CARTBORDERCOLOR'] = str_replace('#', '', $arrConfig['border_color']);
+                }
+                break;
+            case 'DoExpressCheckoutPayment':
+                if (SC_Utils_Ex::isBlank($_SESSION['BUTTONSOURCE'])) {
+                    $arrRequests['BUTTONSOURCE'] = PAYPAL_EXPRESS_BUTTONSOURCE;
+                } else {
+                    $arrRequests['BUTTONSOURCE'] = $_SESSION['BUTTONSOURCE'];
+                }
+                break;
+            default:
         }
-        $arrRequests['LOGOIMG'] = HTTPS_URL . 'user_data/packages/default/img/common/logo.gif';
         //if ($method == 'SetExpressCheckout') {
         // DoExpressCheckoutPayment でも必要
         /* 配送先自動入力
@@ -204,7 +214,7 @@ class SC_Helper_Paypal {
             $arrRequests['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = '090-1757-6327';
         */
         // }
-        $arrRequests['CARTBORDERCOLOR'] = 'cccccc';
+
         $arrRequests = array_merge($arrRequests, $arrParams);
 
         $logtext = "\n************ Start $method Request. ************";

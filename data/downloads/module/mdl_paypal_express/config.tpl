@@ -310,7 +310,8 @@ $(function() {
       <!--{assign var=key value="corporate_logo"}-->
       <a name="<!--{$key}-->"></a>
       <span class="attention"><!--{$arrErr[$key]}--></span>
-      ショップロゴ画像のアップロード:<br />
+      ショップロゴ画像のアップロード:
+      <p class="padT3">※縦60px, 横190px, jpg, png, gif のショップロゴ画像をアップロード可能です</p>
       <!--{if $arrUpFiles[$key].filepath != ""}-->
       <img src="<!--{$arrUpFiles[$key].filepath}-->" />　<a href="javascript:;" onclick="fnFormModeSubmit('form1', 'delete_image', 'image_key', '<!--{$key}-->'); return false;">[画像の取り消し]</a><br />
       <!--{/if}-->
