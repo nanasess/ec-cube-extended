@@ -137,8 +137,8 @@ $(function() {
         }
     });
 
-    $("#colorpicker").spectrum({
-        color: "#bbb",
+    $("#border_color").spectrum({
+        color: '<!--{$arrForm.border_color.value|default:"#BBBBBB"|h}-->',
         showInput: true,
         showInitial: true
     });
@@ -154,9 +154,13 @@ $(function() {
         marginheight="0"
         frameborder="0"></iframe>
 
-<form name="form1" id="form1" method="post" action="<!--{$smarty.server.REQUEST_URI|escape}-->">
+<form name="form1" id="form1" method="post" action="<!--{$smarty.server.REQUEST_URI|escape}-->" enctype="multipart/form-data">
 <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
 <input type="hidden" name="mode" value="edit">
+<input type="hidden" name="image_key" value="" />
+<!--{foreach key=key item=item from=$arrHidden}-->
+    <input type="hidden" name="<!--{$key}-->" value="<!--{$item|h}-->" />
+<!--{/foreach}-->
 
 <table class="form">
   <colgroup width="20%"></colgroup>
@@ -303,11 +307,18 @@ $(function() {
   <tr>
     <th>PayPalログインページの設定</th>
     <td class="pad7">
-      <!--{assign var=key value="use_corporate_logo"}-->
+      <!--{assign var=key value="corporate_logo"}-->
+      <a name="<!--{$key}-->"></a>
       <span class="attention"><!--{$arrErr[$key]}--></span>
-      ショップロゴ画像のアップロード 
-      <input type="file" name="<!--{$key}-->" value="0" id="<!--{$key}-->"  />
-      枠色の設定: <input id='colorpicker' />
+      ショップロゴ画像のアップロード:<br />
+      <!--{if $arrUpFiles[$key].filepath != ""}-->
+      <img src="<!--{$arrUpFiles[$key].filepath}-->" />　<a href="javascript:;" onclick="fnFormModeSubmit('form1', 'delete_image', 'image_key', '<!--{$key}-->'); return false;">[画像の取り消し]</a><br />
+      <!--{/if}-->
+      <input type="file" name="<!--{$key}-->" size="20" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" />
+      <a class="btn-normal" href="javascript:;" name="btn" onclick="fnFormModeSubmit('form1', 'upload_image', 'image_key', '<!--{$key}-->'); return false;">アップロード</a><br /><br />
+      <!--{assign var=key value="border_color"}-->
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      枠色の設定: <input id='<!--{$key}-->' name="<!--{$key}-->" value="<!--{$arrForm[$key].value}-->" />
     </td>
   </tr>
 

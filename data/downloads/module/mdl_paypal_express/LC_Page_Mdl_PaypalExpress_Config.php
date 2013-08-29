@@ -86,8 +86,11 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
      * @return void
      */
     function action() {
-        $objFormParam = new SC_FormParam_Ex();
+        $objUpFile = new SC_UploadFile_Ex(IMAGE_TEMP_REALDIR, IMAGE_SAVE_REALDIR);
+        $objUpFile->addFile('ショップロゴ画像', 'corporate_logo', array('jpg', 'gif', 'png'), IMAGE_SIZE, false, 190, 60);
+        $objUpFile->setHiddenFileList($_POST);
 
+        $objFormParam = new SC_FormParam_Ex();
         $this->initParam($objFormParam);
         $objFormParam->setParam($_POST);
         $objFormParam->convParam();
@@ -100,9 +103,22 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
             }
             if (SC_Utils_Ex::isBlank($this->arrErr)) {
                 if ($this->registerPlugin()) {
+                    $arrExists = SC_Helper_Paypal::getConfig();
                     SC_Helper_Paypal::registerPayments();
+
+                    // ロゴ画像アップロード
+                    $objImage = new SC_Image_Ex($objUpFile->temp_dir);
+                    $image_key = $objFormParam->getValue('image_key');
+                    if ($objUpFile->temp_file[0]) {
+                        $objImage->moveTempImage($objUpFile->temp_file[0], $objUpFile->save_dir);
+                    }
                     $arrConfig = SC_Helper_Paypal::getConfig();
-                    $arrForm = $objFormParam->getHashArray();
+                    if (empty($objUpFile->save_file[0]) && $arrExists['corporate_logo']
+                        && !in_array($objUpFile->temp_file[0], $objUpFile->save_file)) {
+                        $objImage->deleteImage($arrExists['corporate_logo'], $objUpFile->save_dir);
+                    }
+                    $arrForm = array_merge($objUpFile->getDBFileList(), $objFormParam->getHashArray());
+
                     if (isset($arrConfig['is_configured'])) {
                         $arrForm['is_configured'] = $arrConfig['is_configured'];
                     }
@@ -144,6 +160,16 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
                 }
             }
             break;
+        case 'upload_image':
+            $this->arrErr['corporate_logo'] = $objUpFile->makeTempFile($objFormParam->getValue('image_key'), IMAGE_RENAME);
+            $this->tpl_onload .= "location.hash='#corporate_logo';";
+            break;
+        case 'delete_image':
+            $objUpFile->deleteFile($objFormParam->getValue('image_key'));
+            $arrConfig = SC_Helper_Paypal::getConfig();
+            $objFormParam->setParam($arrConfig);
+            $this->tpl_onload .= "location.hash='#corporate_logo';";
+            break;
         case 'complete':
             $this->tpl_mainpage = MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . "/config_complete.tpl";
             break;
@@ -162,10 +188,14 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
             if (SC_Utils_Ex::isBlank($arrConfig['requires_revoke'])) {
                 $arrConfig['requires_revoke'] = '1';
             }
+            $objUpFile->setDBFileList($arrConfig);
             $objFormParam->setParam($arrConfig);
             break;
         }
         $this->arrForm = $objFormParam->getFormParamList();
+        // 画像ファイル表示用データ取得
+        $this->arrHidden = $objUpFile->getHiddenFileList();
+        $this->arrUpFiles = $objUpFile->getFormFileList(IMAGE_TEMP_URLPATH, IMAGE_SAVE_URLPATH);
         $this->setTemplate($this->tpl_mainpage);
     }
 
@@ -288,6 +318,8 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
         $objFormParam->addParam("サンドボックスの使用", "use_sandbox", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam("PayPalAccess の使用", "use_paypalaccess", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam("カゴ落ち通知メルマガ配信機能 の使用", "use_droppeditemsnoticer", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
+        $objFormParam->addParam('枠線の色', 'border_color', STEXT_LEN, 'a', array("MAX_LENGTH_CHECK"));
+        $objFormParam->addParam('image_key', 'image_key', '', '', array());
         if ($_POST['use_paypalaccess'] == '1') {
             $objFormParam->addParam("App ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
             $objFormParam->addParam("App Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
