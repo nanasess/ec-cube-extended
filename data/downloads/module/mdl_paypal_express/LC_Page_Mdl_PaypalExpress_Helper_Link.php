@@ -155,21 +155,6 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
             $arrRequest['TOKEN'] = $_SESSION['token'];
 
             $arrShipping = $objPurchase->getShippings($_SESSION['order_id']);
-            if (count($arrShipping) <= 1) { // FIXME 複数配送の場合は指定しない
-                $arrRequest['ADDROVERRIDE'] = '1';
-                $arrRequest['PAYMENTREQUEST_0_SHIPTONAME'] = $arrShipping[0]['shipping_name02'] . ' ' . $arrShipping[0]['shipping_name01'];
-                $arrRequest['PAYMENTREQUEST_0_SHIPTOZIP'] =  $arrShipping[0]['shipping_zip01'] . '-' . $arrShipping[0]['shipping_zip02'];
-                $arrRequest['PAYMENTREQUEST_0_SHIPTOSTATE'] = $this->arrPref[$arrShipping[0]['shipping_pref']];
-                $arrRequest['PAYMENTREQUEST_0_SHIPTOCITY'] = $arrShipping[0]['shipping_addr01'];
-                $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET'] = $arrShipping[0]['shipping_addr02'];
-                $arrRequest['PAYMENTREQUEST_0_SHIPTOSTREET2'] = '';
-                $arrRequest['EMAIL'] = $arrOrder['order_email'];
-                $arrRequest['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $arrShipping[0]['shipping_tel01'] . '-'
-                                                                 . $arrShipping[0]['shipping_tel02'] . '-'
-                                                                 . $arrShipping[0]['shipping_tel03'];
-            }
-
-            $arrRequest['NOSHIPPING'] = 1;
             $arrResponse = SC_Helper_Paypal::sendNVPRequest('DoExpressCheckoutPayment', $arrRequest);
             if (SC_Helper_Paypal::isError($arrResponse)) {
                 // PDR 実行(ペイパル画面でエラーを表示する)

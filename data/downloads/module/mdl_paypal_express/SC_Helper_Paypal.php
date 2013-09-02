@@ -173,7 +173,6 @@ class SC_Helper_Paypal {
         $arrRequests['VERSION'] = PAYPAL_EXPRESS_API_VERSION;
         $arrRequests['PAYMENTREQUEST_0_PAYMENTACTION'] = PAYPAL_EXPRESS_PAYMENTACTION;
         $arrRequests['PAYMENTREQUEST_0_CURRENCYCODE'] = PAYPAL_EXPRESS_CURRENCY_CODE;
-        $arrRequests['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = PAYPAL_EXPRESS_COUNTRY_CODE;
         $arrRequests['RETURNURL'] = HTTPS_URL . 'shopping/load_payment_module.php?mode=express';
         if ($do_express_checkout) {
             $arrRequests['RETURNURL'] .= '&do_express_checkout=true';
@@ -184,6 +183,7 @@ class SC_Helper_Paypal {
         $arrRequests['METHOD'] = $method;
         switch ($method) {
             case 'SetExpressCheckout':
+                $arrRequests['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = PAYPAL_EXPRESS_COUNTRY_CODE;
                 if (!SC_Utils_Ex::isBlank($arrConfig['corporate_logo'])) {
                     $arrRequests['LOGOIMG'] = HTTPS_URL . IMAGE_SAVE_URLPATH . $arrConfig['corporate_logo'];
                 }
