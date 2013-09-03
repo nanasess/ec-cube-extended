@@ -108,7 +108,11 @@ class SC_Helper_Paypal {
      */
     function registerPayments() {
         $arrData['payment_method'] = "PayPal エクスプレスチェックアウト";
-        $arrData['module_path'] = MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . "/paypal_link.php";
+        if (version_compare(ECCUBE_VERSION, '2.13', '>=')) {
+            $arrData['module_path'] = MDL_PAYPAL_EXPRESS_CODE . "/paypal_link.php";
+        } else {
+            $arrData['module_path'] = MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . "/paypal_link.php";
+        }
         $arrData['charge_flg'] = "1";
         $arrData['fix'] = 3;
         $arrData['creator_id'] = $_SESSION['member_id'];
