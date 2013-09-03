@@ -115,6 +115,7 @@ class SC_Helper_Paypal {
         }
         $arrData['charge_flg'] = "1";
         $arrData['fix'] = 3;
+        $arrData['payment_image'] = 'paypal_payment_logo.gif';
         $arrData['creator_id'] = $_SESSION['member_id'];
         $arrData['create_date'] = "now()";
         $arrData['update_date'] = "now()";

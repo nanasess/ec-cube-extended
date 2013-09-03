@@ -26,14 +26,18 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                 return;
             }
         }
-        if (version_compare(ECCUBE_VERSION, '2.13', '>=')) {
-            $objPage->load_legacy_js = true;
-        }
         $class_name = get_class($objPage);
         $masterData = new SC_DB_MasterData_Ex();
         $objPage->arrPref = $masterData->getMasterData('mtb_pref');
 
         switch ($class_name) {
+            // お支払い方法選択にリンク付与
+            case 'LC_Page_Shopping_Payment_Ex':
+                $objPage->action();
+                $objPage->include_mainpage = $objPage->tpl_mainpage;
+                $objPage->tpl_mainpage = SC_Helper_Paypal::getPluginDir() . 'payment.tpl';
+                break;
+
             case 'LC_Page_Cart_Ex':
                 $objPage->action();
 

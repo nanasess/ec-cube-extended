@@ -67,6 +67,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
 
         // ライブラリをコピー
         SC_Utils_Ex::copyDirectory(MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . '/lib/', $libdir);
+        SC_Utils_Ex::copyDirectory(MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . '/img/', IMAGE_SAVE_REALDIR);
     }
 
     /**
@@ -345,6 +346,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
             }
         }
         $arrFiles = array('SC_Helper_Plugin_Paypal.php',
+                          'payment.tpl',
                           'cart.tpl',
                           'deliv_select.tpl',
                           'deliv_select_sphone.tpl',
