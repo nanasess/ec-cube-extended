@@ -20,8 +20,7 @@ define('PAYPAL_EXPRESS_LINK_URL_SANDBOX', "https://www.sandbox.paypal.com/cgi-bi
 define('PAYPAL_EXPRESS_NVP_URL', 'https://api-3t.paypal.com/nvp');
 define('PAYPAL_EXPRESS_NVP_URL_SANDBOX', 'https://api-3t.sandbox.paypal.com/nvp');
 // エクスプレスチェックアウトボタン
-define('PAYPAL_EXPRESS_CHECKOUT_BUTTON', 'https://fpdbs.paypal.com/dynamicimageweb?cmd=_dynamic-image');
-define('PAYPAL_EXPRESS_CHECKOUT_BUTTON_SANDBOX', 'https://fpdbs.sandbox.paypal.com/dynamicimageweb?cmd=_dynamic-image');
+define('PAYPAL_EXPRESS_CHECKOUT_BUTTON', 'https://www.paypal.com/ja_JP/JP/i/btn/btn_xpressCheckout.gif');
 // NVP API のバージョン
 define('PAYPAL_EXPRESS_API_VERSION', '71.0');
 // 支払の動作

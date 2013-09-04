@@ -174,17 +174,7 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                 $objPage->arrDeliv = SC_Utils_Ex::jsonEncode($arrDeliv);
 
                 // PayPal チェックアウトボタン画像を取得
-                $arrResponse = SC_Helper_Paypal::sendNVPRequest('GetPalDetails');
                 $objPage->paypal_checkout_button_url = PAYPAL_EXPRESS_CHECKOUT_BUTTON;
-                if (SC_Helper_Paypal::useSandbox()) {
-                    $objPage->paypal_checkout_button_url = PAYPAL_EXPRESS_CHECKOUT_BUTTON_SANDBOX;
-                }
-                if (SC_Helper_Paypal::isError($arrResponse)) {
-                    $objPage->tpl_message = SC_Helper_Paypal::getErrorMessage($arrResponse);
-                } else {
-                    $objPage->paypal_checkout_button_url .= '&pal=' . $arrResponse['PAL']
-                        .= '&locale=' . $arrResponse['LOCALE'];
-                }
                 break;
         default:
         }
