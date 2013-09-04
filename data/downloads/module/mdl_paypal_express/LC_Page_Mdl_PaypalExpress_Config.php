@@ -68,6 +68,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
         // ライブラリをコピー
         SC_Utils_Ex::copyDirectory(MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . '/lib/', $libdir);
         SC_Utils_Ex::copyDirectory(MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . '/img/', IMAGE_SAVE_REALDIR);
+        copy(MODULE_REALDIR . MDL_PAYPAL_EXPRESS_CODE . '/paypalbanner.tpl', TEMPLATE_REALDIR . 'frontparts/bloc/paypalbanner.tpl');
     }
 
     /**
@@ -119,6 +120,9 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
                         $objImage->deleteImage($arrExists['corporate_logo'], $objUpFile->save_dir);
                     }
                     $arrForm = array_merge($objUpFile->getDBFileList(), $objFormParam->getHashArray());
+
+                    // 「PayPalが使えます」バナー
+                    self::registerPayPalBanner(DEVICE_TYPE_PC, $objFormParam->getValue('use_paypal_banner'));
 
                     if (isset($arrConfig['is_configured'])) {
                         $arrForm['is_configured'] = $arrConfig['is_configured'];
@@ -193,6 +197,9 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
             $objFormParam->setParam($arrConfig);
             break;
         }
+
+        $this->exists_paypal_banner = self::existsBlocposition(DEVICE_TYPE_PC);
+
         $this->arrForm = $objFormParam->getFormParamList();
         // 画像ファイル表示用データ取得
         $this->arrHidden = $objUpFile->getHiddenFileList();
@@ -320,6 +327,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
         $objFormParam->addParam("PayPalAccess の使用", "use_paypalaccess", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam("カゴ落ち通知メルマガ配信機能 の使用", "use_droppeditemsnoticer", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam('枠線の色', 'border_color', STEXT_LEN, 'a', array("MAX_LENGTH_CHECK"));
+        $objFormParam->addParam("「PayPalが使えます」バナーの使用", "use_paypal_banner", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam('image_key', 'image_key', '', '', array());
         if ($_POST['use_paypalaccess'] == '1') {
             $objFormParam->addParam("App ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
@@ -402,6 +410,98 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
 
     function disableDroppedItemsNoticerPlugin() {
         return $this->disablePlugin(self::DROPPED_ITEMS_NOTICER_NAME);
+    }
+
+    /**
+     *
+     * PayPal が使えますバナーを登録する.
+     */
+    function registerBloc($device_type_id) {
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
+        $arrValues['device_type_id'] = $device_type_id;
+        $arrValues['bloc_id'] = 1 + $objQuery->max('bloc_id', 'dtb_bloc', 'device_type_id = ?',
+                                                   array($arrValues['device_type_id']));
+        $arrValues['bloc_name'] = 'PayPalが使えます';
+        $arrValues['tpl_path'] = 'paypalbanner.tpl';
+        $arrValues['filename'] = 'paypalbanner';
+        $arrValues['create_date'] = 'NOW()';
+        $arrValues['update_date'] = 'NOW()';
+        $arrValues['deletable_flg'] = '1';
+        $objQuery->insert('dtb_bloc', $arrValues);
+        return $arrValues['bloc_id'];
+    }
+
+    /**
+     * PayPal が使えますバナーを配置する.
+     */
+    function registerBlocposition($device_type_id, $bloc_id, $target) {
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
+        $arrValues['device_type_id'] = $device_type_id;
+        $arrValues['bloc_id'] = $bloc_id;
+        $arrValues['target_id'] = $target;
+        $arrValues['page_id'] = 1; // index.php
+        $arrValues['bloc_row'] = -1;    // 常に最上位
+        $arrValues['anywhere'] = '1';
+        $objQuery->insert('dtb_blocposition', $arrValues);
+    }
+
+    /**
+     * PayPal が使えますバナーの存在チェックする.
+     */
+    function existsBloc($device_type_id) {
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
+        $bloc_id = $objQuery->get('bloc_id', 'dtb_bloc', 'device_type_id = ? AND filename = ?',
+                                  array($device_type_id, 'paypalbanner'));
+        return $bloc_id;
+    }
+
+    /**
+     * PayPal が使えますバナーの配置を存在チェックする.
+     */
+    function existsBlocposition($device_type_id) {
+        $bloc_id = self::existsBloc($device_type_id);
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
+        return $objQuery->exists('dtb_blocposition', 'device_type_id = ? AND bloc_id = ?',
+                                 array($device_type_id, $bloc_id));
+    }
+
+    /**
+     * PayPal が使えますバナーの配置を削除する.
+     */
+    function deleteBlocposition($device_type_id) {
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
+        $objQuery->begin();
+        $bloc_id = self::existsBloc($device_type_id);
+        $objQuery->delete('dtb_blocposition', 'device_type_id = ? AND bloc_id = ?',
+                          array($device_type_id, $bloc_id));
+        $objQuery->commit();
+    }
+
+    /**
+     * PayPal が使えますバナーを登録する
+     */
+    function registerPayPalBanner($device_type_id, $use_paypal_banner) {
+        if (self::existsBlocposition($device_type_id)) {
+            return false;
+        }
+        $bloc_id = self::existsBloc($device_type_id);
+        if (SC_Utils_Ex::isBlank($bloc_id)) {
+            $bloc_id = self::registerBloc($device_type_id);
+        }
+
+        switch ($use_paypal_banner) {
+            case PAYPAL_USE_BANNER_RIGHT:
+                self::registerBlocposition($device_type_id, $bloc_id, TARGET_ID_RIGHT);
+                break;
+
+            case PAYPAL_USE_BANNER_LEFT:
+                self::registerBlocposition($device_type_id, $bloc_id, TARGET_ID_LEFT);
+                break;
+
+            default:
+            case PAYPAL_USE_BANNER_NONE:
+                self::deleteBlocposition($device_type_id);
+        }
     }
 
     /**

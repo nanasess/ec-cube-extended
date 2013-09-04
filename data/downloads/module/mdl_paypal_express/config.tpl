@@ -194,7 +194,7 @@ $(function() {
   <tr>
     <th>
       「PayPal でチェックアウト」<br />ボタンの使用
-       <p class="alignC"><img src="https://www.paypal.com/ja_JP/i/btn/btn_xpressCheckout.gif" alt="PayPal Express Checkout ボタン" align="center"></p>
+       <p class="alignC"><img src="<!--{$smarty.const.PAYPAL_EXPRESS_CHECKOUT_BUTTON}-->" alt="PayPal Express Checkout ボタン" align="center"></p>
     </th>
     <td>
       <!--{assign var=key value="use_express_btn"}-->
@@ -297,11 +297,18 @@ $(function() {
   <tr>
     <th>「PayPalが使えます」バナー<br />の使用</th>
     <td class="pad7">
+      <!--{if $exists_paypal_banner}-->
+          <p class="padT3 padB20">※「PayPalが使えます」バナーは、すでに配置されています。「EC-CUBE 管理画面」 &gt; 「デザイン管理」 &gt; 「PC」 &gt; 「レイアウト設定」にて配置を設定可能です。</p>
+      <!--{else}-->
       <!--{assign var=key value="use_paypal_banner"}-->
       <span class="attention"><!--{$arrErr[$key]}--></span>
-      <input type="radio" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> />右ナビ
-      <input type="radio" name="<!--{$key}-->" value="2" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 2}-->checked="checked"<!--{/if}--> />左ナビ
-      <input type="radio" name="<!--{$key}-->" value="0" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 0}-->checked="checked"<!--{/if}--> />使用しない
+      <input type="radio" name="<!--{$key}-->" value="<!--{$smarty.const.PAYPAL_USE_BANNER_LEFT}-->" id="<!--{$key}-->"
+      <!--{if $arrForm[$key].value == $smarty.const.PAYPAL_USE_BANNER_LEFT}-->checked="checked"<!--{/if}--> />左ナビ
+      <input type="radio" name="<!--{$key}-->" value="<!--{$smarty.const.PAYPAL_USE_BANNER_RIGHT}-->" id="<!--{$key}-->"
+      <!--{if $arrForm[$key].value == $smarty.const.PAYPAL_USE_BANNER_RIGHT}-->checked="checked"<!--{/if}--> />右ナビ
+      <input type="radio" name="<!--{$key}-->" value="<!--{$smarty.const.PAYPAL_USE_BANNER_NONE}-->" id="<!--{$key}-->"
+      <!--{if $arrForm[$key].value == $smarty.const.PAYPAL_USE_BANNER_NONE}-->checked="checked"<!--{/if}--> />使用しない
+      <!--{/if}-->
     </td>
   </tr>
   <tr>

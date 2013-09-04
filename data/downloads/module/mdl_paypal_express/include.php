@@ -32,3 +32,11 @@ define('PAYPAL_EXPRESS_BUTTONSOURCE', 'EC-CUBE_cart_EC_JP');
 /** API署名を取得するURL */
 define('PAYPAL_API_SIGNATURE_URL', 'https://www.paypal.com/jp/ja/cgi-bin/webscr?cmd=_get-api-signature&generic-flow=true');
 define('PAYPAL_SANDBOX_API_SIGNATURE_URL' , 'https://www.sandbox.paypal.com/jp/ja/cgi-bin/webscr?cmd=_get-api-signature&generic-flow=true');
+/** PayPal について URL */
+define('PAYPAL_OLC_URL', 'https://www.paypal.com/jp/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayPal-outside');
+/** PayPal が使えますバナー */
+define('PAYPAL_NOW_ACCEPTING_URL', 'https://www.paypal.com/ja_JP/JP/i/bnr/bnr_nowAccepting_150x60.gif');
+/** PayPal が使えますバナー配置 */
+define('PAYPAL_USE_BANNER_NONE', 0);
+define('PAYPAL_USE_BANNER_RIGHT', 1);
+define('PAYPAL_USE_BANNER_LEFT', 2);
