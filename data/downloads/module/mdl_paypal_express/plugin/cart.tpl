@@ -11,6 +11,7 @@ $(function() {
                 $('form#form' + key + ' div.btn_area ul li').remove();
                 $('.btn_sub').remove();
             }
+
             $('form#form' + key + ' div.btn_area ul, form#form' + key + ' .tblareabtn')
                 .append('<li>' + btn + '</li>');
             var comment = '<p class="alignC">ポイントをご利用になられる場合は、あらかじめログインをしてご購入ください。</p><p class="alignC">「PayPal でチェックアウト」を使用すると、よりスピーディで、より安全に、お支払いが可能になります。<br />送付先もPayPal画面でご指定ください。</p>';
@@ -22,6 +23,9 @@ $(function() {
                                                                  'margin-left':'auto',
                                                                  'display':'block'})
                                                            .width(145));
+
+            var topbtn = '<div><div style="width: 145px; margin-left:auto; margin-right:auto">' + btn + '</div>' + comment + '</div>';
+            $('form#form' + key + ' table').before(topbtn);
         }
     }
 });
