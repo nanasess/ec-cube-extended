@@ -20,6 +20,7 @@ class LC_Page_PayPalAccess_Bloc extends LC_Page_FrontParts_Bloc_Ex {
      * @return void
      */
     function init() {
+        $this->skip_load_page_layout = true;
         parent::init();
     }
 

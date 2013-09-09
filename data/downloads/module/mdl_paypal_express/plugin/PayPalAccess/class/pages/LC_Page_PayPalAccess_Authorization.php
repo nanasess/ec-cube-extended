@@ -25,6 +25,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
      * @return void
      */
     function init() {
+        $this->skip_load_page_layout = true;
         parent::init();
         // PayPal認証画面を識別するフラグ
         $this->paypal_access_authorization = true;
@@ -49,6 +50,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
         // エラーの場合は, トップページへリダイレクト
         if (isset($_GET['error']) && $_GET['error'] == 'access_denied') {
             $this->tpl_onload = "window.opener.location.href = '" . HTTP_URL. "';window.close();";
+            GC_Utils_Ex::gfPrintLog('redirect to ' . HTTP_URL);
             return;
         }
 
@@ -161,6 +163,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     return;
                 } catch (OIDConnect_ClientException $e) {
                     $this->tpl_onload = "window.opener.location.href = '" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "';window.close();";
+                    GC_Utils_Ex::gfPrintLog('redirect to ' . $_SERVER['PHP_SELF']);
                     return;
                 }
                 break;
@@ -269,14 +272,18 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     case OIDConnect_ClientException::BAD_REQUEST_ERROR_CODE:
                         GC_Utils_Ex::gfPrintLog(print_r($e, true));
                         $this->tpl_onload = "window.opener.location.href = '" . HTTP_URL. "';window.close();";
+                        GC_Utils_Ex::gfPrintLog('redirect to ' . HTTP_URL);
                         return;
                     default:
                 }
                 throw new Exception($e);
             }
+            /*
             if (SC_Utils_Ex::isBlank($this->tpl_mainpage)) {
+                GC_Utils_Ex::gfPrintLog('tpl_mainpage is empty.');
                 SC_Response_Ex::actionExit();
             }
+            */
         }
         // Authorization フローを実行する
         else {
@@ -304,6 +311,7 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
                     || SC_Utils_Ex::isBlank($objCustomer->getValue('sex'))) {
                     $referer_url = '/mypage/change.php';
                     $this->tpl_onload = "window.opener.location.href = '$referer_url';window.close();";
+                    GC_Utils_Ex::gfPrintLog('redirect to ' . $referer_url);
                     return;
                 }
             }
@@ -315,8 +323,8 @@ class LC_Page_PayPalAccess_Authorization extends LC_Page_Ex {
         } else {
             $referer_url = HTTPS_URL;
         }
+        GC_Utils_Ex::gfPrintLog('redirect to ' . $referer_url);
         $this->tpl_onload = "window.opener.location.href = '$referer_url';window.close();";
-
     }
 
     /**

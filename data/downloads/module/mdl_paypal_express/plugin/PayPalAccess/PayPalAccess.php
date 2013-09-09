@@ -83,6 +83,11 @@ class PayPalAccess extends SC_Plugin_Base {
      * @return void
      */
     function enable($arrPlugin) {
+        // エクスプレスチェックアウトのアップグレードを考慮して再度コピー
+        copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/templates/paypalaccess.tpl",
+             TEMPLATE_REALDIR . 'frontparts/bloc/paypalaccess.tpl');
+        copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/templates/paypalaccess.tpl",
+             SMARTPHONE_TEMPLATE_REALDIR . 'frontparts/bloc/paypalaccess.tpl');
         self::registerBloc($arrPlugin, DEVICE_TYPE_PC);
         self::registerBloc($arrPlugin, DEVICE_TYPE_SMARTPHONE);
     }
