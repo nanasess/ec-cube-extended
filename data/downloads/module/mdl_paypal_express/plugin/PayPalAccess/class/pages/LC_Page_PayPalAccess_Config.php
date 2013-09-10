@@ -19,7 +19,7 @@ class LC_Page_PayPalAccess_Config extends LC_Page_Admin_Ex {
         $this->skip_load_page_layout = true;
         parent::init();
         $this->tpl_mainpage =  PLUGIN_UPLOAD_REALDIR . PAYPAL_ACCESS_PLUGIN_NAME . "/templates/config.tpl";
-        $this->tpl_subtitle = 'PayPal Access プラグイン';
+        $this->tpl_subtitle = 'Log In with PayPal プラグイン';
         $this->load_legacy_js = true;
     }
 
@@ -44,7 +44,7 @@ class LC_Page_PayPalAccess_Config extends LC_Page_Admin_Ex {
         case 'edit':
             $this->arrErr = $objFormParam->checkError();
             if (SC_Utils_Ex::isBlank($this->arrErr)) {
-                $this->tpl_onload .= 'alert("登録完了しました。\nデザイン管理画面より、PayPal Access ボタンのブロックを配置してください。"); window.close();';
+                $this->tpl_onload .= 'alert("登録完了しました。\nデザイン管理画面より、Log In with PayPal ボタンのブロックを配置してください。"); window.close();';
                 $requires_revoke = $objFormParam->getValue('requires_revoke');
                 $this->setUpNotnull($requires_revoke);
                 SC_Helper_PayPalAccess::setConfig($objFormParam->getHashArray());
@@ -71,8 +71,8 @@ class LC_Page_PayPalAccess_Config extends LC_Page_Admin_Ex {
      *  パラメータ情報の初期化
      */
     function initParam(&$objFormParam) {
-        $objFormParam->addParam("App ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
-        $objFormParam->addParam("App Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
+        $objFormParam->addParam("Client ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
+        $objFormParam->addParam("Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
         $objFormParam->addParam("「カナ(姓/名)・性別」の入力", "requires_revoke", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam("サンドボックスの使用", "use_sandbox", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
     }

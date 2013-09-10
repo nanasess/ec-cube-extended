@@ -27,14 +27,14 @@
  * @version $Id: $
  */
 class plugin_info{
-    /** プラグインコード(必須)：プラグインを識別する為キーで、他のプラグインと重複しない一意な値である必要がありま. */
+    /** プラグインコード(必須)：プラグインを識別する為キーで、他のプラグインと重複しない一意な値である必要があります. */
     static $PLUGIN_CODE       = "PayPalAccess";
     /** プラグイン名(必須)：EC-CUBE上で表示されるプラグイン名. */
-    static $PLUGIN_NAME       = "PayPal Access プラグイン";
+    static $PLUGIN_NAME       = "Log In with PayPal プラグイン";
     /** プラグインバージョン(必須)：プラグインのバージョン. */
-    static $PLUGIN_VERSION    = "1.0";
+    static $PLUGIN_VERSION    = "1.1";
     /** 対応バージョン(必須)：対応するEC-CUBEバージョン. */
-    static $COMPLIANT_VERSION = "2.12.0, 2.12.1, 2.12.2, 2.12.3";
+    static $COMPLIANT_VERSION = "2.12.0, 2.12.1, 2.12.2, 2.12.3, 2.12.4,, 2.12.5, , 2.12.6";
     /** 作者(必須)：プラグイン作者. */
     static $AUTHOR            = "";
     /** 説明(必須)：プラグインの説明. */

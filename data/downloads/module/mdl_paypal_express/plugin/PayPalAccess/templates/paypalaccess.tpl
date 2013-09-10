@@ -2,11 +2,12 @@
 <script>
 paypal.use( ["login"], function(login) {
   login.render ({
-    "appid": "AQAkZBDY6wOQAbnscaKORCHqawapzrO13ffnosEyxQ3wuwmZPUszYoaSY5r3",
+    "authend": "sandbox",
+    "appid": "AZ52ABDdmAefYyQU11B7zvEqnRKn6qQBMfMGOitKRw47THBS1rdhYRzWArJE",
     "scopes": "id_token profile email address phone https://uri.paypal.com/services/paypalattributes",
     "containerid": "paypalaccess",
     "locale": "ja-jp",
-    "returnurl": "http://version-213.k-4.local/plugin/PayPalAccess/"
+    "returnurl": "<!--{$smarty.const.HTTPS_URL}-->plugin/PayPalAccess/"
   });
 });
 </script>

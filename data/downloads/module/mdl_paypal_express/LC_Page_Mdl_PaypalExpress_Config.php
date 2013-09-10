@@ -330,12 +330,12 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
         $objFormParam->addParam("「PayPalが使えます」バナーの使用", "use_paypal_banner", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         $objFormParam->addParam('image_key', 'image_key', '', '', array());
         if ($_POST['use_paypalaccess'] == '1') {
-            $objFormParam->addParam("App ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
-            $objFormParam->addParam("App Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
+            $objFormParam->addParam("Client ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
+            $objFormParam->addParam("Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK", "EXIST_CHECK"));
             $objFormParam->addParam("「カナ(姓/名)・性別」の入力", "requires_revoke", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         } else {
-            $objFormParam->addParam("App ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK"));
-            $objFormParam->addParam("App Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK"));
+            $objFormParam->addParam("Client ID", "app_id", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK"));
+            $objFormParam->addParam("Secret", "app_secret", MTEXT_LEN, "a", array("MAX_LENGTH_CHECK"));
             $objFormParam->addParam("「カナ(姓/名)・性別」の入力", "requires_revoke", 1, "n", array("MAX_LENGTH_CHECK", "NUM_CHECK"));
         }
     }

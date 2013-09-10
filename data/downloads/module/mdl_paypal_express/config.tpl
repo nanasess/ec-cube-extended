@@ -224,32 +224,27 @@ $(function() {
       <!--{else}-->
           <div class="attention">SSL が無効になっています。Log In with PayPal をご利用の際は、必ず SSL をご使用ください。(HTTPS_URL パラメータが https:// ではありません。)</div>
       <!--{/if}-->
-      <p class="fs14 padT3 padB20">※Log In with PayPal プラグインをご利用頂く為には、PayPal DevPortal の登録が必要です。以下の手順で登録の上、ご利用ください。</p>
+      <p class="fs14 padT3 padB20">※Log In with PayPal プラグインをご利用頂く為には、PayPal Developer の登録が必要です。以下の手順で登録の上、ご利用ください。</p>
       <ol>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico01.jpg" alt="1"><a href="https://devportal.x.com" target="_blank">https://devportal.x.com</a> へアクセスします。</li>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico02.jpg" alt="2">PayPal アカウントでログインします。</li>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico03.jpg" alt="3">「Manage Applications」ボタンをクリックします。</li>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico04.jpg" alt="4">必要事項を入力し、「Register Application」ボタンをクリックします。<a href="javascript:;" id="devportal_guide">(詳細)</a>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico01.jpg" alt="1"><a href="https://developer.paypal.com/" target="_blank">https://developer.paypal.com/</a> へアクセスし、PayPal アカウントでログインします。</li>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico02.jpg" alt="2">「Applications」タブをクリックし、「My apps」の「Create application」をクリックします。</li>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico03.jpg" alt="3">「Application name」に登録するサイト名(半角英数字記号)、「Integration type」に Web を選択し、「Create Application」をクリックします。</li>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico04.jpg" alt="4">「LOG IN WITH PAYPAL」の ON/OFF スイッチをクリックし、必要事項を入力します。<a href="javascript:;" id="devportal_guide">(詳細)</a>
         <ul class="guide" style="display:none">
-          <li><strong>Application Name</strong> - Log In with PayPal への登録名を入力します。(必須・半角英数字記号)</li>
-          <li><strong>Display Name</strong> - 顧客への表示名を入力します。(必須)</li>
-          <li><strong>Domain URL</strong> - <!--{$smarty.const.HTTPS_URL}--> を入力します。(必須)</li>
-          <li><strong>Contact Email</strong> - 連絡先メールアドレスを入力します。 (必須)</li>
+          <li><strong>Information requested from customers</strong> - Personal Information, Address Information, Account Information にチェックを入れます。</li>
+          <li><strong>Return URL</strong> - <!--{$smarty.const.HTTPS_URL}-->plugin/<!--{$smarty.const.PAYPAL_ACCESS_PLUGIN_NAME}-->/ を入力します。</li>
           <li><strong>Privacy Policy URL</strong> - <!--{$smarty.const.HTTP_URL}-->guide/privacy.php を入力します。</li>
           <li><strong>User Agreement URL</strong> - <!--{$smarty.const.HTTP_URL}-->entry/kiyaku.php を入力します。</li>
-          <li><strong>Allow only users with verified emails to login</strong> - 認証済みメールアドレスのみ許可する場合はチェックを入れます</li>
-          <li><strong>Protocols</strong> - 「OAuth 2.0 / Open Id Connect」にチェックを入れます</li>
-          <li><strong>Return URL</strong> - <!--{$smarty.const.HTTPS_URL}-->plugin/<!--{$smarty.const.PAYPAL_ACCESS_PLUGIN_NAME}-->/ を入力します。</li>
-          <li><strong>Attributes Level</strong> - Full Name, Date of Birth, Email Address, Street Address, City, State, Zip, Country, Phone Number,Account Verified にチェックを入れます。それ以外は任意です。</li>
-          <li><strong>PayPal App ID</strong> - 空欄とします</li>
+          <li><strong>Use Seamless Checkout</strong> - 商品購入時に再ログインしないようにする場合はチェックを入れます。</li>
+          <li><strong>Allow the customers who haven't yet confirmed their email address with PayPal, to log in to your app.</strong> - 認証済みメールアドレスのみ許可する場合はチェックを入れます。</li>
         </ul>
         </li>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico05.jpg" alt="5">画面に表示された App ID 及び App Secret を以下のフォームに入力し、「登録」ボタンをクリックします。</li>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico05.jpg" alt="5">「REST API CREDENTIALS」の Show をクリックし、Live credentials の Client ID 及び Secret を以下のフォームに入力し、「登録」ボタンをクリックします。</li>
       </ol>
     </td>
   </tr>
   <tr class="paypalaccess">
-    <th>App ID<span class="attention">※</span></th>
+    <th>Client ID<span class="attention">※</span></th>
     <td class="pad7">
       <!--{assign var=key value="app_id"}-->
       <span class="attention"><!--{$arrErr[$key]}--></span>
@@ -257,7 +252,7 @@ $(function() {
     </td>
   </tr>
   <tr class="paypalaccess">
-    <th>App Secret<span class="attention">※</span></th>
+    <th>Secret<span class="attention">※</span></th>
     <td class="pad7">
       <!--{assign var=key value="app_secret"}-->
       <span class="attention"><!--{$arrErr[$key]}--></span>

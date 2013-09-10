@@ -27,30 +27,24 @@ $(function() {
 <form name="form1" id="form1" method="post" action="<!--{$smarty.server.REQUEST_URI|escape}-->">
 <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
 <input type="hidden" name="mode" value="edit">
-<p class="remark">PayPal Access プラグインをご利用頂く為には、PayPal DevPortal の登録が必要です。以下の手順で登録の上、ご利用ください。
+<p class="remark">Log In with PayPal プラグインをご利用頂く為には、PayPal Developer の登録が必要です。以下の手順で登録の上、ご利用ください。
 <ol>
-  <li><a href="https://devportal.x.com" target="_blank">https://devportal.x.com</a> へアクセスします。</li>
-  <li>PayPal アカウントでログインします。</li>
-  <li>「Manage Applications」ボタンをクリックします。</li>
-  <li>必要事項を入力し、「Register Application」ボタンをクリックします。<a href="javascript:;" id="devportal_guide">(詳細)</a>
-     <ul class="guide" style="display:none">
-       <li><strong>Application Name</strong> - PayPal Accessへの登録名を入力します。(必須・半角英数字記号)</li>
-       <li><strong>Display Name</strong> - 顧客への表示名を入力します。(必須)</li>
-       <li><strong>Domain URL</strong> - <!--{$smarty.const.HTTPS_URL}--> を入力します。(必須)</li>
-       <li><strong>Contact Email</strong> - 連絡先メールアドレスを入力します。 (必須)</li>
-       <li><strong>Privacy Policy URL</strong> - <!--{$smarty.const.HTTP_URL}-->guide/privacy.php を入力します。</li>
-       <li><strong>User Agreement URL</strong> - <!--{$smarty.const.HTTP_URL}-->entry/kiyaku.php を入力します。</li>
-       <li><strong>Allow only users with verified emails to login</strong> - 認証済みメールアドレスのみ許可する場合はチェックを入れます</li>
-       <li><strong>Protocols</strong> - 「OAuth 2.0 / Open Id Connect」にチェックを入れます</li>
-       <li><strong>Return URL</strong> - <!--{$smarty.const.HTTPS_URL}-->plugin/<!--{$smarty.const.PAYPAL_ACCESS_PLUGIN_NAME}-->/ を入力します。</li>
-       <li><strong>Attributes Level</strong> - Full Name, Date of Birth, Email Address, Street Address, City, State, Zip, Country, Phone Number,Account Verified にチェックを入れます。それ以外は任意です。</li>
-       <li><strong>PayPal App ID</strong> - 空欄とします</li>
-
-     </ul>
+  <li><a href="https://developer.paypal.com/" target="_blank">https://developer.paypal.com/</a> へアクセスし、PayPal アカウントでログインします。</li>
+  <li>「Applications」タブをクリックし、「My apps」の「Create application」をクリックします。</li>
+  <li>「Application name」に登録するサイト名(半角英数字記号)、「Integration type」に Web を選択し、「Create Application」をクリックします。</li>
+  <li>「LOG IN WITH PAYPAL」の ON/OFF スイッチをクリックし、必要事項を入力します。<a href="javascript:;" id="devportal_guide">(詳細)</a>
+  <ul class="guide" style="display:none">
+    <li><strong>Information requested from customers</strong> - Personal Information, Address Information, Account Information にチェックを入れます。</li>
+    <li><strong>Return URL</strong> - <!--{$smarty.const.HTTPS_URL}-->plugin/<!--{$smarty.const.PAYPAL_ACCESS_PLUGIN_NAME}-->/ を入力します。</li>
+    <li><strong>Privacy Policy URL</strong> - <!--{$smarty.const.HTTP_URL}-->guide/privacy.php を入力します。</li>
+    <li><strong>User Agreement URL</strong> - <!--{$smarty.const.HTTP_URL}-->entry/kiyaku.php を入力します。</li>
+    <li><strong>Use Seamless Checkout</strong> - 商品購入時に再ログインしないようにする場合はチェックを入れます。</li>
+    <li><strong>Allow the customers who haven't yet confirmed their email address with PayPal, to log in to your app.</strong> - 認証済みメールアドレスのみ許可する場合はチェックを入れます。</li>
+  </ul>
   </li>
-  <li>画面に表示された App ID 及び App Secre を以下のフォームに入力し、「登録」ボタンをクリックします。</li>
+  <li>「REST API CREDENTIALS」の Show をクリックし、Live credentials の Client ID 及び Secret を以下のフォームに入力し、「登録」ボタンをクリックします。</li>
 </ol>
-<a href="https://www.x.com/developers/paypal/products/paypal-access" target="_blank"> ＞＞ PayPal Accessについて</a><br />
+<a href="https://developer.paypal.com/webapps/developer/docs/integration/direct/log-in-with-paypal/" target="_blank"> ＞＞ Log In with PayPalについて</a><br />
 【お問い合わせ先】電話: 03-6739-7135／メール：<a href="mailto:wpp@paypal.com">wpp@paypal.com</a></p>
 <!--{if $arrErr.err != ""}-->
     <div class="attention"><!--{$arrErr.err}--></div>
@@ -84,7 +78,7 @@ $(function() {
       <span class="attention"><!--{$arrErr[$key]}--></span>
       <input type="radio" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> />任意
       <input type="radio" name="<!--{$key}-->" value="2" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 2}-->checked="checked"<!--{/if}--> />必須
-      <p>※ PayPal アカウントから、会員の「カナ(姓/名)・性別」は取得できません。必須にした場合は、PayPal Access でログイン後、「カナ(姓/名)・性別」の入力を促します。</p>
+      <p>※ PayPal アカウントから、会員の「カナ(姓/名)・性別」は取得できません。必須にした場合は、Log In with PayPal でログイン後、「カナ(姓/名)・性別」の入力を促します。</p>
     </td>
   </tr>
   <tr>
@@ -103,7 +97,7 @@ $(function() {
   </ul>
 </div>
 <!--{else}-->
-<div class="attention">SSL が無効になっています。PayPal Access をご利用の際は、必ず SSL をご使用ください。(HTTPS_URL パラメータが https:// ではありません。)</div>
+<div class="attention">SSL が無効になっています。Log In with PayPal をご利用の際は、必ず SSL をご使用ください。(HTTPS_URL パラメータが https:// ではありません。)</div>
 <!--{/if}-->
 </form>
 <!--{include file="`$smarty.const.TEMPLATE_ADMIN_REALDIR`admin_popup_footer.tpl"}-->
