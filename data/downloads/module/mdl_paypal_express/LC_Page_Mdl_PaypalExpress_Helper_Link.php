@@ -72,6 +72,8 @@ class LC_Page_Mdl_PaypalExpress_Helper_Link extends LC_Page_Ex {
         if (SC_Helper_Paypal::useSandbox()) {
             $link_url = PAYPAL_EXPRESS_LINK_URL_SANDBOX;
         }
+        // これをつけると, PayPal支払い画面で「同意して支払う」ボタンになる
+        $link_url .= '&useraction=commit';
 
         $objPurchase = new SC_Helper_Purchase_Ex();
         $arrOrder = $objPurchase->getOrder($_SESSION['order_id']);

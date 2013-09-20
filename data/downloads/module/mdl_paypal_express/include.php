@@ -40,3 +40,5 @@ define('PAYPAL_NOW_ACCEPTING_URL', 'https://www.paypal.com/ja_JP/JP/i/bnr/bnr_no
 define('PAYPAL_USE_BANNER_NONE', 0);
 define('PAYPAL_USE_BANNER_RIGHT', 1);
 define('PAYPAL_USE_BANNER_LEFT', 2);
+/** 購入者へのメモ */
+define('PAYPAL_NOTETOBUYER', '送料はこの後のご購入サイトの注文内容確認画面でご確認ください。');

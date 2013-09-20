@@ -14,7 +14,7 @@ $(function() {
 
             $('form#form' + key + ' div.btn_area ul, form#form' + key + ' .tblareabtn')
                 .append('<li>' + btn + '</li>');
-            var comment = '<p class="alignC">ポイントをご利用になられる場合は、あらかじめログインをしてご購入ください。</p><p class="alignC">「PayPal でチェックアウト」を使用すると、よりスピーディで、より安全に、お支払いが可能になります。<br />送付先もPayPal画面でご指定ください。</p>';
+            var comment = '<p class="alignC">ポイントをご利用になられる場合は、あらかじめログインをしてご購入ください。</p><p class="alignC">「PayPal でチェックアウト」をクリックすると、よりスピーディで、より安全に、お支払いが可能になります。<br />送付先もPayPal画面でご指定ください。</p>';
             $('form#form' + key + ' div.btn_area').before(comment); // for PC
             $('form#form' + key + ' .tblareabtn').after(comment); // for sphone v2.11.1
             $('form#form' + key + ' .formBox').after($(comment).css({'margin-bottom':'20px', // for sphone v2.11.2

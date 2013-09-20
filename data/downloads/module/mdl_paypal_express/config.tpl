@@ -204,6 +204,43 @@ $(function() {
     </td>
   </tr>
   <tr>
+    <th>PayPal決済ページの設定<br /><span class="attention">※設定推奨</span></th>
+    <td class="pad7">
+      <!--{assign var=key value="corporate_logo"}-->
+      <a name="<!--{$key}-->"></a>
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      ショップロゴ画像のアップロード:
+      <p class="padT3">※縦60px, 横190px, jpg, png, gif のショップロゴ画像をアップロード可能です</p>
+      <!--{if $arrUpFiles[$key].filepath != ""}-->
+      <img src="<!--{$arrUpFiles[$key].filepath}-->" />　<a href="javascript:;" onclick="fnFormModeSubmit('form1', 'delete_image', 'image_key', '<!--{$key}-->'); return false;">[画像の取り消し]</a><br />
+      <!--{/if}-->
+      <input type="file" name="<!--{$key}-->" size="20" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" />
+      <a class="btn-normal" href="javascript:;" name="btn" onclick="fnFormModeSubmit('form1', 'upload_image', 'image_key', '<!--{$key}-->'); return false;">アップロード</a><br /><br />
+      <!--{assign var=key value="border_color"}-->
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      枠色の設定: <input id='<!--{$key}-->' name="<!--{$key}-->" value="<!--{$arrForm[$key].value}-->" /><br />
+      <p class="padT3">※ショップロゴを登録して、枠色の設定をすることによりPayPal決済画面をECサイトのデザインに合わせることができます。</p>
+    </td>
+  </tr>
+  <!--{if $droppeditemsnoticer_flg == true}-->
+  <tr>
+    <th>カゴ落ち通知メルマガ配信機能<br />の使用</th>
+    <td class="pad7">
+      <!--{assign var=key value="use_droppeditemsnoticer"}-->
+      <span class="attention"><!--{$arrErr[$key]}--></span>
+      <input type="checkbox" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> /><label for="<!--{$key}-->">カゴ落ち通知メルマガ配信機能を使用する</label>
+      <p class="fs14 padT3 padB20">※カゴ落ちした会員を対象にメルマガ配信をする場合はチェックを入れてください。メルマガを受信した会員は、「PayPal でチェックアウト」ボタンを使用して、スムーズに購入を完了できます。以下の手順でご利用ください。</p>
+      <ol>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico01.jpg" alt="1">「EC-CUBE 管理画面」 &gt; 「メルマガ管理」 &gt; 「配信内容設定」のカゴ落ち会員の検索に日付を入力して検索します。</li>
+        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico02.jpg" alt="2">「カゴ落ち通知メルマガ配信内容を設定する」にて、内容確認及び配信します。
+      </li>
+      </ol>
+      <p class="padT3 padB20">※メルマガのテンプレートの編集は、「EC-CUBE 管理画面」 &gt; 「メルマガ管理」 &gt; 「カゴ落ち通知メルマガテンプレート管理」より可能です。</p>
+    </td>
+  </tr>
+  <!--{/if}-->
+
+  <tr>
     <th><a href="https://www.paypal.jp/jp/contents/support/introduction/sandbox/" target="_blank">Sandbox<span class="fs14">(開発用テストツール)</span></a><br />の使用</th>
     <td class="pad7">
       <!--{assign var=key value="use_sandbox"}-->
@@ -272,23 +309,6 @@ $(function() {
     </td>
   </tr>
   <!--{/if}-->
-  <!--{if $droppeditemsnoticer_flg == true}-->
-  <tr>
-    <th>カゴ落ち通知メルマガ配信機能<br />の使用</th>
-    <td class="pad7">
-      <!--{assign var=key value="use_droppeditemsnoticer"}-->
-      <span class="attention"><!--{$arrErr[$key]}--></span>
-      <input type="checkbox" name="<!--{$key}-->" value="1" id="<!--{$key}-->" <!--{if $arrForm[$key].value == 1}-->checked="checked"<!--{/if}--> /><label for="<!--{$key}-->">カゴ落ち通知メルマガ配信機能を使用する</label>
-      <p class="fs14 padT3 padB20">※カゴ落ちした会員を対象にメルマガ配信をする場合はチェックを入れてください。メルマガを受信した会員は、「PayPal でチェックアウト」ボタンを使用して、スムーズに購入を完了できます。以下の手順でご利用ください。</p>
-      <ol>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico01.jpg" alt="1">「EC-CUBE 管理画面」 &gt; 「メルマガ管理」 &gt; 「配信内容設定」のカゴ落ち会員の検索に日付を入力して検索します。</li>
-        <li><img class="no" src="<!--{$smarty.const.OSTORE_SSLURL}-->user_data/packages/default/img/paypal_info/ico02.jpg" alt="2">「カゴ落ち通知メルマガ配信内容を設定する」にて、内容確認及び配信します。
-      </li>
-      </ol>
-      <p class="padT3 padB20">※メルマガのテンプレートの編集は、「EC-CUBE 管理画面」 &gt; 「メルマガ管理」 &gt; 「カゴ落ち通知メルマガテンプレート管理」より可能です。</p>
-    </td>
-  </tr>
-  <!--{/if}-->
   <tr>
     <th>「PayPalが使えます」バナー<br />の使用</th>
     <td class="pad7">
@@ -304,24 +324,6 @@ $(function() {
       <input type="radio" name="<!--{$key}-->" value="<!--{$smarty.const.PAYPAL_USE_BANNER_NONE}-->" id="<!--{$key}-->"
       <!--{if $arrForm[$key].value == $smarty.const.PAYPAL_USE_BANNER_NONE}-->checked="checked"<!--{/if}--> />使用しない
       <!--{/if}-->
-    </td>
-  </tr>
-  <tr>
-    <th>PayPalログインページの設定</th>
-    <td class="pad7">
-      <!--{assign var=key value="corporate_logo"}-->
-      <a name="<!--{$key}-->"></a>
-      <span class="attention"><!--{$arrErr[$key]}--></span>
-      ショップロゴ画像のアップロード:
-      <p class="padT3">※縦60px, 横190px, jpg, png, gif のショップロゴ画像をアップロード可能です</p>
-      <!--{if $arrUpFiles[$key].filepath != ""}-->
-      <img src="<!--{$arrUpFiles[$key].filepath}-->" />　<a href="javascript:;" onclick="fnFormModeSubmit('form1', 'delete_image', 'image_key', '<!--{$key}-->'); return false;">[画像の取り消し]</a><br />
-      <!--{/if}-->
-      <input type="file" name="<!--{$key}-->" size="20" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" />
-      <a class="btn-normal" href="javascript:;" name="btn" onclick="fnFormModeSubmit('form1', 'upload_image', 'image_key', '<!--{$key}-->'); return false;">アップロード</a><br /><br />
-      <!--{assign var=key value="border_color"}-->
-      <span class="attention"><!--{$arrErr[$key]}--></span>
-      枠色の設定: <input id='<!--{$key}-->' name="<!--{$key}-->" value="<!--{$arrForm[$key].value}-->" />
     </td>
   </tr>
 

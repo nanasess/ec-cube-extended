@@ -149,6 +149,10 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                     if ($hasDownload) {
                         $arrRequest['NOSHIPPING'] = 1;
                     }
+                    // ショートカットの場合は送料が含まれないので, 「お見積」表示
+                    $arrRequest['TOTALTYPE'] = 'EstimatedTotal';
+                    $arrRequest['NOTETOBUYER'] = PAYPAL_NOTETOBUYER;
+
                     $arrRequest = array_merge($arrRequest, SC_Helper_Paypal::createItemRequests($arrDetails, $arrOrder));
                     $arrResponse = SC_Helper_Paypal::sendNVPRequest('SetExpressCheckout', $arrRequest, true);
                     if (SC_Helper_Paypal::isError($arrResponse)) {

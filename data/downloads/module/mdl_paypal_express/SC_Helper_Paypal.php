@@ -151,9 +151,11 @@ class SC_Helper_Paypal {
      * - PWD
      * - SIGNATURE
      * - VERSION
-     * - PAYMENTACTION
+     * - PAYMENTREQUEST_0_PAYMENTACTION
+     * - PAYMENTREQUEST_0_CURRENCYCODE
      * - RETURNURL
      * - CANCELURL
+     * - PAYMENTREQUEST_0_INVNUM
      *
      * @param string $method NVP API メソッド
      * @param array $arrParams 追加のパラメータの連想配列
@@ -190,7 +192,8 @@ class SC_Helper_Paypal {
             case 'SetExpressCheckout':
                 $arrRequests['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = PAYPAL_EXPRESS_COUNTRY_CODE;
                 if (!SC_Utils_Ex::isBlank($arrConfig['corporate_logo'])) {
-                    $arrRequests['LOGOIMG'] = HTTPS_URL . IMAGE_SAVE_URLPATH . $arrConfig['corporate_logo'];
+                    // XXX IMAGE_SAVE_URLPATH にも HTTPS_URL にも ROOT_URLPATH が含まれている
+                    $arrRequests['LOGOIMG'] = HTTPS_URL . 'upload/save_image/' . $arrConfig['corporate_logo'];
                 }
                 if (!SC_Utils_Ex::isBlank($arrConfig['border_color'])) {
                     $arrRequests['CARTBORDERCOLOR'] = str_replace('#', '', $arrConfig['border_color']);
@@ -205,20 +208,6 @@ class SC_Helper_Paypal {
                 break;
             default:
         }
-        //if ($method == 'SetExpressCheckout') {
-        // DoExpressCheckoutPayment でも必要
-        /* 配送先自動入力
-            $arrRequests['ADDROVERRIDE'] = '1';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTONAME'] = '健太郎 大河内';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTOZIP'] = '444-0426';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTOSTATE'] = '愛知県';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTOCITY'] = '西尾市';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTOSTREET'] = '一色町治明';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTOSTREET2'] = '北ス2';
-            $arrRequests['EMAIL'] = 'nanasess@fsm.ne.jp';
-            $arrRequests['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = '090-1757-6327';
-        */
-        // }
 
         $arrRequests = array_merge($arrRequests, $arrParams);
 
