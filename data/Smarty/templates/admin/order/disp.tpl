@@ -21,16 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 *}-->
-
-<script type="text/javascript">
-<!--
-self.moveTo(20,20);self.focus();
-//-->
-</script>
-
 <!--{include file="`$smarty.const.TEMPLATE_ADMIN_REALDIR`admin_popup_header.tpl"}-->
 
-    <!--▼お客様情報ここから-->
+<script type="text/javascript">
+    <!--
+    self.moveTo(20,20);self.focus();
+    //-->
+</script>
+
+<!--▼お客様情報ここから-->
     <table class="form">
         <tr>
             <th>注文番号</th>
@@ -76,6 +75,10 @@ self.moveTo(20,20);self.focus();
             <td><!--{$arrForm.order_kana01.value|h}-->　<!--{$arrForm.order_kana02.value|h}--></td>
         </tr>
         <tr>
+            <th>会社名</th>
+            <td><!--{$arrForm.order_company_name.value|h}--></td>
+        </tr>
+        <tr>
             <th>メールアドレス</th>
             <td><!--{$arrForm.order_email.value|h}--></td>
         </tr>
@@ -83,6 +86,20 @@ self.moveTo(20,20);self.focus();
             <th>TEL</th>
             <td><!--{$arrForm.order_tel01.value|h}--> - <!--{$arrForm.order_tel02.value|h}--> - <!--{$arrForm.order_tel03.value|h}--></td>
         </tr>
+        <!--{if $smarty.const.FORM_COUNTRY_ENABLE}-->
+        <tr>
+            <th>国</th>
+            <td>
+                <!--{$arrCountry[$arrForm.order_country_id.value]|h}-->
+            </td>
+        </tr>
+        <tr>
+            <th>ZIP CODE</th>
+            <td>
+                <!--{$arrForm.order_zipcode.value|h}-->
+            </td>
+        </tr>
+        <!--{/if}-->
         <tr>
             <th>住所</th>
             <td>
@@ -250,6 +267,11 @@ self.moveTo(20,20);self.focus();
                 </td>
             </tr>
             <tr>
+                <th>会社名</th>
+                <!--{assign var=key1 value="shipping_company_name"}-->
+                <td><!--{$arrShipping[$key1]|h}--></td>
+            </tr>
+            <tr>
                 <th>TEL</th>
                 <td>
                     <!--{assign var=key1 value="shipping_tel01"}-->
@@ -260,6 +282,23 @@ self.moveTo(20,20);self.focus();
                     <!--{$arrShipping[$key3]|h}-->
                 </td>
             </tr>
+            <!--{if $smarty.const.FORM_COUNTRY_ENABLE}-->
+            <tr>
+                <th>国</th>
+                <td>
+                    <!--{assign var=key1 value="shipping_country_id"}-->
+                    <!--{assign var=key2 value=$arrShipping[$key1]}-->
+                    <!--{$arrCountry[$key2]|h}-->
+                </td>
+            </tr>
+            <tr>
+                <th>ZIP CODE</th>
+                <td>
+                    <!--{assign var=key1 value="shipping_zipcode"}-->
+                    <!--{$arrShipping[$key1]|h}-->
+                </td>
+            </tr>            
+            <!--{/if}-->
             <tr>
                 <th>住所</th>
                 <td>

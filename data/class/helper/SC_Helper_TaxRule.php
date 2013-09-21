@@ -116,7 +116,7 @@ class SC_Helper_TaxRule
     }
 
     /**
-     * 現在有効な税金設定情報を返す
+     * 現在有効な税率設定情報を返す
      *
      * @param  integer $price 計算対象の金額
      * @return array   税設定情報
@@ -216,14 +216,13 @@ class SC_Helper_TaxRule
             // XXXX: 互換性のためtax_ruleにもcalc_ruleを設定
             $arrRet['tax_rule'] = $arrRet['calc_rule'];
             $data_c[$cache_key] = $arrRet;
-            GC_Utils_Ex::gfDebugLog('tax_key=' . $cache_key . ' result_tax=' . print_r($data_c[$cache_key],true));
         }
 
         return $data_c[$cache_key];
     }
 
     /**
-     * 税金設定情報を登録する（商品管理用）
+     * 税率設定情報を登録する（商品管理用）
      *
      * @param  decimal $tax_rate         消費税率
      * @param  integer $product_id       商品ID
@@ -250,7 +249,7 @@ class SC_Helper_TaxRule
     }
 
     /**
-     * 税金設定情報を登録する（仮）リファクタする（memo：規格設定後に商品編集を行うと消費税が0になるのを対応が必要）
+     * 税率設定情報を登録する（仮）リファクタする（memo：規格設定後に商品編集を行うと消費税が0になるのを対応が必要）
      *
      * @param
      * @return
