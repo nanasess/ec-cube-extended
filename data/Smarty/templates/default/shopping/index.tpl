@@ -19,18 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *}-->
-<script>
-  $(function() {
-     $('#do_express').click(function() {
-         document.formexpress.submit();
-     });
-  });
-</script>
-<form name="formexpress" id="formexpress" action="<!--{$smarty.const.ROOT_URLPATH}-->cart/index.php" method="post">
-  <input type="hidden" name="mode" value="do_express" />
-  <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
-  <input type="hidden" name="cartKey" value="<!--{$smarty.const.PRODUCT_TYPE_NORMAL}-->" />
-</form>
 <div id="undercolumn">
     <div id="undercolumn_login">
         <h2 class="title"><!--{$tpl_title|h}--></h2>
@@ -39,19 +27,6 @@
             <input type="hidden" name="mode" value="login" />
 
             <div class="login_area">
-                <h3>PayPalでチェックアウト</h3>
-                <p class="inputtext">「PayPal でチェックアウト」をクリックすると、よりスピーディで、より安全に、お支払いが可能になります。<br />送付先もPayPal画面でご指定ください。</p>
-                <div class="inputbox">
-                  <div class="btn_area">
-                    <ul>
-                      <li>
-                        <a href="javascript:;" id="do_express">
-                          <img src="https://www.paypal.com/ja_JP/JP/i/btn/btn_xpressCheckout.gif"  alt="PayPal でチェックアウト" width="145" height="42"/>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
 
                 <h3>会員登録がお済みのお客様</h3>
                 <p class="inputtext">会員の方は、登録時に入力されたメールアドレスとパスワードでログインしてください。</p>
