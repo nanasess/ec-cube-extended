@@ -1,6 +1,9 @@
 <?php
+require_once(realpath(dirname( __FILE__)) . '/define.php');
+require_once(realpath(dirname( __FILE__)) . '/PayPalAccess.php');
+
 /*
- * CategoryContents
+ * PayPalAccess
  * Copyright (C) 2012 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
  * 
@@ -26,5 +29,11 @@
  * @version $Id: $
  */
 class plugin_update{
+
+    function update($arrPlugin) {
+        PayPalAccess::uninstall($arrPlugin);
+        PayPalAccess::install($arrPlugin);
+        PayPalAccess::enable($arrPlugin);
+    }
 }
 ?>

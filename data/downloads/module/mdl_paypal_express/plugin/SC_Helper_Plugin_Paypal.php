@@ -31,6 +31,13 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
         $objPage->arrPref = $masterData->getMasterData('mtb_pref');
 
         switch ($class_name) {
+            // shoppping/index を書きかえる
+            case 'LC_Page_Shopping_Ex':
+                $objPage->action();
+                $objPage->include_mainpage = $objPage->tpl_mainpage;
+                $objPage->tpl_mainpage = SC_Helper_Paypal::getPluginDir() . 'shopping_login.tpl';
+                break;
+
             // お支払い方法選択にリンク付与
             case 'LC_Page_Shopping_Payment_Ex':
                 $objPage->action();
@@ -38,11 +45,12 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
                 $objPage->tpl_mainpage = SC_Helper_Paypal::getPluginDir() . 'payment.tpl';
                 break;
 
+            // カートページを書きかえる
             case 'LC_Page_Cart_Ex':
                 $objPage->action();
 
                 $objCartSess = new SC_CartSession_Ex();
-                // カートページを書きかえる
+
                 $objPage->include_mainpage = $objPage->tpl_mainpage;
                 $objPage->tpl_mainpage = SC_Helper_Paypal::getPluginDir() . 'cart.tpl';
 
@@ -192,7 +200,9 @@ class SC_Helper_Plugin_Paypal extends SC_Helper_Plugin_Ex {
      */
     function isEnable($class_name) {
         if (SC_Helper_Paypal::useExpressBtn()) {
-            $arrEnableClass = array('LC_Page_Cart_Ex');
+            $arrEnableClass = array('LC_Page_Cart_Ex',
+                                    'LC_Page_Shopping_Ex',
+                                    'LC_Page_Shopping_Payment_Ex');
             return in_array($class_name, $arrEnableClass);
         } else {
             return false;

@@ -355,6 +355,7 @@ class LC_Page_Mdl_PaypalExpress_Config extends LC_Page_Admin_Ex {
         }
         $arrFiles = array('SC_Helper_Plugin_Paypal.php',
                           'payment.tpl',
+                          'shopping_login.tpl',
                           'cart.tpl',
                           'deliv_select.tpl',
                           'deliv_select_sphone.tpl',

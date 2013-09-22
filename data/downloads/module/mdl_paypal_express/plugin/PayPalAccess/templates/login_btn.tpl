@@ -4,19 +4,7 @@
         $('#member_form').eq(0).after($('#paypal_access_login').show());
     });
 //]]></script>
-<script src="https://www.paypalobjects.com/js/external/api.js"></script>
-<script>
-paypal.use( ["login"], function(login) {
-  login.render ({
-    "authend": "sandbox",
-    "appid": "AZ52ABDdmAefYyQU11B7zvEqnRKn6qQBMfMGOitKRw47THBS1rdhYRzWArJE",
-    "scopes": "id_token profile email address phone https://uri.paypal.com/services/paypalattributes",
-    "containerid": "paypalaccess",
-    "locale": "ja-jp",
-    "returnurl": "<!--{$smarty.const.HTTPS_URL}-->plugin/PayPalAccess/"
-  });
-});
-</script>
+<!--{include file="`$smarty.const.PLUGIN_UPLOAD_REALDIR`PayPalAccess/templates/login_with_paypal_btn.tpl"}-->
 <div id="paypal_access_login" style="display: none">
   <div class="login_area">
     <h3>PayPal アカウントでログイン</h3>

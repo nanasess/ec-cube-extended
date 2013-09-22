@@ -4,6 +4,7 @@
         $('form').eq(0).after($('#paypal_access_login').show());
     });
 //]]></script>
+<!--{include file="`$smarty.const.PLUGIN_UPLOAD_REALDIR`PayPalAccess/templates/login_with_paypal_btn.tpl"}-->
 <div id="paypal_access_login" style="display: none">
   <div class="login_area">
     <h3>PayPal アカウントでログイン</h3>
@@ -14,7 +15,7 @@
       <div class="btn_area">
         <ul>
           <li>
-            <a href="<!--{$smarty.const.HTTPS_URL}-->plugin/PayPalAccess/"><img src="https://www.paypalobjects.com/en_US/Marketing/i/btn/login-with-paypal-button.png" /></a>
+            <div id="paypalaccess" style="text-align: center; width: 150px; margin-left: auto; margin-right: auto;"></div>
           </li>
         </ul>
       </div>

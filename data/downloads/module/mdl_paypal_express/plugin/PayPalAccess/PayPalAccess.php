@@ -52,6 +52,7 @@ class PayPalAccess extends SC_Plugin_Base {
         copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/logo.png", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/logo.png");
         copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/copy/index.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/index.php");
         copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/copy/jquery.paypalaccess_util.js", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/jquery.paypalaccess_util.js");
+        copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/copy/plg_paypalaccess.php", HTML_REALDIR . "frontparts/bloc/plg_paypalaccess.php");
         copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/templates/paypalaccess.tpl", TEMPLATE_REALDIR . 'frontparts/bloc/paypalaccess.tpl');
         copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/templates/paypalaccess.tpl", SMARTPHONE_TEMPLATE_REALDIR . 'frontparts/bloc/paypalaccess.tpl');
 
@@ -88,6 +89,8 @@ class PayPalAccess extends SC_Plugin_Base {
              TEMPLATE_REALDIR . 'frontparts/bloc/paypalaccess.tpl');
         copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/templates/paypalaccess.tpl",
              SMARTPHONE_TEMPLATE_REALDIR . 'frontparts/bloc/paypalaccess.tpl');
+        copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/copy/plg_paypalaccess.php",
+             HTML_REALDIR . "frontparts/bloc/plg_paypalaccess.php");
         self::registerBloc($arrPlugin, DEVICE_TYPE_PC);
         self::registerBloc($arrPlugin, DEVICE_TYPE_SMARTPHONE);
     }
@@ -103,11 +106,18 @@ class PayPalAccess extends SC_Plugin_Base {
         $arrValues['bloc_name'] = 'PayPal アカウントでログインボタン';
         $arrValues['tpl_path'] = 'paypalaccess.tpl';
         $arrValues['filename'] = 'paypalaccess';
+        $arrValues['php_path'] = 'frontparts/bloc/plg_paypalaccess.php';
         $arrValues['create_date'] = 'CURRENT_TIMESTAMP';
         $arrValues['update_date'] = 'CURRENT_TIMESTAMP';
         $arrValues['deletable_flg'] = '1';
         $arrValues['plugin_id'] = $arrPlugin['plugin_id'];
-        $objQuery->insert('dtb_bloc', $arrValues);
+        $where = 'plugin_id = ? AND device_type_id = ?';
+        $arrWhere = array($arrPlugin['plugin_id'], $device_type_id);
+        if ($objQuery->exists('dtb_bloc', $where, $arrWhere)) {
+            $objQuery->update('dtb_bloc', $arrValues, $where, $arrWhere);
+        } else {
+            $objQuery->insert('dtb_bloc', $arrValues);
+        }
     }
 
     /**
