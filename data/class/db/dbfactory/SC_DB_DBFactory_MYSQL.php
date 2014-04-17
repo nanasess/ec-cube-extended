@@ -362,5 +362,6 @@ __EOS__;
     {
         $objQuery->exec('SET SESSION storage_engine = InnoDB');
         $objQuery->exec("SET SESSION sql_mode = 'ANSI'");
+        $objQuery->exec("SET SESSION time_zone = '+09:00'");
     }
 }
