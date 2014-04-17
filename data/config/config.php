@@ -1,8 +1,14 @@
 <?php
 define('ECCUBE_INSTALL', 'ON');
 define('ROOT_URLPATH', $_SERVER['ROOT_URLPATH']);
-define('HTTP_URL', 'http://' . $_SERVER['SERVER_NAME'] . ROOT_URLPATH);
-define('HTTPS_URL', 'https://' . $_SERVER['SERVER_NAME'] . ROOT_URLPATH);
+// if ($_SERVER['SERVER_PORT'] == 80 || $_SERVER['SERVER_PORT'] == 443) {
+//     $location = '//' . $_SERVER['SERVER_NAME'] . ROOT_URLPATH;
+// } else {
+//     $location = '//' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . ROOT_URLPATH;
+// }
+$location = '//' . $_SERVER['SERVER_NAME'] . ROOT_URLPATH;
+define('HTTP_URL', 'http:' . $location);
+define('HTTPS_URL', 'https:' . $location); // TODO インストーラで設定する
 define('DOMAIN_NAME', $_SERVER['DOMAIN_NAME']);
 define('DB_TYPE', $_SERVER['DB_TYPE']);
 define('DB_USER', $_SERVER['DB_USER']);
