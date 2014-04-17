@@ -1,0 +1,11 @@
+<?php
+define('ADMIN_DIR', $_SERVER['ADMIN_DIR']);
+define('ADMIN_FORCE_SSL', FALSE);
+define('ADMIN_ALLOW_HOSTS', 'a:0:{}');
+define('AUTH_MAGIC', $_SERVER['AUTH_MAGIC']);
+define('PASSWORD_HASH_ALGOS', 'sha256');
+define('MAIL_BACKEND', $_SERVER['MAIL_BACKEND']);
+define('SMTP_HOST', $_SERVER['SMTP_HOST']);
+define('SMTP_PORT', $_SERVER['SMTP_PORT']);
+define('SMTP_USER', $_SERVER['SMTP_USER']);
+define('SMTP_PASSWORD', $_SERVER['SMTP_PASSWORD']);

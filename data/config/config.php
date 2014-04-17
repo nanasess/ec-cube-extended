@@ -1,28 +1,42 @@
 <?php
-define('ECCUBE_INSTALL', 'ON');
-define('ROOT_URLPATH', $_SERVER['ROOT_URLPATH']);
-// if ($_SERVER['SERVER_PORT'] == 80 || $_SERVER['SERVER_PORT'] == 443) {
-//     $location = '//' . $_SERVER['SERVER_NAME'] . ROOT_URLPATH;
-// } else {
-//     $location = '//' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . ROOT_URLPATH;
-// }
-$location = '//' . $_SERVER['SERVER_NAME'] . ROOT_URLPATH;
-define('HTTP_URL', 'http:' . $location);
-define('HTTPS_URL', 'https:' . $location); // TODO インストーラで設定する
-define('DOMAIN_NAME', $_SERVER['DOMAIN_NAME']);
-define('DB_TYPE', $_SERVER['DB_TYPE']);
-define('DB_USER', $_SERVER['DB_USER']);
-define('DB_PASSWORD', $_SERVER['DB_PASSWORD']);
-define('DB_SERVER', $_SERVER['DB_SERVER']);
-define('DB_NAME', $_SERVER['DB_NAME']);
-define('DB_PORT', $_SERVER['DB_PORT']);
-define('ADMIN_DIR', $_SERVER['ADMIN_DIR']);
-define('ADMIN_FORCE_SSL', FALSE);
-define('ADMIN_ALLOW_HOSTS', 'a:0:{}');
-define('AUTH_MAGIC', $_SERVER['AUTH_MAGIC']);
-define('PASSWORD_HASH_ALGOS', 'sha256');
-define('MAIL_BACKEND', $_SERVER['MAIL_BACKEND']);
-define('SMTP_HOST', $_SERVER['SMTP_HOST']);
-define('SMTP_PORT', $_SERVER['SMTP_PORT']);
-define('SMTP_USER', $_SERVER['SMTP_USER']);
-define('SMTP_PASSWORD', $_SERVER['SMTP_PASSWORD']);
+$realpath = dirname(__FILE__);
+$scheme = "http";
+if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on") {
+    $scheme = "https";
+}
+if ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) {
+    $location = "://" . $_SERVER["SERVER_NAME"] . "/";
+    $http_location = $scheme . "://" . $_SERVER["SERVER_NAME"] . "/";
+    if (file_get_contents('https' . $location) !== false) {
+        $https_location = 'https' . $location;
+    } else {
+        $https_location = $http_location;
+    }
+} else {
+    $http_location = $scheme . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/";
+    $https_location = $http_location;
+}
+
+$define_php = $realpath . './define.php';
+$webmatrix_php = $realpath . './webmatrix.php';
+if (file_exists($define_php)) {
+    require_once($define_php);
+
+    if (file_exists($webmatrix_php)) {
+        $subject = file_get_contents($webmatrix_php);
+        preg_match("|/\\*\\s*mysql://([^:]*):([^@]*)@([^/]*)/([^;]*);\\*/|", $subject, $matches);
+        list($all, $db_user, $db_password, $db_server, $db_name) = $matches;
+
+        define('ECCUBE_INSTALL', 'ON');
+        define('ROOT_URLPATH', '/');
+        define('HTTP_URL', $http_location);
+        define('HTTPS_URL', $https_location);
+        define('DOMAIN_NAME', '');
+        define('DB_TYPE', 'mysql');
+        define('DB_USER', $db_user);
+        define('DB_PASSWORD', $db_password);
+        define('DB_SERVER', $db_server);
+        define('DB_NAME', $db_name);
+        define('DB_PORT', '');
+    }
+}
