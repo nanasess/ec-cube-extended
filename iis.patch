@@ -1,0 +1,21 @@
+diff -urN eccube-2.11.0-orig/data/config/webmatrix.php eccube-2.11.0-IIS-patched/data/config/webmatrix.php
+--- ec-cube/data/config/webmatrix.php	1970-01-01 09:00:00.000000000 +0900
++++ ec-cube/data/config/webmatrix.php	2011-03-24 19:34:45.000000000 +0900
+@@ -0,0 +1,4 @@
++<?php
++/* WebMatrix Connection String */
++/* mysql://PlaceHolderForUser:PlaceHolderForPassword@PlaceHolderForServer/PlaceHolderForDb;*/
++?>
+diff -urN eccube-2.11.0-orig/html/.user.ini eccube-2.11.0-IIS-patched/html/.user.ini
+--- ec-cube/html/.user.ini	1970-01-01 09:00:00.000000000 +0900
++++ ec-cube/html/.user.ini	2011-03-24 19:38:06.000000000 +0900
+@@ -0,0 +1,9 @@
++mbstring.language = Japanese
++mbstring.encoding_translation = off
++output_handler = NULL
++magic_quotes_gpc = off
++session.auto_start = 0
++mbstring.internal_encoding = UTF-8
++upload_max_filesize = 5M
++register_globals = off
++date.timezone = Asia/Tokyo
