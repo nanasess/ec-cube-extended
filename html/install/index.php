@@ -45,7 +45,6 @@ ini_set('max_execution_time', 300);
 
 $objPage = new StdClass;
 $objPage->arrDB_TYPE = array(
-    'pgsql' => 'PostgreSQL',
     'mysql' => 'MySQL',
 );
 $objPage->arrDB_PORT = array(
@@ -718,10 +717,47 @@ function lfInitWebParam($objWebParam)
 // DBパラメーター情報の初期化
 function lfInitDBParam($objDBParam)
 {
+    // EC-CUBEデフォルト値設定
+    $default_server = '127.0.0.1';
+    $default_dbname = 'eccube_db';
+    $default_user   = 'eccube_db_user';
+    $default_pass   = '';
+
+    // WebMatrixの設定ファイルから接続情報を取得
+    $webpi_filename = HTML_REALDIR . HTML2DATA_DIR . 'config/webmatrix.php';
+    if(file_exists($webpi_filename) && $fp = @fopen($webpi_filename, 'r')) {
+        while (!feof($fp)) {
+            $connect_str = fgets($fp);
+            if(preg_match('/mysql/', $connect_str)) {
+                break;
+            }
+        }
+        
+        // MySQLの文字列から分割して接続情報を取得する
+        if(!empty($connect_str)) {
+            // /* mysql://[ユーザー名]:[パスワード]@[ホスト名]/[データベース名];*/
+            // @で分解
+            $split_connect = explode('@', $connect_str);
+
+            // ユーザー名, パスワードを取得
+            $split_userpass_wk = explode('//', $split_connect[0]);
+            $split_userpass    = explode(':', $split_userpass_wk[1]);
+            $default_user      = $split_userpass[0];
+            $default_pass      = $split_userpass[1];
+            
+            // ホスト名, データベース名を取得
+            $split_serverdb_wk = explode(';', $split_connect[1]);
+            $split_serverdb    = explode('/', $split_serverdb_wk[0]);
+            $default_server    = $split_serverdb[0];
+            $default_dbname    = $split_serverdb[1];
+        }
+        fclose($fp);
+    }
+
     if (defined('DB_SERVER')) {
         $db_server = DB_SERVER;
     } else {
-        $db_server = '127.0.0.1';
+        $db_server = $default_server;
     }
 
     if (defined('DB_TYPE')) {
@@ -739,13 +775,19 @@ function lfInitDBParam($objDBParam)
     if (defined('DB_NAME')) {
         $db_name = DB_NAME;
     } else {
-        $db_name = 'eccube_db';
+        $db_name = $default_dbname;
     }
 
     if (defined('DB_USER')) {
         $db_user = DB_USER;
     } else {
-        $db_user = 'eccube_db_user';
+        $db_user = $default_user;
+    }
+
+    if (defined('DB_PASSWORD')) {
+        $db_password = DB_PASSWORD;
+    } else {
+        $db_password = $default_pass;
     }
 
     $objDBParam->addParam('DBの種類', 'db_type', INT_LEN, '', array('EXIST_CHECK', 'MAX_LENGTH_CHECK'), $db_type);
@@ -753,7 +795,7 @@ function lfInitDBParam($objDBParam)
     $objDBParam->addParam('DBポート', 'db_port', INT_LEN, '', array('MAX_LENGTH_CHECK'), $db_port);
     $objDBParam->addParam('DB名', 'db_name', MTEXT_LEN, '', array('EXIST_CHECK', 'MAX_LENGTH_CHECK'), $db_name);
     $objDBParam->addParam('DBユーザ', 'db_user', MTEXT_LEN, '', array('EXIST_CHECK', 'MAX_LENGTH_CHECK'), $db_user);
-    $objDBParam->addParam('DBパスワード', 'db_password', MTEXT_LEN, '', array('EXIST_CHECK', 'MAX_LENGTH_CHECK'));
+    $objDBParam->addParam('DBパスワード', 'db_password', MTEXT_LEN, '', array('EXIST_CHECK', 'MAX_LENGTH_CHECK'), $default_pass);
 
     return $objDBParam;
 }

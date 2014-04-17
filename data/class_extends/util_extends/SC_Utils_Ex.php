@@ -34,4 +34,21 @@ require_once CLASS_REALDIR . 'util/SC_Utils.php';
  */
 class SC_Utils_Ex extends SC_Utils
 {
+    function sfInitInstall() {
+        // インストール済みが定義されていない。
+        if (!defined('ECCUBE_INSTALL')) {
+            $phpself = $_SERVER['SCRIPT_NAME'];
+            if (strpos('/install/', $phpself) === false) {
+                $path = substr($phpself, 0, strpos($phpself, basename($phpself)));
+                $install_url = SC_Utils_Ex::searchInstallerPath($path);
+                header('Location: ' . $install_url);
+                exit;
+            }
+        }
+        $path = HTML_REALDIR . 'install/' . DIR_INDEX_FILE;
+        if (file_exists($path)) {
+            SC_Utils_Ex::sfErrorHeader('&gt;&gt; /install/' . DIR_INDEX_FILE . ' は、インストール完了後にファイルを削除してください。削除するには<a href="' . ROOT_URLPATH . 'deleteInstaller.php">こちら</a>をクリックしてください。');
+        }
+    }
+
 }
