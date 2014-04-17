@@ -232,31 +232,33 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
         $cntInsert = 0;
         $img_cnt = 0;
 
-        $fp = $this->openZipCsv();
-        while (!feof($fp)) {
-            $arrCSV = fgetcsv($fp, ZIP_CSV_LINE_MAX);
-            if (empty($arrCSV)) continue;
-            $cntCurrentLine++;
-            if ($cntCurrentLine >= $start) {
-                $sqlval = array();
-                $sqlval['zip_id'] = $cntCurrentLine;
-                $sqlval['zipcode'] = $arrCSV[2];
-                $sqlval['state'] = $arrCSV[6];
-                $sqlval['city'] = $arrCSV[7];
-                $sqlval['town'] = $arrCSV[8];
-                $objQuery->insert('mtb_zip', $sqlval);
-                $cntInsert++;
+        $begin = microtime(true);
+        $con = $objQuery->conn->connection;
+        $stmt = 'INSERT INTO mtb_zip (zip_id, zipcode, state, city, town) VALUES (?, ?, ?, ?, ?)';
+        mysql_query('PREPARE insert_mtb_zip FROM \'' . mysql_real_escape_string($stmt) . '\'', $con);
+        $line = file(ZIP_CSV_UTF8_REALFILE);
+        for($i = 0; $line[$i] != ''; $i ++){
+            if (!($array = explode(",", $line[$i]))) {
+                continue;
             }
+            mysql_query('SET @zip_id = ' . mysql_real_escape_string(++$cntCurrentLine, $con), $con);
+            mysql_query('SET @zipcode = \'' . mysql_real_escape_string($array[2], $con) . '\'', $con);
+            mysql_query('SET @state = \'' . mysql_real_escape_string($array[6], $con) . '\'', $con);
+            mysql_query('SET @city = \'' . mysql_real_escape_string($array[7], $con) . '\'', $con);
+            mysql_query('SET @town = \'' . mysql_real_escape_string($array[8], $con) . '\'', $con);
+            mysql_query('EXECUTE insert_mtb_zip USING @zip_id, @zipcode, @state, @city, @town', $con);
+            $cntInsert++;
 
             // $disp_line件ごとに進捗表示する
-            if ($cntCurrentLine % $disp_line == 0 && $img_cnt < IMAGE_MAX) {
+            if ($i % $disp_line == 0 && $img_cnt < IMAGE_MAX) {
                 echo '<img src="' . $img_path . 'graph_1_w.gif">';
                 SC_Utils_Ex::sfFlush();
                 $img_cnt++;
             }
             SC_Utils_Ex::extendTimeOut();
         }
-        fclose($fp);
+        mysql_query('DEALLOCATE PREPARE insert_mtb_zip');
+        $end = microtime(true);
 
         echo '<img src="' . $img_path . 'space_w.gif">';
 
@@ -270,7 +272,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                     document.open('text/html','replace');
                     document.clear();
                     document.write('<p>完了しました。<br />');
-                    document.write("<?php echo $cntInsert ?> 件を追加しました。</p>");
+                    document.write("<?php echo $cntInsert ?> 件を追加しました。<?php echo ($end-$begin); ?> 秒かかりました</p>");
                     document.write("<p><a href='?' target='_top'>戻る</a></p>");
                     document.close();
                 }
