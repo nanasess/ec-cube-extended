@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <version>1.0.0</version>
+  <title>Sample Application for WebPI v3 RTW Feed</title>
+  
+  <updated>2011-03-1T00:000:00Z</updated>
+  <author>
+    <name>Sample Application Builder</name>
+    <uri></uri>
+  </author>
+  <id>http://www.microsoft.com/web/webpi/4.0/WebApplicationList.xml/Sample</id>
+
+  <entry type="application">
+    <productId xmlns="http://www.w3.org/2005/Atom">sample</productId>
+    <title xmlns="http://www.w3.org/2005/Atom">Sample App</title>
+      <id xmlns="http://www.w3.org/2005/Atom">http://www.microsoft.com/web/webpi/3.0/SampleAppJa</id>
+    <summary xmlns="http://www.w3.org/2005/Atom">Application Sample</summary>
+    <longSummary xmlns="http://www.w3.org/2005/Atom">Application Sample</longSummary>
+    <version xmlns="http://www.w3.org/2005/Atom">3.1.3</version>
+    <images><icon></icon></images>
+    <updated>2009-10-5T18:30:02Z</updated>
+    <published>2009-10-5T18:30:02Z</published>
+    <author>
+      <name xmlns="http://www.w3.org/2005/Atom">Sample Application</name>
+      <uri></uri>
+    </author>
+    <keywords xmlns="http://www.w3.org/2005/Atom">
+      <keywordId xmlns="http://www.w3.org/2005/Atom">oss</keywordId>
+      <keywordId xmlns="http://www.w3.org/2005/Atom">PHP</keywordId>
+      <keywordId xmlns="http://www.w3.org/2005/Atom">MySQL</keywordId>
+    </keywords>
+    
+    <installers xmlns="http://www.w3.org/2005/Atom">
+      <installer>
+        <id>1</id>
+        <languageId>en</languageId>
+        <installerFile>
+          <fileSize>10240</fileSize>
+          <installerURL>http://downloads.ec-cube.net/src/eccube-2.13.1-IIS-azp.zip</installerURL>
+          <sha1>094d7bfb28213b782c7b29804d674c68eabafc02</sha1>
+
+        </installerFile>
+        <helpLink></helpLink>
+        <msDeploy>
+          <startPage></startPage>
+        </msDeploy>
+      </installer>
+    </installers>
+  </entry>
+
+  <!-- Tabs and Keywords -->
+  <tabs>
+    <tab>
+      <keywordTab>
+        <id>oss</id>
+        <name>Sample App</name>
+        <description>Select from sample applications:</description>
+        <keywords>
+          <keywordId>oss</keywordId>
+        </keywords>
+      </keywordTab>
+    </tab>
+  </tabs>
+  <keywords>
+    <keyword id="oss">OSS Apps</keyword>
+  </keywords>
+  
+</feed>
