@@ -1,6 +1,6 @@
 <?php
 /** HTMLディレクトリからのDATAディレクトリの相対パス */
-define('HTML2DATA_DIR', '../data/');
+define('HTML2DATA_DIR', './data/');
 
 /** data/module 以下の PEAR ライブラリを優先的に使用する */
 set_include_path(realpath(dirname(__FILE__) . '/' . HTML2DATA_DIR . 'module') . PATH_SEPARATOR . get_include_path());
