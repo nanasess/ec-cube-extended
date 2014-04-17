@@ -37,6 +37,9 @@ function smarty_core_write_file($params, &$smarty)
     fwrite($fd, $params['contents']);
     fclose($fd);
 
+    $params['filename'] = str_replace('\\', '/', $params['filename']); 
+    $params['filename'] = str_replace('//', '/', $params['filename']);
+
     if (DIRECTORY_SEPARATOR == '\\' || !@rename($_tmp_file, $params['filename'])) {
         // On platforms and filesystems that cannot overwrite with rename() 
         // delete the file before renaming it -- because windows always suffers
