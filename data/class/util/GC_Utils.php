@@ -189,6 +189,10 @@ class GC_Utils
             $path = GC_Utils_Ex::isAdminFunction() ? ADMIN_LOG_REALFILE : LOG_REALFILE;
         }
 
+        if (isset($_SERVER['COMPUTERNAME'])) {
+            $path = str_replace('.log', '.' . $_SERVER['COMPUTERNAME'] . '.log', $path);
+        }
+
         $msg = "$today [{$_SERVER['SCRIPT_NAME']}] $msg from {$_SERVER['REMOTE_ADDR']}\n";
         if ($verbose) {
             if (GC_Utils_Ex::isFrontFunction()) {
