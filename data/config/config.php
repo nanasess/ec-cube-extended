@@ -7,11 +7,14 @@ if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on") {
 if ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) {
     $location = "://" . $_SERVER["SERVER_NAME"] . "/";
     $http_location = $scheme . "://" . $_SERVER["SERVER_NAME"] . "/";
+    /*
     if (file_get_contents('https' . $location) !== false) {
         $https_location = 'https' . $location;
     } else {
         $https_location = $http_location;
     }
+    */
+    $https_location = $http_location;
 } else {
     $http_location = $scheme . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/";
     $https_location = $http_location;
