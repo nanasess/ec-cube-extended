@@ -232,6 +232,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
         $cntInsert = 0;
         $img_cnt = 0;
 
+        /* 標準実装が非常に遅いので Azure/WebMatrix 向けにチューニング */
         $begin = microtime(true);
         $con = $objQuery->conn->connection;
         $stmt = 'INSERT INTO mtb_zip (zip_id, zipcode, state, city, town) VALUES (?, ?, ?, ?, ?)';
