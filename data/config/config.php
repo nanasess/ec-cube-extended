@@ -1,22 +1,16 @@
 <?php
 $realpath = dirname(__FILE__);
-$scheme = "http";
-if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on") {
-    $scheme = "https";
+define('ROOT_URLPATH', '/');
+
+// for Azure
+if (!strpos($_SERVER['SERVER_NAME'], 'localhost')) {
+    $location = "//" . $_SERVER["SERVER_NAME"] . ROOT_URLPATH;
+    $http_location = 'http:' . $location;
+    $https_location = 'https:' . $location;
 }
-if ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) {
-    $location = "://" . $_SERVER["SERVER_NAME"] . "/";
-    $http_location = $scheme . "://" . $_SERVER["SERVER_NAME"] . "/";
-    /*
-    if (file_get_contents('https' . $location) !== false) {
-        $https_location = 'https' . $location;
-    } else {
-        $https_location = $http_location;
-    }
-    */
-    $https_location = $http_location;
-} else {
-    $http_location = $scheme . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/";
+// for WebMatrix
+else {
+    $http_location = "http://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . ROOT_URLPATH;
     $https_location = $http_location;
 }
 
@@ -31,7 +25,6 @@ if (file_exists($define_php)) {
         list($all, $db_user, $db_password, $db_server, $db_name) = $matches;
 
         define('ECCUBE_INSTALL', 'ON');
-        define('ROOT_URLPATH', '/');
         define('HTTP_URL', $http_location);
         define('HTTPS_URL', $https_location);
         define('DOMAIN_NAME', '');
