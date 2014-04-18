@@ -3,7 +3,7 @@ $realpath = dirname(__FILE__);
 define('ROOT_URLPATH', '/');
 
 // for Azure
-if (!strpos($_SERVER['SERVER_NAME'], 'localhost')) {
+if (strpos($_SERVER['SERVER_NAME'], 'localhost') === false) {
     $location = "//" . $_SERVER["SERVER_NAME"] . ROOT_URLPATH;
     $http_location = 'http:' . $location;
     $https_location = 'https:' . $location;
