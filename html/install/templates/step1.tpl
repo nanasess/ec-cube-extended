@@ -21,7 +21,7 @@
  *}-->
 <script type="text/javascript">
 $(function() {
-    $('.option').hide();
+    // $('.option').hide();
     if ($('input[name=mail_backend]').val() == 'smtp') {
         $('.smtp').attr('disabled', false);
     } else {
@@ -144,7 +144,7 @@ $(function() {
                     <td>
                     <!--{assign var=key value="normal_url"}-->
                     <span class="attention"><!--{$arrErr[$key]}--></span>
-                    <input type="text" name="<!--{$key}-->" value="<!--{$arrForm[$key].value|h}-->" maxlength="<!--{$arrForm[$key].length}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" size="50"  />
+                    <input type="text" name="<!--{$key}-->" value="<!--{$arrForm[$key].value|h}-->" maxlength="<!--{$arrForm[$key].length}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" size="50"  readonly="readonly" />
                     </td>
                 </tr>
                 <tr>
@@ -152,7 +152,7 @@ $(function() {
                     <td>
                     <!--{assign var=key value="secure_url"}-->
                     <span class="attention"><!--{$arrErr[$key]}--></span>
-                    <input type="text" name="<!--{$key}-->" value="<!--{$arrForm[$key].value|h}-->" maxlength="<!--{$arrForm[$key].length}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" size="50"  />
+                    <input type="text" name="<!--{$key}-->" value="<!--{$arrForm[$key].value|h}-->" maxlength="<!--{$arrForm[$key].length}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" size="50" readonly="readonly" />
                     </td>
                 </tr>
                 <tr>
@@ -168,7 +168,7 @@ $(function() {
 
             <p><a href="javascript:;" id="options">&gt;&gt; オプション設定</a></p>
             <div class="option">
-                <h2>メールサーバーの設定(オプション)</h2>
+                <h2>メールサーバーの設定</h2>
                 <table>
                     <col width="30%" />
                     <col width="70%" />

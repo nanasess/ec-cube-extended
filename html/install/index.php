@@ -684,7 +684,7 @@ function lfInitWebParam($objWebParam)
     if (defined('MAIL_BACKEND')) {
         $mail_backend = MAIL_BACKEND;
     } else {
-        $mail_backend = 'mail';
+        $mail_backend = 'smtp';
     }
     if (defined('SMTP_HOST')) {
         $smtp_host = SMTP_HOST;
@@ -1069,17 +1069,6 @@ function lfMakeConfigFile()
 
     // FIXME 変数出力はエスケープすべき
     $config_data = "<?php\n"
-                 . "define('ECCUBE_INSTALL', 'ON');\n"
-                 . "define('HTTP_URL', '"              . $normal_url . "');\n"
-                 . "define('HTTPS_URL', '"             . $secure_url . "');\n"
-                 . "define('ROOT_URLPATH', '"          . $url_dir . "');\n"
-                 . "define('DOMAIN_NAME', '"           . $objWebParam->getValue('domain') . "');\n"
-                 . "define('DB_TYPE', '"               . $objDBParam->getValue('db_type') . "');\n"
-                 . "define('DB_USER', '"               . $objDBParam->getValue('db_user') . "');\n"
-                 . "define('DB_PASSWORD', '"           . $objDBParam->getValue('db_password') . "');\n"
-                 . "define('DB_SERVER', '"             . $objDBParam->getValue('db_server') . "');\n"
-                 . "define('DB_NAME', '"               . $objDBParam->getValue('db_name') . "');\n"
-                 . "define('DB_PORT', '"               . $objDBParam->getValue('db_port') . "');\n"
                  . "define('ADMIN_DIR', '"             . $objWebParam->getValue('admin_dir') . "/');\n"
                  . "define('ADMIN_FORCE_SSL', "        . $force_ssl . ");\n"
                  . "define('ADMIN_ALLOW_HOSTS', '"     . serialize($allow_hosts) . "');\n"
@@ -1091,7 +1080,7 @@ function lfMakeConfigFile()
                  . "define('SMTP_USER', '"             . $objWebParam->getValue('smtp_user') . "');\n"
                  . "define('SMTP_PASSWORD', '"         . $objWebParam->getValue('smtp_password') . "');\n";
 
-    if ($fp = fopen(CONFIG_REALFILE, 'w')) {
+    if ($fp = fopen(DEFINE_REALFILE, 'w')) {
         fwrite($fp, $config_data);
         fclose($fp);
     }
