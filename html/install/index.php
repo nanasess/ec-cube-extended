@@ -1080,6 +1080,9 @@ function lfMakeConfigFile()
                  . "define('SMTP_USER', '"             . $objWebParam->getValue('smtp_user') . "');\n"
                  . "define('SMTP_PASSWORD', '"         . $objWebParam->getValue('smtp_password') . "');\n";
 
+    if (!defined('DEFINE_REALFILE')) {
+        define('DEFINE_REALFILE', HTML_REALDIR . HTML2DATA_DIR . 'config/define.php');
+    }
     if ($fp = fopen(DEFINE_REALFILE, 'w')) {
         fwrite($fp, $config_data);
         fclose($fp);
