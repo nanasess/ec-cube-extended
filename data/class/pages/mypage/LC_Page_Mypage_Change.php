@@ -53,7 +53,7 @@ class LC_Page_Mypage_Change extends LC_Page_AbstractMypage_Ex
         $this->httpCacheControl('nocache');
 
         // 生年月日選択肢の取得
-        $objDate            = new SC_Date_Ex(BIRTH_YEAR, date('Y',strtotime('now')));
+        $objDate            = new SC_Date_Ex(BIRTH_YEAR, date('Y', strtotime('now')));
         $this->arrYear      = $objDate->getYear('', START_BIRTH_YEAR, '');
         $this->arrMonth     = $objDate->getMonth(true);
         $this->arrDay       = $objDate->getDay(true);
@@ -107,9 +107,8 @@ class LC_Page_Mypage_Change extends LC_Page_AbstractMypage_Ex
                             $data['pref'] = $arrAdsList[0]['state'];
                             $data['addr01'] = $arrAdsList[0]['city']. $arrAdsList[0]['town'];
                             $objFormParam->setParam($data);
-                        }
                         // 該当無し
-                        else {
+                        } else {
                             $this->arrErr['zip01'] = '※該当する住所が見つかりませんでした。<br>';
                         }
                     }

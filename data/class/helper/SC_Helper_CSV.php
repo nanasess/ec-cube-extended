@@ -20,6 +20,9 @@ class SC_Helper_CSV
     /** 項目名 */
     public $arrSubnaviName;
 
+    /** ヘッダーを出力するか (cbOutputCSV 用) */
+    private $output_header = false;
+
     /**
      * デフォルトコンストラクタ.
      */
@@ -79,21 +82,17 @@ class SC_Helper_CSV
             // この WHERE 句を足さないと無効な規格も出力される。現行仕様と合わせる為追加。
             $inner_where = 'dtb_products_class.del_flg = 0';
             $from = SC_Product_Ex::prdclsSQL($inner_where);
-        }
         // 会員の場合
-        else if ($csv_id == 2) {
+        } elseif ($csv_id == 2) {
             $from = 'dtb_customer';
-        }
         // 注文の場合
-        else if ($csv_id == 3) {
+        } elseif ($csv_id == 3) {
             $from = 'dtb_order';
-        }
         // レビューの場合
-        else if ($csv_id == 4) {
+        } elseif ($csv_id == 4) {
             $from = 'dtb_review AS A INNER JOIN dtb_products AS B on A.product_id = B.product_id';
-        }
         // カテゴリの場合
-        else if ($csv_id == 5) {
+        } elseif ($csv_id == 5) {
             $from = 'dtb_category';
         }
 
@@ -169,7 +168,7 @@ class SC_Helper_CSV
         foreach ($arrCSVFrame as $val) {
             if ($val['status'] != CSV_COLUMN_STATUS_FLG_ENABLE
                 && $val['rw_flg'] == CSV_COLUMN_RW_FLG_KEY_FIELD
-) {
+            ) {
                 //キーフィールド
                 $result = false;
             }
@@ -207,10 +206,12 @@ class SC_Helper_CSV
      */
     public function cbOutputCSV($data)
     {
-        $line = $this->sfArrayToCsv($data);
-        $line = mb_convert_encoding($line, 'SJIS-Win');
-        $line .= "\r\n";
-        fwrite($this->fpOutput, $line);
+        // 1行目のみヘッダーを出力する
+        if ($this->output_header) {
+            fputcsv($this->fpOutput, array_keys($data));
+            $this->output_header = false;
+        }
+        fputcsv($this->fpOutput, $data);
         SC_Utils_Ex::extendTimeOut();
 
         return true;
@@ -221,59 +222,63 @@ class SC_Helper_CSV
      *
      * @param  integer $sql         SQL文
      * @param  array   $arrVal      プリペアドステートメントの実行時に使用される配列。配列の要素数は、クエリ内のプレースホルダの数と同じでなければなりません。
-     * @param  string  $file_head   ファイル名の頭に付ける文字列
-     * @param  array   $arrHeader   ヘッダ出力列配列
-     * @param  boolean $is_download true:ダウンロード用出力までさせる false:CSVの内容を返す(旧方式、メモリを食います。）
+     * @param  string       ファイル名の頭に付ける文字列
+     * @param  array|null   ヘッダ出力列配列。null の場合、SQL 文の列名を出力する。
+     * @param  boolean      true:ダウンロード用出力までさせる false:CSVの内容を返す(旧方式、メモリを食います。）
      * @return mixed   $is_download = true時 成功失敗フラグ(boolean) 、$is_downalod = false時 string
      */
-    public function sfDownloadCsvFromSql($sql, $arrVal = array(), $file_head = 'csv', $arrHeader = array(), $is_download = false)
+    public function sfDownloadCsvFromSql($sql, $arrVal = array(), $file_head = 'csv', $arrHeader = null, $is_download = false)
     {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
 
-        // ヘッダ構築
-        if (is_array($arrHeader)) {
-            $header = $this->sfArrayToCsv($arrHeader);
-            $header = mb_convert_encoding($header, 'SJIS-Win');
-            $header .= "\r\n";
+        if (!$is_download) {
+            ob_start();
         }
 
-        //テンポラリファイル作成
-        // TODO: パフォーマンス向上には、ストリームを使うようにすると良い
-        //  環境要件がPHPバージョン5.1以上になったら使うように変えても良いかと
-        //  fopen('php://temp/maxmemory:'. (5*1024*1024), 'r+');
-        $tmp_filename = tempnam(CSV_TEMP_REALDIR, $file_head . '_csv');
-        $this->fpOutput = fopen($tmp_filename, 'w+');
-        fwrite($this->fpOutput, $header);
+        $this->fpOutput =& SC_Helper_CSV_Ex::fopen_for_output_csv();
+
+        // ヘッダー構築
+        $this->output_header = false;
+        if (is_array($arrHeader)) {
+            fputcsv($this->fpOutput, $arrHeader);
+        } elseif (is_null($arrHeader)) {
+            // ループバック内でヘッダーを出力する
+            $this->output_header = true;
+        }
+
         $objQuery->doCallbackAll(array(&$this, 'cbOutputCSV'), $sql, $arrVal);
+
+        // コールバック内でヘッダー出力する場合、0行時にヘッダーを生成できない。
+        // コールバックが呼ばれていない場合、念のため CRLF を出力しておく。
+        // XXX WEB画面前提で、アラート表示する流れのほうが親切かもしれない。
+        if ($this->output_header) {
+            fwrite($this->fpOutput, "\r\n");
+        }
 
         fclose($this->fpOutput);
 
+        // CSV 用の HTTP ヘッダーを送出する。
         if ($is_download) {
-            // CSVを送信する。
-            $this->lfDownloadCSVFile($tmp_filename, $file_head . '_');
-            $res = true;
-        } else {
-            $res = SC_Helper_FileManager_Ex::sfReadFile($tmp_filename);
+            $file_name = $file_head . '_' . date('ymd_His') .'.csv';
+            SC_Response_Ex::headerForDownload($file_name);
+            $return = true;
+        }
+        // 戻り値にCSVデータをセットする
+        else {
+            $return = ob_get_clean();
         }
 
-        //テンポラリファイル削除
-        unlink($tmp_filename);
-
-        return $res;
+        return $return;
     }
 
     /**
-     * 1次元配列を1行のCSVとして返す
-     * 参考: http://jp.php.net/fputcsv
+     * 前方互換用
      *
-     * @param  array  $fields         データ1次元配列
-     * @param  string $delimiter
-     * @param  string $enclosure
-     * @param  string $arrayDelimiter
-     * @return string 結果行
+     * @deprecated 2.13.2 fputcsv を使うこと。(sfDownloadCsvFromSql や cbOutputCSV の実装を参照)
      */
     public function sfArrayToCsv($fields, $delimiter = ',', $enclosure = '"', $arrayDelimiter = '|')
     {
+        trigger_error('前方互換用メソッドが使用されました。', E_USER_WARNING);
         if (strlen($delimiter) != 1) {
             trigger_error('delimiter must be a single character', E_USER_WARNING);
 
@@ -306,54 +311,78 @@ class SC_Helper_CSV
     }
 
     /**
-     * 配列データのCSVを送信する。
+     * 前方互換用
      *
-     * @param  array  $fields データ配列
-     * @param  string $prefix
-     * @return void
+     * @deprecated 2.13.2
      */
     public function lfDownloadCsv($arrData, $prefix = '')
     {
+        trigger_error('前方互換用メソッドが使用されました。', E_USER_WARNING);
         if ($prefix == '') {
             $dir_name = SC_Utils_Ex::sfUpDirName();
             $file_name = $dir_name . date('ymdHis') .'.csv';
         } else {
             $file_name = $prefix . date('ymdHis') .'.csv';
         }
-
-        /* HTTPヘッダの出力 */
-        Header("Content-disposition: attachment; filename=${file_name}");
-        Header("Content-type: application/octet-stream; name=${file_name}");
-        Header('Cache-Control: ');
-        Header('Pragma: ');
+        SC_Response_Ex::headerForDownload($file_name);
 
         /* データを出力 */
+        $fp =& SC_Helper_CSV_Ex::fopen_for_output_csv();
         foreach ($arrData as $lineArray) {
-            $lineString = $this->sfArrayToCsv($lineArray);
-            $lineString = mb_convert_encoding($lineString, 'SJIS-Win');
-            echo $lineString . "\r\n";
+            fputcsv($fp, $lineArray);
         }
+        fclose($fp);
     }
 
     /**
-     * CSVファイルを送信する。
+     * 前方互換用
      *
-     * @param  string $filepath 送信するファイルのフルパス
-     * @param  string $prefix
-     * @return void
+     * @deprecated 2.13.2
      */
     public function lfDownloadCSVFile($filepath, $prefix = '')
     {
+        trigger_error('前方互換用メソッドが使用されました。', E_USER_WARNING);
         $file_name = $prefix . date('YmdHis') . '.csv';
-
-        /* HTTPヘッダの出力 */
-        Header("Content-disposition: attachment; filename={$file_name}");
-        Header("Content-type: application/octet-stream; name={$file_name}");
-        Header('Cache-Control: ');
-        Header('Pragma: ');
+        SC_Response_Ex::headerForDownload($file_name);
 
         /* データを出力 */
         // file_get_contentsはメモリマッピングも自動的に使ってくれるので高速＆省メモリ
         echo file_get_contents($filepath);
     }
+
+    /**
+     * CSV 出力用のファイルポインタリソースを開く
+     *
+     * @return resource ファイルポインタリソース
+     */
+    public static function &fopen_for_output_csv($filename = 'php://output')
+    {
+        $fp = fopen($filename, 'w');
+
+        stream_filter_append($fp, 'convert.iconv.utf-8/cp932');
+        stream_filter_append($fp, 'convert.eccube_lf2crlf');
+
+        return $fp;
+    }
 }
+
+/**
+ * 改行コードを CRLF に変換するフィルター
+ *
+ * @package php_user_filter
+ * @author Seasoft 塚田将久 (新規作成)
+ * @version $Id$
+ */
+class php_user_filter_lf2crlf extends php_user_filter
+{
+    function filter($in, $out, &$consumed, $closing)
+    {
+        while ($bucket = stream_bucket_make_writeable($in)) {
+            $bucket->data = preg_replace("/[\r\n]+$/", "\r\n", $bucket->data);
+            $consumed += $bucket->datalen;
+            stream_bucket_append($out, $bucket);
+        }
+        return PSFS_PASS_ON;
+    }
+}
+stream_filter_register('convert.eccube_lf2crlf', 'php_user_filter_lf2crlf');

@@ -81,17 +81,11 @@ class SC_Product
             $o_col = $this->arrOrderData['col'];
             $o_table = $this->arrOrderData['table'];
             $o_order = $this->arrOrderData['order'];
-            $order = <<< __EOS__
-                    (
-                        SELECT $o_col
-                        FROM
-                            $o_table as T2
-                        WHERE T2.product_id = alldtl.product_id
-                        ORDER BY T2.$o_col $o_order
-                        LIMIT 1
-                    ) $o_order, product_id
-__EOS__;
-            $objQuery->setOrder($order);
+            $objQuery->setOrder("T2.$o_col $o_order");
+            $objQuery->setLimit(1);
+            $sub_sql = $objQuery->getSqlWithLimitOffset($o_col, "$o_table AS T2", 'T2.product_id = alldtl.product_id');
+
+            $objQuery->setOrder("($sub_sql) $o_order, product_id");
         }
         $arrReturn = $objQuery->getCol('alldtl.product_id', $table, '', $arrVal);
 
@@ -200,16 +194,17 @@ __EOS__;
     /**
      * 商品詳細を取得する.
      *
-     * @param  integer $productId 商品ID
+     * @param  integer $product_id 商品ID
      * @return array   商品詳細情報の配列
      */
-    public function getDetail($productId)
+    public function getDetail($product_id)
     {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
-        $arrProduct = $objQuery->getRow('*', $this->alldtlSQL('product_id = ?'),
-                                    'product_id = ?',
-                                    array($productId, $productId));
-        $arrProduct = (array) $arrProduct;
+
+        $from = $this->alldtlSQL();
+        $where = 'product_id = ?';
+        $arrWhereVal = array($product_id);
+        $arrProduct = (array)$objQuery->getRow('*', $from, $where, $arrWhereVal);
 
         // 税込金額を設定する
         SC_Product_Ex::setIncTaxToProduct($arrProduct);
@@ -291,7 +286,7 @@ __EOS__;
                     $this->stock_find[$productId] = true;
                 }
 
-                if (!in_array($classcat_id1, $classCats1)) {
+                if (!in_array($classcategory_id1, $classCats1)) {
                     $classCats1[$classcategory_id1] = $arrProductsClass['classcategory_name1']
                         . ($classcategory_id2 == 0 && !$stock_find_class ? ' (品切れ中)' : '');
                 }
@@ -407,10 +402,10 @@ __EOS__;
         $arrProduct = (array) $arrRes[0];
 
         // 税込計算
-        if(!SC_Utils_Ex::isBlank($arrProduct['price01'])) {
+        if (!SC_Utils_Ex::isBlank($arrProduct['price01'])) {
             $arrProduct['price01_inctax'] = SC_Helper_TaxRule_Ex::sfCalcIncTax($arrProduct['price01'], $arrProduct['product_id'], $productClassId);        
         }
-        if(!SC_Utils_Ex::isBlank($arrProduct['price02'])) {
+        if (!SC_Utils_Ex::isBlank($arrProduct['price02'])) {
             $arrProduct['price02_inctax'] = SC_Helper_TaxRule_Ex::sfCalcIncTax($arrProduct['price02'], $arrProduct['product_id'], $productClassId);        
         }
 
@@ -629,102 +624,9 @@ __EOS__;
      */
     public function alldtlSQL($where_products_class = '')
     {
-        if (!SC_Utils_Ex::isBlank($where_products_class)) {
-            $where_products_class = 'AND (' . $where_products_class . ')';
-        }
-        /*
-         * point_rate, deliv_fee は商品規格(dtb_products_class)ごとに保持しているが,
-         * 商品(dtb_products)ごとの設定なので MAX のみを取得する.
-         */
-        $sql = <<< __EOS__
-            (
-                SELECT
-                     dtb_products.product_id
-                    ,dtb_products.name
-                    ,dtb_products.maker_id
-                    ,dtb_products.status
-                    ,dtb_products.comment1
-                    ,dtb_products.comment2
-                    ,dtb_products.comment3
-                    ,dtb_products.comment4
-                    ,dtb_products.comment5
-                    ,dtb_products.comment6
-                    ,dtb_products.note
-                    ,dtb_products.main_list_comment
-                    ,dtb_products.main_list_image
-                    ,dtb_products.main_comment
-                    ,dtb_products.main_image
-                    ,dtb_products.main_large_image
-                    ,dtb_products.sub_title1
-                    ,dtb_products.sub_comment1
-                    ,dtb_products.sub_image1
-                    ,dtb_products.sub_large_image1
-                    ,dtb_products.sub_title2
-                    ,dtb_products.sub_comment2
-                    ,dtb_products.sub_image2
-                    ,dtb_products.sub_large_image2
-                    ,dtb_products.sub_title3
-                    ,dtb_products.sub_comment3
-                    ,dtb_products.sub_image3
-                    ,dtb_products.sub_large_image3
-                    ,dtb_products.sub_title4
-                    ,dtb_products.sub_comment4
-                    ,dtb_products.sub_image4
-                    ,dtb_products.sub_large_image4
-                    ,dtb_products.sub_title5
-                    ,dtb_products.sub_comment5
-                    ,dtb_products.sub_image5
-                    ,dtb_products.sub_large_image5
-                    ,dtb_products.sub_title6
-                    ,dtb_products.sub_comment6
-                    ,dtb_products.sub_image6
-                    ,dtb_products.sub_large_image6
-                    ,dtb_products.del_flg
-                    ,dtb_products.creator_id
-                    ,dtb_products.create_date
-                    ,dtb_products.update_date
-                    ,dtb_products.deliv_date_id
-                    ,T4.product_code_min
-                    ,T4.product_code_max
-                    ,T4.price01_min
-                    ,T4.price01_max
-                    ,T4.price02_min
-                    ,T4.price02_max
-                    ,T4.stock_min
-                    ,T4.stock_max
-                    ,T4.stock_unlimited_min
-                    ,T4.stock_unlimited_max
-                    ,T4.point_rate
-                    ,T4.deliv_fee
-                    ,T4.class_count
-                    ,dtb_maker.name AS maker_name
-                FROM dtb_products
-                    JOIN (
-                        SELECT product_id,
-                            MIN(product_code) AS product_code_min,
-                            MAX(product_code) AS product_code_max,
-                            MIN(price01) AS price01_min,
-                            MAX(price01) AS price01_max,
-                            MIN(price02) AS price02_min,
-                            MAX(price02) AS price02_max,
-                            MIN(stock) AS stock_min,
-                            MAX(stock) AS stock_max,
-                            MIN(stock_unlimited) AS stock_unlimited_min,
-                            MAX(stock_unlimited) AS stock_unlimited_max,
-                            MAX(point_rate) AS point_rate,
-                            MAX(deliv_fee) AS deliv_fee,
-                            COUNT(*) as class_count
-                        FROM dtb_products_class
-                        WHERE del_flg = 0 $where_products_class
-                        GROUP BY product_id
-                    ) AS T4
-                        ON dtb_products.product_id = T4.product_id
-                    LEFT JOIN dtb_maker
-                        ON dtb_products.maker_id = dtb_maker.maker_id
-            ) AS alldtl
-__EOS__;
+        $objDBFactory = SC_DB_DBFactory_Ex::getInstance();
 
-        return $sql;
+        return $objDBFactory->alldtlSQL($where_products_class);
     }
 
     /**
@@ -783,5 +685,53 @@ __EOS__;
         $tablename = ($tablename) ? $tablename . '.' : null;
 
         return $tablename . 'del_flg = 0 AND ' . $tablename . 'status = 1 ';
+    }
+
+    /**
+     * 商品が属しているカテゴリーIDを取得する.
+     *
+     * @param int $product_id
+     * @param bool $include_hidden
+     * @return array
+     */
+    public function getCategoryIds($product_id, $include_hidden = false) {
+        if ($this->isValidProductId($product_id, $include_hidden)) {
+            $objQuery =& SC_Query_Ex::getSingletonInstance();
+            $category_id = $objQuery->getCol('category_id', 'dtb_product_categories', 'product_id = ?', array($product_id));
+        } else {
+            // 不正な場合は、空の配列を返す。
+            $category_id = array();
+        }
+
+        return $category_id;
+    }
+
+    /**
+     * 有効な商品IDかチェックする.
+     *
+     * @param int $product_id
+     * @param bool $include_hidden
+     * @param bool $include_deleted
+     * @return bool
+     */
+    public function isValidProductId($product_id, $include_hidden = false, $include_deleted = false) {
+        $where = '';
+        if (!$include_hidden) {
+            $where .= 'status = 1';
+        }
+        if (!$include_deleted) {
+            if ($where != '') {
+                $where .= ' AND ';
+            }
+            $where .= 'del_flg = 0';
+        }
+        if (
+            SC_Utils_Ex::sfIsInt($product_id)
+            && !SC_Utils_Ex::sfIsZeroFilling($product_id)
+            && SC_Helper_DB_Ex::sfIsRecord('dtb_products', 'product_id', array($product_id), $where)
+        ) {
+            return true;
+        }
+        return false;
     }
 }

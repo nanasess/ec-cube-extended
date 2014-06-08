@@ -175,9 +175,8 @@ class SC_Response
                     $url = preg_replace($pattern, $replacement, $url);
                 }
             }
-        }
         // 現在のURLからのパス
-        else {
+        } else {
             if (!is_bool($useSsl)) {
                 $useSsl = SC_Utils_Ex::sfIsHTTPS();
             }
@@ -334,5 +333,17 @@ class SC_Response
             header("HTTP/{$httpVersion} {$statusCode} {$messages[$statusCode]}");
             header("Status: {$statusCode} {$messages[$statusCode]}", true, $statusCode);
         }
+    }
+
+    /**
+     * ダウンロード用の HTTP ヘッダを出力する
+     *
+     * @return void
+     */
+    public static function headerForDownload($file_name) {
+        header("Content-disposition: attachment; filename={$file_name}");
+        header("Content-type: application/octet-stream; name={$file_name}");
+        header('Cache-Control: ');
+        header('Pragma: ');
     }
 }

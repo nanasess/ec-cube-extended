@@ -118,7 +118,7 @@ class LC_Page_Shopping_Confirm extends LC_Page_Ex
                                                   $arrOrderTemp['charge'],
                                                   $arrOrderTemp['discount'],
                                                   $arrOrderTemp['deliv_id'],
-                                                  $arrOrderTemp['order_pref'],  // 税金計算の為に追加　注文者基準
+                                                  $arrOrderTemp['order_pref'], // 税金計算の為に追加　注文者基準
                                                   $arrOrderTemp['order_country_id'] // 税金計算の為に追加　注文者基準
                                                   );
 
@@ -161,9 +161,8 @@ class LC_Page_Shopping_Confirm extends LC_Page_Ex
                     $objPurchase->completeOrder(ORDER_PENDING);
 
                     SC_Response_Ex::sendRedirect(SHOPPING_MODULE_URLPATH);
-                }
                 // 購入完了ページ
-                else {
+                } else {
                     $objPurchase->completeOrder(ORDER_NEW);
                     SC_Helper_Purchase_Ex::sendOrderMail($this->arrForm['order_id'], $this);
 

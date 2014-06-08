@@ -152,15 +152,6 @@ class LC_Page_Products_Review extends LC_Page_Ex
     {
         $arrErr = $objFormParam->checkError();
 
-        $arrForm = $objFormParam->getHashArray();
-
-        // 重複メッセージの判定
-        $objQuery =& SC_Query_Ex::getSingletonInstance();
-        $exists = $objQuery->exists('dtb_review','product_id = ? AND title = ? ', array($arrForm['product_id'], $arrForm['title']));
-        if ($exists) {
-            $arrErr['title'] .= '重複したタイトルは登録できません。';
-        }
-
         if (REVIEW_ALLOW_URL == false) {
             $objErr = new SC_CheckError_Ex($objFormParam->getHashArray());
             // コメント欄へのURLの入力を禁止
@@ -185,25 +176,17 @@ class LC_Page_Products_Review extends LC_Page_Ex
     }
 
     //登録実行
-    public function lfRegistRecommendData(&$objFormParam)
+    public function lfRegistRecommendData(SC_FormParam &$objFormParam)
     {
-        $objQuery =& SC_Query_Ex::getSingletonInstance();
-        $objCustomer = new SC_Customer_Ex();
-
         $arrRegist = $objFormParam->getDbArray();
 
-        $arrRegist['create_date'] = 'CURRENT_TIMESTAMP';
-        $arrRegist['update_date'] = 'CURRENT_TIMESTAMP';
-        $arrRegist['creator_id'] = '0';
-
+        $objCustomer = new SC_Customer_Ex();
         if ($objCustomer->isLoginSuccess(true)) {
             $arrRegist['customer_id'] = $objCustomer->getValue('customer_id');
         }
 
         //-- 登録実行
-        $objQuery->begin();
-        $arrRegist['review_id'] = $objQuery->nextVal('dtb_review_review_id');
-        $objQuery->insert('dtb_review', $arrRegist);
-        $objQuery->commit();
+        $objReview = new SC_Helper_Review_Ex();
+        $objReview->save($arrRegist);
     }
 }

@@ -88,7 +88,7 @@ class SC_Helper_DB
 
     public function sfColumnAdd($tableName, $colName, $colType)
     {
-        $objQuery =& SC_Query_Ex::getSingletonInstance($dsn);
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
 
         return $objQuery->query("ALTER TABLE $tableName ADD $colName $colType ");
     }
@@ -102,10 +102,9 @@ class SC_Helper_DB
      * @return bool   データが存在する場合 true, データの追加に成功した場合 true,
      *               $add == false で, データが存在しない場合 false
      */
-    public function sfDataExists($tableName, $where, $arrWhereVal)
+    public static function sfDataExists($tableName, $where, $arrWhereVal)
     {
         $dbFactory = SC_DB_DBFactory_Ex::getInstance();
-        $dsn = $dbFactory->getDSN($dsn);
 
         $objQuery =& SC_Query_Ex::getSingletonInstance();
         $exists = $objQuery->exists($tableName, $where, $arrWhereVal);
@@ -370,56 +369,6 @@ class SC_Helper_DB
     }
 
     /**
-     * カテゴリツリーの取得を複数カテゴリで行う.
-     *
-     * @param  integer $product_id  商品ID
-     * @param  bool    $count_check 登録商品数のチェックを行う場合 true
-     * @return array   カテゴリツリーの配列
-     */
-    public function sfGetMultiCatTree($product_id, $count_check = false)
-    {
-        $objQuery =& SC_Query_Ex::getSingletonInstance();
-        $col = '';
-        $col .= ' cat.category_id,';
-        $col .= ' cat.category_name,';
-        $col .= ' cat.parent_category_id,';
-        $col .= ' cat.level,';
-        $col .= ' cat.rank,';
-        $col .= ' cat.creator_id,';
-        $col .= ' cat.create_date,';
-        $col .= ' cat.update_date,';
-        $col .= ' cat.del_flg, ';
-        $col .= ' ttl.product_count';
-        $from = 'dtb_category as cat left join dtb_category_total_count as ttl on ttl.category_id = cat.category_id';
-        // 登録商品数のチェック
-        if ($count_check) {
-            $where = 'del_flg = 0 AND product_count > 0';
-        } else {
-            $where = 'del_flg = 0';
-        }
-        $objQuery->setOption('ORDER BY rank DESC');
-        $arrRet = $objQuery->select($col, $from, $where);
-
-        $arrCategory_id = SC_Helper_DB_Ex::sfGetCategoryId($product_id);
-
-        $arrCatTree = array();
-        foreach ($arrCategory_id as $pkey => $parent_category_id) {
-            $arrParentID = SC_Helper_DB_Ex::sfGetParents('dtb_category', 'parent_category_id', 'category_id', $parent_category_id);
-
-            foreach ($arrParentID as $pid) {
-                foreach ($arrRet as $key => $array) {
-                    if ($array['category_id'] == $pid) {
-                        $arrCatTree[$pkey][] = $arrRet[$key];
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $arrCatTree;
-    }
-
-    /**
      * 親カテゴリを連結した文字列を取得する.
      *
      * @param  integer $category_id カテゴリID
@@ -436,7 +385,7 @@ class SC_Helper_DB
         foreach ($arrCatID as $val) {
             $sql = 'SELECT category_name FROM dtb_category WHERE category_id = ?';
             $arrVal = array($val);
-            $CatName = $objQuery->getOne($sql,$arrVal);
+            $CatName = $objQuery->getOne($sql, $arrVal);
             $ConbName .= $CatName . ' | ';
         }
         // 最後の ｜ をカットする
@@ -462,7 +411,7 @@ class SC_Helper_DB
         // カテゴリ名称を取得する
         $sql = 'SELECT category_name FROM dtb_category WHERE category_id = ?';
         $arrVal = array($arrRet['id']);
-        $arrRet['name'] = $objQuery->getOne($sql,$arrVal);
+        $arrRet['name'] = $objQuery->getOne($sql, $arrVal);
 
         return $arrRet;
     }
@@ -563,28 +512,22 @@ class SC_Helper_DB
     /**
      * 選択中の商品のカテゴリを取得する.
      *
-     * @param  integer $product_id  プロダクトID
-     * @param  integer $category_id カテゴリID
-     * @return array   選択中の商品のカテゴリIDの配列
+     * @param   int $product_id     プロダクトID
+     * @param   int $category_id    カテゴリID
+     * @param   bool $closed        非表示の商品を含む場合はtrue
+     * @return  array   選択中の商品のカテゴリIDの配列
      *
      */
     public function sfGetCategoryId($product_id, $category_id = 0, $closed = false)
     {
-        if ($closed) {
-            $status = '';
-        } else {
-            $status = 'status = 1';
-        }
         $category_id = (int) $category_id;
         $product_id = (int) $product_id;
-        if (SC_Utils_Ex::sfIsInt($category_id) && $category_id != 0 && SC_Helper_DB_Ex::sfIsRecord('dtb_category','category_id', $category_id)) {
+        $objCategory = new SC_Helper_Category_Ex();
+        if ($objCategory->isValidCategoryId($category_id, $closed)) {
             $category_id = array($category_id);
-        } elseif (SC_Utils_Ex::sfIsInt($product_id) && $product_id != 0 && SC_Helper_DB_Ex::sfIsRecord('dtb_products','product_id', $product_id, $status)) {
-            $objQuery =& SC_Query_Ex::getSingletonInstance();
-            $category_id = $objQuery->getCol('category_id', 'dtb_product_categories', 'product_id = ?', array($product_id));
         } else {
-            // 不正な場合は、空の配列を返す。
-            $category_id = array();
+            $objProduct = new SC_Product_Ex();
+            $category_id = $objProduct->getCategoryIds($product_id, $closed);
         }
 
         return $category_id;
@@ -728,7 +671,7 @@ class SC_Helper_DB
 
         //まずテーブル内容の元を取得
         if (!$is_force_all_count) {
-            $arrCategoryCountOld = $objQuery->select('category_id,product_count','dtb_category_count');
+            $arrCategoryCountOld = $objQuery->select('category_id,product_count', 'dtb_category_count');
         } else {
             $arrCategoryCountOld = array();
         }
@@ -1006,10 +949,10 @@ __EOS__;
      * @param  string $keyname     プライマリーキーのカラム名
      * @param  string $valname     データ内容のカラム名
      * @param  string $where       WHERE句
-     * @param  array  $arrWhereVal プレースホルダ
+     * @param  array  $arrVal プレースホルダ
      * @return array  SELECT ボックス用リストの配列
      */
-    public function sfGetIDValueList($table, $keyname, $valname, $where = '', $arrVal = array())
+    public static function sfGetIDValueList($table, $keyname, $valname, $where = '', $arrVal = array())
     {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
         $col = "$keyname, $valname";
@@ -1366,10 +1309,10 @@ __EOS__;
      * @param  string $table    テーブル名
      * @param  string $col      カラム名
      * @param  array  $arrVal   要素の配列
-     * @param  array  $addwhere SQL の AND 条件である WHERE 句
+     * @param  string  $addwhere SQL の AND 条件である WHERE 句
      * @return bool   レコードが存在する場合 true
      */
-    public function sfIsRecord($table, $col, $arrVal, $addwhere = '')
+    public static function sfIsRecord($table, $col, $arrVal, $addwhere = '')
     {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
         $arrCol = preg_split('/[, ]/', $col);
@@ -1441,9 +1384,9 @@ __EOS__;
             $this->g_maker_on = true;
             $maker_id = (int) $maker_id;
             $product_id = (int) $product_id;
-            if (SC_Utils_Ex::sfIsInt($maker_id) && $maker_id != 0 && $this->sfIsRecord('dtb_maker','maker_id', $maker_id)) {
+            if (SC_Utils_Ex::sfIsInt($maker_id) && $maker_id != 0 && $this->sfIsRecord('dtb_maker', 'maker_id', $maker_id)) {
                 $this->g_maker_id = array($maker_id);
-            } elseif (SC_Utils_Ex::sfIsInt($product_id) && $product_id != 0 && $this->sfIsRecord('dtb_products','product_id', $product_id, $status)) {
+            } elseif (SC_Utils_Ex::sfIsInt($product_id) && $product_id != 0 && $this->sfIsRecord('dtb_products', 'product_id', $product_id, $status)) {
                 $objQuery =& SC_Query_Ex::getSingletonInstance();
                 $maker_id = $objQuery->getCol('maker_id', 'dtb_products', 'product_id = ?', array($product_id));
                 $this->g_maker_id = $maker_id;
@@ -1516,10 +1459,12 @@ __EOS__;
      * 店舗基本情報に基づいて税金付与した金額を返す
      * SC_Utils_Ex::sfCalcIncTax とどちらか統一したほうが良い
      *
-     * @param  integer $price 計算対象の金額
-     * @return integer 税金付与した金額
+     * @param  int $price 計算対象の金額
+     * @param  int $tax
+     * @param  int $tax_rule
+     * @return int 税金付与した金額
      */
-    public function sfCalcIncTax($price, $tax = null, $tax_rule = null)
+    public static function sfCalcIncTax($price, $tax = null, $tax_rule = null)
     {
         // 店舗基本情報を取得
         $CONF = SC_Helper_DB_Ex::sfGetBasisData();

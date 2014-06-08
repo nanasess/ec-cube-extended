@@ -102,9 +102,9 @@
                         <dd class="price">
                             <span id="price01_default"><!--{strip}-->
                                 <!--{if $arrProduct.price01_min_inctax == $arrProduct.price01_max_inctax}-->
-                                    <!--{$arrProduct.price01_min_inctax|number_format}-->
+                                    <!--{$arrProduct.price01_min_inctax|n2s}-->
                                 <!--{else}-->
-                                    <!--{$arrProduct.price01_min_inctax|number_format}-->～<!--{$arrProduct.price01_max_inctax|number_format}-->
+                                    <!--{$arrProduct.price01_min_inctax|n2s}-->～<!--{$arrProduct.price01_max_inctax|n2s}-->
                                 <!--{/if}-->
                             <!--{/strip}--></span><span id="price01_dynamic"></span>
                             円
@@ -118,9 +118,9 @@
                     <dd class="price">
                         <span id="price02_default"><!--{strip}-->
                             <!--{if $arrProduct.price02_min_inctax == $arrProduct.price02_max_inctax}-->
-                                <!--{$arrProduct.price02_min_inctax|number_format}-->
+                                <!--{$arrProduct.price02_min_inctax|n2s}-->
                             <!--{else}-->
-                                <!--{$arrProduct.price02_min_inctax|number_format}-->～<!--{$arrProduct.price02_max_inctax|number_format}-->
+                                <!--{$arrProduct.price02_min_inctax|n2s}-->～<!--{$arrProduct.price02_max_inctax|n2s}-->
                             <!--{/if}-->
                         <!--{/strip}--></span><span id="price02_dynamic"></span>
                         円
@@ -132,12 +132,12 @@
                     <div class="point">ポイント：
                         <span id="point_default"><!--{strip}-->
                             <!--{if $arrProduct.price02_min == $arrProduct.price02_max}-->
-                                <!--{$arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate|number_format}-->
+                                <!--{$arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate|n2s}-->
                             <!--{else}-->
                                 <!--{if $arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate == $arrProduct.price02_max|sfPrePoint:$arrProduct.point_rate}-->
-                                    <!--{$arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate|number_format}-->
+                                    <!--{$arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate|n2s}-->
                                 <!--{else}-->
-                                    <!--{$arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate|number_format}-->～<!--{$arrProduct.price02_max|sfPrePoint:$arrProduct.point_rate|number_format}-->
+                                    <!--{$arrProduct.price02_min|sfPrePoint:$arrProduct.point_rate|n2s}-->～<!--{$arrProduct.price02_max|sfPrePoint:$arrProduct.point_rate|n2s}-->
                                 <!--{/if}-->
                             <!--{/if}-->
                         <!--{/strip}--></span><span id="point_dynamic"></span>
@@ -180,7 +180,6 @@
                 <div class="main_comment"><!--{$arrProduct.main_comment|nl2br_html}--></div>
 
                 <!--▼買い物かご-->
-
                 <div class="cart_area clearfix">
                     <input type="hidden" name="mode" value="cart" />
                     <input type="hidden" name="product_id" value="<!--{$tpl_product_id}-->" />
@@ -255,16 +254,19 @@
                             <!--{if !$is_favorite}-->
                                 <a href="javascript:eccube.changeAction('?product_id=<!--{$arrProduct.product_id|h}-->'); eccube.setModeAndSubmit('add_favorite','favorite_product_id','<!--{$arrProduct.product_id|h}-->');"><img class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_add_favorite.jpg" alt="お気に入りに追加" /></a>
                             <!--{else}-->
-                                <img src="<!--{$TPL_URLPATH}-->img/button/btn_add_favorite_on.jpg" alt="お気に入り登録済" name="add_favorite_product" id="add_favorite_product" />
-                                <script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.tipsy.js"></script>
+                                <img src="<!--{$TPL_URLPATH}-->img/button/btn_add_favorite_on.jpg" title="お気に入りに登録済み" alt="お気に入りに登録済み" id="add_favorite_product" />
+                                <script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.ui/jquery.ui.core.min.js"></script>
+                                <script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.ui/jquery.ui.widget.min.js"></script>
+                                <script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.ui/jquery.ui.position.min.js"></script>
+                                <script type="text/javascript" src="<!--{$smarty.const.ROOT_URLPATH}-->js/jquery.ui/jquery.ui.tooltip.min.js"></script>
                                 <script type="text/javascript">
                                     var favoriteButton = $("#add_favorite_product");
-                                    favoriteButton.tipsy({gravity: $.fn.tipsy.autoNS, fallback: "お気に入りに登録済み", fade: true });
+                                    favoriteButton.tooltip();
 
                                     <!--{if $just_added_favorite == true}-->
-                                    favoriteButton.load(function(){$(this).tipsy("show")});
+                                    favoriteButton.load(function(){ $(this).tooltip("open") });
                                     $(function(){
-                                        var tid = setTimeout('favoriteButton.tipsy("hide")',5000);
+                                        var tid = setTimeout('favoriteButton.tooltip("close")',5000);
                                     });
                                     <!--{/if}-->
                                 </script>
@@ -272,8 +274,8 @@
                         </div>
                     <!--{/if}-->
                 </div>
+                <!--▲買い物かご-->
             </div>
-            <!--▲買い物かご-->
         </div>
     </form>
 
@@ -361,9 +363,9 @@
                         <h3><a href="<!--{$smarty.const.P_DETAIL_URLPATH}--><!--{$arrItem.product_id|u}-->"><!--{$arrItem.name|h}--></a></h3>
                         <p class="sale_price"><!--{$smarty.const.SALE_PRICE_TITLE}-->(税込)：<span class="price">
                             <!--{if $price02_min == $price02_max}-->
-                                <!--{$price02_min|number_format}-->
+                                <!--{$price02_min|n2s}-->
                             <!--{else}-->
-                                <!--{$price02_min|number_format}-->～<!--{$price02_max|number_format}-->
+                                <!--{$price02_min|n2s}-->～<!--{$price02_max|n2s}-->
                             <!--{/if}-->円</span></p>
                         <p class="mini"><!--{$arrItem.comment|h|nl2br}--></p>
                     </div>

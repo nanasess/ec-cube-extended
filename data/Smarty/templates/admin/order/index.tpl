@@ -289,7 +289,7 @@
                     <input type="text" name="<!--{$key2}-->" value="<!--{$arrForm[$key2].value|h}-->" maxlength="<!--{$arrForm[$key2].length}-->" style="<!--{$arrErr[$key2]|sfGetErrorColor}-->" size="6" class="box6" />
                     円
                 </td>
-                <th>購入商品</th>
+                <th>購入商品名</th>
                 <td>
                     <!--{assign var=key value="search_product_name"}-->
                     <!--{if $arrErr[$key]}--><span class="attention"><!--{$arrErr[$key]}--></span><!--{/if}-->
@@ -383,9 +383,8 @@
                                 <td class="center"><!--{$arrResults[cnt].create_date|sfDispDBDate}--></td>
                                 <td class="center"><!--{$arrResults[cnt].order_id}--></td>
                                 <td class="center"><!--{$arrResults[cnt].order_name01|h}--> <!--{$arrResults[cnt].order_name02|h}--></td>
-                                <!--{assign var=payment_id value="`$arrResults[cnt].payment_id`"}-->
-                                <td class="center"><!--{$arrPayments[$payment_id]}--></td>
-                                <td class="right"><!--{$arrResults[cnt].total|number_format}--></td>
+                                <td class="center"><!--{$arrResults[cnt].payment_method|h}--></td>
+                                <td class="right"><!--{$arrResults[cnt].total|n2s}--></td>
                                 <td class="center"><!--{$arrResults[cnt].commit_date|sfDispDBDate|default:"未発送"}--></td>
                                 <td class="center"><!--{$arrORDERSTATUS[$status]}--></td>
                                 <td class="center">

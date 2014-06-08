@@ -187,9 +187,20 @@ class LC_Page_Admin_Basis_Holiday extends LC_Page_Admin_Ex
         $arrErr = $objFormParam->checkError();
         $arrForm = $objFormParam->getHashArray();
 
+        // 日付の妥当性チェック
+        // 閏年への対応.
+        if ($arrForm['month'] == 2 && $arrForm['day'] == 29) {
+            $valid_date = true;
+        } else {
+            $valid_date = checkdate($arrForm['month'], $arrForm['day'], date('Y'));
+        }
+        if (!$valid_date) {
+            $arrErr['date'] = '※ 妥当な日付ではありません。<br />';
+        }
+
         // 編集中のレコード以外に同じ日付が存在する場合
         if ($objHoliday->isDateExist($arrForm['month'], $arrForm['day'], $arrForm['holiday_id'])) {
-            $arrErr['date'] = '※ 既に同じ日付の登録が存在します。<br>';
+            $arrErr['date'] = '※ 既に同じ日付の登録が存在します。<br />';
         }
 
         return $arrErr;

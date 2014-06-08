@@ -97,13 +97,8 @@ class SC_UploadFile
     {
         $objErr = new SC_CheckError_Ex();
         $cnt = 0;
-        $arrKeyname = array_flip($this->keyname);
-
-        if ($_FILES[$keyname]['error'] != 0) {
-            $objErr->arrErr[$keyname] .= '※ ' . $this->disp_name[$arrKeyname[$keyname]] . 'のアップロードに失敗しました。';
-            $objErr->arrErr[$keyname] .= 'エラーコードは[' . $_FILES[$keyname]['error'] . ']です。';
-            $objErr->arrErr[$keyname] .= '<br />';
-        } else {
+        $check = $this->checkUploadError($keyname, $objErr);
+        if ($check) {
             foreach ($this->keyname as $val) {
                 // 一致したキーのファイルに情報を保存する。
                 if ($val == $keyname) {
@@ -148,10 +143,8 @@ class SC_UploadFile
     {
         $objErr = new SC_CheckError_Ex();
         $cnt = 0;
-        $arrKeyname = array_flip($this->keyname);
-        if (!($_FILES[$keyname]['size'] > 0)) {
-            $objErr->arrErr[$keyname] = '※ ' . $this->disp_name[$arrKeyname[$keyname]] . 'がアップロードされていません。(ファイルがアップロードできない場合は、.htaccessファイルのphp_value upload_max_filesizeを調整してください)<br />';
-        } else {
+        $check = $this->checkUploadError($keyname, $objErr);
+        if ($check) {
             foreach ($this->keyname as $val) {
                 // 一致したキーのファイルに情報を保存する。
                 if ($val == $keyname) {
@@ -530,10 +523,50 @@ class SC_UploadFile
         } else {
             // アップロードした画像名で保存
             $uploadfile = strlen($uploadfile) > 0 ? $uploadfile : $_FILES[$keyname]['name'];
-            $uniqname =  preg_replace('/(.+)\.(.+?)$/','$1', $uploadfile);
+            $uniqname =  preg_replace('/(.+)\.(.+?)$/', '$1', $uploadfile);
         }
         $dst_file = $this->temp_dir . $uniqname;
 
         return $dst_file;
+    }
+
+    /**
+     * ファイルのアップロードのエラーを確認
+     *
+     * @param string $keyname ファイルinputタグのname
+     * @param object $objErr SC_CheckErrorインスタンス
+     * @return boolean
+     */
+    public function checkUploadError($keyname, SC_CheckError &$objErr)
+    {
+        $index = array_search($keyname, $this->keyname);
+
+        switch ($_FILES[$keyname]['error']) {
+            case UPLOAD_ERR_OK:
+                return true;
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $objErr->arrErr[$keyname] = '※ '
+                    . $this->disp_name[$index]
+                    . 'が選択されていません。'
+                    . '<br />';
+                break;
+            case UPLOAD_ERR_INI_SIZE:
+                $objErr->arrErr[$keyname] = '※ '
+                    . $this->disp_name[$index]
+                    . 'のアップロードに失敗しました。'
+                    . '(.htaccessファイルのphp_value upload_max_filesizeを調整してください)'
+                    . '<br />';
+                break;
+            default:
+                $objErr->arrErr[$keyname] = '※ '
+                    . $this->disp_name[$index]
+                    . 'のアップロードに失敗しました。'
+                    . 'エラーコードは[' . $_FILES[$keyname]['error'] . ']です。'
+                    . '<br />';
+                break;
+        }
+
+        return false;
     }
 }

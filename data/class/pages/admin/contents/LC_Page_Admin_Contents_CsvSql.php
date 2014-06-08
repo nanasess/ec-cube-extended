@@ -190,8 +190,8 @@ class LC_Page_Admin_Contents_CsvSql extends LC_Page_Admin_Ex
         $arrErr = $objFormParam->checkError();
         // 拡張エラーチェック
         $objErr = new SC_CheckError_Ex($objFormParam->getHashArray());
-        $objErr->doFunc( array('SQL文', 'csv_sql', '30000'), array('EXIST_CHECK', 'MAX_LENGTH_CHECK'));
-        $objErr->doFunc( array('SQL文には読み込み関係以外のSQLコマンドおよび";"記号', 'csv_sql', $this->lfGetSqlDenyList()), array('PROHIBITED_STR_CHECK'));
+        $objErr->doFunc(array('SQL文', 'csv_sql', '30000'), array('EXIST_CHECK', 'MAX_LENGTH_CHECK'));
+        $objErr->doFunc(array('SQL文には読み込み関係以外のSQLコマンドおよび";"記号', 'csv_sql', $this->lfGetSqlDenyList()), array('PROHIBITED_STR_CHECK'));
         if (!SC_Utils_Ex::isBlank($objErr->arrErr)) {
             $arrErr = array_merge($arrErr, $objErr->arrErr);
         }
@@ -211,7 +211,7 @@ class LC_Page_Admin_Contents_CsvSql extends LC_Page_Admin_Ex
         $arrErr = $objFormParam->checkError();
         // 拡張エラーチェック
         $objErr = new SC_CheckError_Ex($objFormParam->getHashArray());
-        $objErr->doFunc( array('SQL ID', 'sql_id'), array('EXIST_CHECK'));
+        $objErr->doFunc(array('SQL ID', 'sql_id'), array('EXIST_CHECK'));
         if (!SC_Utils_Ex::isBlank($objErr->arrErr)) {
             $arrErr = array_merge($arrErr, $objErr->arrErr);
         }
@@ -231,7 +231,7 @@ class LC_Page_Admin_Contents_CsvSql extends LC_Page_Admin_Ex
         $arrErr = $objFormParam->checkError();
         // 拡張エラーチェック
         $objErr = new SC_CheckError_Ex($objFormParam->getHashArray());
-        $objErr->doFunc( array('CSV出力対象SQL ID', 'csv_output_id'), array('EXIST_CHECK'));
+        $objErr->doFunc(array('CSV出力対象SQL ID', 'csv_output_id'), array('EXIST_CHECK'));
         if (!SC_Utils_Ex::isBlank($objErr->arrErr)) {
             $arrErr = array_merge($arrErr, $objErr->arrErr);
         }
@@ -351,26 +351,12 @@ class LC_Page_Admin_Contents_CsvSql extends LC_Page_Admin_Ex
      */
     public function lfDoCsvOutput($sql_id)
     {
-        $arrData = $this->lfGetSqlList('sql_id = ?', array($sql_id));
-        $sql = 'SELECT ' . $arrData[0]['csv_sql'] . ' ';
-
-        // TODO: ヘッダ取得 SQL内にLIMIT文がある場合はLIMIT句は追加しないので重いかも
-        $objQuery =& SC_Query_Ex::getSingletonInstance();
-
-        $arrHeader = array();
-        if (!preg_match('/ LIMIT /', $sql)) {
-            $head_sql = $sql . ' LIMIT 0';
-        } else {
-            $head_sql = $sql;
-        }
-        $arrData = $objQuery->getQueryDefsFields($head_sql, array(), true);
-        if (!SC_Utils_Ex::isBlank($arrData)) {
-            foreach ($arrData as $key => $val) {
-                $arrHeader[] = $key;
-            }
-        }
         $objCSV = new SC_Helper_CSV_Ex();
-        $objCSV->sfDownloadCsvFromSql($sql, array(), 'contents', $arrHeader, true);
+
+        $arrData = $this->lfGetSqlList('sql_id = ?', array($sql_id));
+        $sql = 'SELECT ' . $arrData[0]['csv_sql'];
+
+        $objCSV->sfDownloadCsvFromSql($sql, array(), 'contents', null, true);
         SC_Response_Ex::actionExit();
     }
 
@@ -431,64 +417,65 @@ class LC_Page_Admin_Contents_CsvSql extends LC_Page_Admin_Ex
      */
     public function lfGetSqlDenyList()
     {
-        $arrList = array(';'
-            ,'CREATE\s'
-            ,'INSERT\s'
-            ,'UPDATE\s'
-            ,'DELETE\s'
-            ,'ALTER\s'
-            ,'ABORT\s'
-            ,'ANALYZE\s'
-            ,'CLUSTER\s'
-            ,'COMMENT\s'
-            ,'COPY\s'
-            ,'DECLARE\s'
-            ,'DISCARD\s'
-            ,'DO\s'
-            ,'DROP\s'
-            ,'EXECUTE\s'
-            ,'EXPLAIN\s'
-            ,'GRANT\s'
-            ,'LISTEN\s'
-            ,'LOAD\s'
-            ,'LOCK\s'
-            ,'NOTIFY\s'
-            ,'PREPARE\s'
-            ,'REASSIGN\s'
-//            ,'REINDEX\s'      // REINDEXは許可で良いかなと
-            ,'RELEASE\sSAVEPOINT'
-            ,'RENAME\s'
-            ,'REST\s'
-            ,'REVOKE\s'
-            ,'SAVEPOINT\s'
-            ,'SET\s'
-            ,'SHOW\s'
-            ,'START\sTRANSACTION'
-            ,'TRUNCATE\s'
-            ,'UNLISTEN\s'
-            ,'VACCUM\s'
-            ,'HANDLER\s'
-            ,'LOAD\sDATA\s'
-            ,'LOAD\sXML\s'
-            ,'REPLACE\s'
-            ,'OPTIMIZE\s'
-            ,'REPAIR\s'
-            ,'INSTALL\sPLUGIN\s'
-            ,'UNINSTALL\sPLUGIN\s'
-            ,'BINLOG\s'
-            ,'KILL\s'
-            ,'RESET\s'
-            ,'PURGE\s'
-            ,'CHANGE\sMASTER'
-            ,'START\sSLAVE'
-            ,'STOP\sSLAVE'
-            ,'MASTER\sPOS\sWAIT'
-            ,'SIGNAL\s'
-            ,'RESIGNAL\s'
-            ,'RETURN\s'
-            ,'USE\s'
-            ,'HELP\s'
-            );
+        $arrList = array(
+            ';',
+            'CREATE\s',
+            'INSERT\s',
+            'UPDATE\s',
+            'DELETE\s',
+            'ALTER\s',
+            'ABORT\s',
+            'ANALYZE\s',
+            'CLUSTER\s',
+            'COMMENT\s',
+            'COPY\s',
+            'DECLARE\s',
+            'DISCARD\s',
+            'DO\s',
+            'DROP\s',
+            'EXECUTE\s',
+            'EXPLAIN\s',
+            'GRANT\s',
+            'LISTEN\s',
+            'LOAD\s',
+            'LOCK\s',
+            'NOTIFY\s',
+            'PREPARE\s',
+            'REASSIGN\s',
+//            'REINDEX\s', // REINDEXは許可で良いかなと
+            'RELEASE\sSAVEPOINT',
+            'RENAME\s',
+            'REST\s',
+            'REVOKE\s',
+            'SAVEPOINT\s',
+            '\sSET\s', // OFFSETを誤検知しないように先頭・末尾に\sを指定
+            'SHOW\s',
+            'START\sTRANSACTION',
+            'TRUNCATE\s',
+            'UNLISTEN\s',
+            'VACCUM\s',
+            'HANDLER\s',
+            'LOAD\sDATA\s',
+            'LOAD\sXML\s',
+            'REPLACE\s',
+            'OPTIMIZE\s',
+            'REPAIR\s',
+            'INSTALL\sPLUGIN\s',
+            'UNINSTALL\sPLUGIN\s',
+            'BINLOG\s',
+            'KILL\s',
+            'RESET\s',
+            'PURGE\s',
+            'CHANGE\sMASTER',
+            'START\sSLAVE',
+            'STOP\sSLAVE',
+            'MASTER\sPOS\sWAIT',
+            'SIGNAL\s',
+            'RESIGNAL\s',
+            'RETURN\s',
+            'USE\s',
+            'HELP\s',
+        );
 
         return $arrList;
     }

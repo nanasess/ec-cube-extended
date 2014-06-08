@@ -87,7 +87,9 @@ class SC_DB_DBFactory
      * @return string データベースのバージョン
      */
     public function sfGetDBVersion($dsn = '')
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * MySQL 用の SQL 文に変更する.
@@ -96,7 +98,9 @@ class SC_DB_DBFactory
      * @return string MySQL 用に置換した SQL 文
      */
     public function sfChangeMySQL($sql)
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * 昨日の売上高・売上件数を算出する SQL を返す.
@@ -105,7 +109,9 @@ class SC_DB_DBFactory
      * @return string 昨日の売上高・売上件数を算出する SQL
      */
     public function getOrderYesterdaySql($method)
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * 当月の売上高・売上件数を算出する SQL を返す.
@@ -114,7 +120,9 @@ class SC_DB_DBFactory
      * @return string 当月の売上高・売上件数を算出する SQL
      */
     public function getOrderMonthSql($method)
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * 昨日のレビュー書き込み件数を算出する SQL を返す.
@@ -122,7 +130,9 @@ class SC_DB_DBFactory
      * @return string 昨日のレビュー書き込み件数を算出する SQL
      */
     public function getReviewYesterdaySql()
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * メール送信履歴の start_date の検索条件の SQL を返す.
@@ -130,7 +140,9 @@ class SC_DB_DBFactory
      * @return string 検索条件の SQL
      */
     public function getSendHistoryWhereStartdateSql()
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * ダウンロード販売の検索条件の SQL を返す.
@@ -138,7 +150,9 @@ class SC_DB_DBFactory
      * @return string 検索条件の SQL
      */
     public function getDownloadableDaysWhereSql()
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * 文字列連結を行う.
@@ -147,7 +161,9 @@ class SC_DB_DBFactory
      * @return string 連結後の SQL 文
      */
     public function concatColumn($columns)
-    { return null; }
+    {
+        return null;
+    }
 
     /**
      * テーブルを検索する.
@@ -159,7 +175,9 @@ class SC_DB_DBFactory
      * @return array  テーブル名の配列
      */
     public function findTableNames($expression = '')
-    { return array(); }
+    {
+        return array();
+    }
 
     /**
      * インデックス作成の追加定義を取得する
@@ -171,7 +189,9 @@ class SC_DB_DBFactory
      * @return array  インデックス設定情報配列
      */
     public function sfGetCreateIndexDefinition($table, $name, $definition)
-    { return $definition; }
+    {
+        return $definition;
+    }
 
     /**
      * 各 DB に応じた SC_Query での初期化を行う
@@ -193,5 +213,88 @@ class SC_DB_DBFactory
         $objManager =& $objQuery->conn->loadModule('Manager');
 
         return $objManager->listTables();
+    }
+
+    /**
+     * SQL 文に OFFSET, LIMIT を付加する。
+     *
+     * @param string 元の SQL 文
+     * @param integer LIMIT
+     * @param integer OFFSET
+     * @return string 付加後の SQL 文
+     */
+    function addLimitOffset($sql, $limit = 0, $offset = 0)
+    {
+        if ($limit != 0) {
+            $sql .= " LIMIT $limit";
+        }
+        if (strlen($offset) === 0) {
+            $offset = 0;
+        }
+        $sql .= " OFFSET $offset";
+
+        return $sql;
+    }
+
+    /**
+     * 商品詳細の SQL を取得する.
+     *
+     * @param  string $where_products_class 商品規格情報の WHERE 句
+     * @return string 商品詳細の SQL
+     */
+    public function alldtlSQL($where_products_class = '')
+    {
+        if (!SC_Utils_Ex::isBlank($where_products_class)) {
+            $where_products_class = 'AND (' . $where_products_class . ')';
+        }
+        /*
+         * point_rate, deliv_fee は商品規格(dtb_products_class)ごとに保持しているが,
+         * 商品(dtb_products)ごとの設定なので MAX のみを取得する.
+         */
+        $sql = <<< __EOS__
+            (
+                SELECT
+                     dtb_products.*
+                    ,T4.product_code_min
+                    ,T4.product_code_max
+                    ,T4.price01_min
+                    ,T4.price01_max
+                    ,T4.price02_min
+                    ,T4.price02_max
+                    ,T4.stock_min
+                    ,T4.stock_max
+                    ,T4.stock_unlimited_min
+                    ,T4.stock_unlimited_max
+                    ,T4.point_rate
+                    ,T4.deliv_fee
+                    ,T4.class_count
+                    ,dtb_maker.name AS maker_name
+                FROM dtb_products
+                    INNER JOIN (
+                        SELECT product_id,
+                            MIN(product_code) AS product_code_min,
+                            MAX(product_code) AS product_code_max,
+                            MIN(price01) AS price01_min,
+                            MAX(price01) AS price01_max,
+                            MIN(price02) AS price02_min,
+                            MAX(price02) AS price02_max,
+                            MIN(stock) AS stock_min,
+                            MAX(stock) AS stock_max,
+                            MIN(stock_unlimited) AS stock_unlimited_min,
+                            MAX(stock_unlimited) AS stock_unlimited_max,
+                            MAX(point_rate) AS point_rate,
+                            MAX(deliv_fee) AS deliv_fee,
+                            COUNT(*) as class_count
+                        FROM dtb_products_class
+                        WHERE del_flg = 0 $where_products_class
+                        GROUP BY product_id
+                    ) AS T4
+                        ON dtb_products.product_id = T4.product_id
+                    LEFT JOIN dtb_maker
+                        ON dtb_products.maker_id = dtb_maker.maker_id
+            ) AS alldtl
+__EOS__;
+
+        return $sql;
     }
 }

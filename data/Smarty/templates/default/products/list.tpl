@@ -141,7 +141,7 @@
         <!--{assign var=id value=$arrProduct.product_id}-->
         <!--{assign var=arrErr value=$arrProduct.arrErr}-->
         <!--▼商品-->
-        <form name="product_form<!--{$id|h}-->" action="?" onsubmit="return false;">
+        <form name="product_form<!--{$id|h}-->" action="?">
             <input type="hidden" name="<!--{$smarty.const.TRANSACTION_ID_NAME}-->" value="<!--{$transactionid}-->" />
             <input type="hidden" name="product_id" value="<!--{$id|h}-->" />
             <input type="hidden" name="product_class_id" id="product_class_id<!--{$id|h}-->" value="<!--{$tpl_product_class_id[$id]}-->" />
@@ -176,9 +176,9 @@
                         <span class="price">
                             <span id="price02_default_<!--{$id}-->"><!--{strip}-->
                                 <!--{if $arrProduct.price02_min_inctax == $arrProduct.price02_max_inctax}-->
-                                    <!--{$arrProduct.price02_min_inctax|number_format}-->
+                                    <!--{$arrProduct.price02_min_inctax|n2s}-->
                                 <!--{else}-->
-                                    <!--{$arrProduct.price02_min_inctax|number_format}-->～<!--{$arrProduct.price02_max_inctax|number_format}-->
+                                    <!--{$arrProduct.price02_min_inctax|n2s}-->～<!--{$arrProduct.price02_max_inctax|n2s}-->
                                 <!--{/if}-->
                             </span><span id="price02_dynamic_<!--{$id}-->"></span><!--{/strip}-->
                             円</span>

@@ -1086,13 +1086,6 @@ CREATE TABLE mtb_ownersstore_err (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE mtb_ownersstore_ips (
-    id smallint,
-    name text,
-    rank smallint NOT NULL DEFAULT 0,
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE mtb_constants (
     id text,
     name text,
@@ -1248,3 +1241,4 @@ CREATE INDEX dtb_mobile_ext_session_id_param_key_key ON dtb_mobile_ext_session_i
 CREATE INDEX dtb_mobile_ext_session_id_param_value_key ON dtb_mobile_ext_session_id (param_value);
 CREATE INDEX dtb_mobile_ext_session_id_url_key ON dtb_mobile_ext_session_id (url);
 CREATE INDEX dtb_mobile_ext_session_id_create_date_key ON dtb_mobile_ext_session_id (create_date);
+CREATE INDEX dtb_products_class_product_id ON dtb_products_class (product_id) WHERE del_flg = 0;

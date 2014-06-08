@@ -127,7 +127,7 @@ class GC_Utils
     {
         trigger_error('前方互換用メソッドが使用されました。', E_USER_WARNING);
         // メッセージの前に、ログ出力元関数名とログ出力関数呼び出し部分の行数を付与
-        $mess = GC_Utils::gfGetCallerInfo(true) . $mess;
+        $mess = GC_Utils_Ex::gfGetCallerInfo(true) . $mess;
 
         // ログレベル=Debugの場合は、[Debug]を先頭に付与する
         if ($log_level === 'Debug') {
@@ -179,7 +179,7 @@ class GC_Utils
      * @param string $path
      * @param bool   $verbose 冗長な出力を行うか
      */
-    public function gfPrintLog($msg, $path = '', $verbose = USE_VERBOSE_LOG)
+    public static function gfPrintLog($msg, $path = '', $verbose = USE_VERBOSE_LOG)
     {
         // 日付の取得
         $today = date('Y/m/d H:i:s');
@@ -257,7 +257,7 @@ class GC_Utils
      * [依存] なし
      * [注釈] -
      *----------------------------------------------------------------------*/
-    public function gfMakePassword($pwLength)
+    public static function gfMakePassword($pwLength)
     {
         // 乱数表のシードを決定
         srand((double) microtime() * 54234853);
@@ -340,13 +340,11 @@ class GC_Utils
         // PHP >= 5.3.1, PHP == 5.3.0 (not Windows)
         if (isset($arrDefinedConstants['Core'])) {
             $arrDefinedCoreConstants = $arrDefinedConstants['Core'];
-        }
         // PHP < 5.3.0
-        elseif (isset($arrDefinedConstants['internal'])) {
+        } elseif (isset($arrDefinedConstants['internal'])) {
             $arrDefinedCoreConstants = $arrDefinedConstants['internal'];
-        }
         // PHP == 5.3.0 (Windows)
-        elseif (isset($arrDefinedConstants['mhash'])) {
+        } elseif (isset($arrDefinedConstants['mhash'])) {
             $arrDefinedCoreConstants = $arrDefinedConstants['mhash'];
         }
 
@@ -366,8 +364,6 @@ class GC_Utils
      */
     public function getUrl()
     {
-        $url = '';
-
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
             $url = 'https://';
         } else {
@@ -397,7 +393,7 @@ class GC_Utils
      *
      * @return bool フロント機能か
      */
-    public function isFrontFunction()
+    public static function isFrontFunction()
     {
         return defined('FRONT_FUNCTION') && FRONT_FUNCTION === true;
     }
@@ -407,7 +403,7 @@ class GC_Utils
      *
      * @return bool インストール機能か
      */
-    public function isInstallFunction()
+    public static function isInstallFunction()
     {
         return defined('INSTALL_FUNCTION') && INSTALL_FUNCTION === true;
     }

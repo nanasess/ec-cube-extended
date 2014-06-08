@@ -51,14 +51,15 @@ class SC_Query
     public function __construct($dsn = '', $force_run = false, $new = false)
     {
         if ($dsn == '') {
-            $dsn = array('phptype'  => DB_TYPE,
-                         'username' => DB_USER,
-                         'password' => DB_PASSWORD,
-                         'protocol' => 'tcp',
-                         'hostspec' => DB_SERVER,
-                         'port'     => DB_PORT,
-                         'database' => DB_NAME
-                         );
+            $dsn = array(
+                'phptype'  => DB_TYPE,
+                'username' => DB_USER,
+                'password' => DB_PASSWORD,
+                'protocol' => 'tcp',
+                'hostspec' => DB_SERVER,
+                'port'     => DB_PORT,
+                'database' => DB_NAME,
+            );
         }
 
         // オプション
@@ -67,11 +68,10 @@ class SC_Query
             'persistent' => PEAR_DB_PERSISTENT,
             // Debugモード
             'debug' => PEAR_DB_DEBUG,
+            // バッファリング true にするとメモリが解放されない。
+            // 連続クエリ実行時に問題が生じる。
+            'result_buffering' => false,
         );
-
-        // バッファリング trueにするとメモリが解放されない。
-        // 連続クエリ実行時に問題が生じる。
-        $options['result_buffering'] = false;
 
         if ($new) {
             $this->conn = MDB2::connect($dsn, $options);
@@ -200,7 +200,11 @@ class SC_Query
      */
     public function commit()
     {
-        return $this->conn->commit();
+        if ($this->inTransaction()) {
+            return $this->conn->commit();
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -222,7 +226,11 @@ class SC_Query
      */
     public function rollback()
     {
-        return $this->conn->rollback();
+        if ($this->inTransaction()) {
+            return $this->conn->rollback();
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1214,5 +1222,23 @@ class SC_Query
         if (isset(SC_Query_Ex::$arrPoolInstance[$key_str])) {
             return SC_Query_Ex::$arrPoolInstance[$key_str];
         }
+    }
+
+    /**
+     * 構築した SELECT 文を LIMIT OFFSET も含め取得する.
+     *
+     * @param  string SELECT 文に含めるカラム名
+     * @param  string SELECT 文に含めるテーブル名
+     * @param  string SELECT 文に含める WHERE 句
+     * @return string 構築済みの SELECT 文
+     */
+    function getSqlWithLimitOffset($cols, $from = '', $where = '')
+    {
+        $sql = $this->getSql($cols, $from, $where);
+        $offset = $this->conn->offset;
+        $limit = $this->conn->limit;
+        $this->setLimitOffset(0, 0);
+
+        return $this->dbFactory->addLimitOffset($sql, $limit, $offset);
     }
 }

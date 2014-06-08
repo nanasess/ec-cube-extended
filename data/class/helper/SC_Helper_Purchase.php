@@ -311,6 +311,8 @@ class SC_Helper_Purchase
      */
     public function getShippingTemp($has_shipment_item = false)
     {
+        // ダウンロード商品の場合setされていないので空の配列を返す.
+        if (!isset($_SESSION['shipping'])) return array();
         if ($has_shipment_item) {
             $arrReturn = array();
             foreach ($_SESSION['shipping'] as $key => $arrVal) {
@@ -980,9 +982,8 @@ __EOS__;
             // 販売価格が 0 円
             if ($arrOrderDetail[$key]['price'] == '0') {
                 $arrOrderDetail[$key]['is_downloadable'] = true;
-            }
             // ダウンロード期限内かつ, 入金日あり
-            elseif ($arrOrderDetail[$key]['effective'] == '1'
+            } elseif ($arrOrderDetail[$key]['effective'] == '1'
                     && !SC_Utils_Ex::isBlank($arrOrderDetail[$key]['payment_date'])) {
                 $arrOrderDetail[$key]['is_downloadable'] = true;
             } else {
@@ -1057,27 +1058,32 @@ __EOS__;
     }
 
     /**
-     * 受注完了メールを送信する.
+     * 注文受付メールを送信する.
      *
-     * HTTP_USER_AGENT の種別により, 携帯電話の場合は携帯用の文面,
-     * PC の場合は PC 用の文面でメールを送信する.
+     * 端末種別IDにより, 携帯電話の場合は携帯用の文面,
+     * それ以外の場合は PC 用の文面でメールを送信する.
      *
-     * @param  integer $orderId 受注ID
+     * @param integer $order_id 受注ID
      * @param  object  $objPage LC_Page インスタンス
-     * @return void
+     * @return boolean 送信に成功したか。現状では、正確には取得できない。
      */
-    public function sendOrderMail($orderId, &$objPage = NULL)
+    public static function sendOrderMail($order_id, &$objPage = NULL)
     {
-        $mailHelper = new SC_Helper_Mail_Ex();
+        $objMail = new SC_Helper_Mail_Ex();
 
         // setPageは、プラグインの処理に必要(see #1798)
         if (is_object($objPage)) {
-            $mailHelper->setPage($objPage);
+            $objMail->setPage($objPage);
         }
 
-        $template_id =
-            SC_Display_Ex::detectDevice() == DEVICE_TYPE_MOBILE ? 2 : 1;
-        $mailHelper->sfSendOrderMail($orderId, $template_id);
+        $arrOrder = SC_Helper_Purchase::getOrder($order_id);
+        if (empty($arrOrder)) {
+            return false; // 失敗
+        }
+        $template_id = $arrOrder['device_type_id'] == DEVICE_TYPE_MOBILE ? 2 : 1;
+        $objMail->sfSendOrderMail($order_id, $template_id);
+
+        return true; // 成功
     }
 
     /**
@@ -1175,9 +1181,8 @@ __EOS__;
         // 対応状況が発送済みに変更の場合、発送日を更新
         if ($arrOrderOld['status'] != ORDER_DELIV && $newStatus == ORDER_DELIV) {
             $sqlval['commit_date'] = 'CURRENT_TIMESTAMP';
-        }
         // 対応状況が入金済みに変更の場合、入金日を更新
-        elseif ($arrOrderOld['status'] != ORDER_PRE_END && $newStatus == ORDER_PRE_END) {
+        } elseif ($arrOrderOld['status'] != ORDER_PRE_END && $newStatus == ORDER_PRE_END) {
             $sqlval['payment_date'] = 'CURRENT_TIMESTAMP';
         }
 
@@ -1345,11 +1350,12 @@ __EOS__;
 
     /**
      * 決済処理中スタータスの受注データのキャンセル処理
-     * @param $cancel_flg 決済処理中ステータスのロールバックをするか(true:する false:しない)
+     * @param bool $cancel_flg 決済処理中ステータスのロールバックをするか(true:する false:しない)
+     * @return void
      */
     public function cancelPendingOrder($cancel_flg)
     {
-        if($cancel_flg == true){
+        if ($cancel_flg == true) {
             $this->checkDbAllPendingOrder();
             $this->checkDbMyPendignOrder();
             $this->checkSessionPendingOrder();
@@ -1365,7 +1371,7 @@ __EOS__;
         if (!SC_Utils_Ex::isBlank($term) && preg_match("/^[0-9]+$/", $term)) {
             $target_time = strtotime('-' . $term . ' sec');
             $objQuery =& SC_Query_Ex::getSingletonInstance();
-            $arrVal = array(date('Y/m/d H:i:s',$target_time), ORDER_PENDING);
+            $arrVal = array(date('Y/m/d H:i:s', $target_time), ORDER_PENDING);
             $objQuery->begin();
             $arrOrders = $objQuery->select('order_id', 'dtb_order', 'create_date <= ? and status = ? and del_flg = 0', $arrVal);
             if (!SC_Utils_Ex::isBlank($arrOrders)) {

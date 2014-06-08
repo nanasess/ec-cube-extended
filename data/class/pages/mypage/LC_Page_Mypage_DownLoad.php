@@ -79,7 +79,7 @@ class LC_Page_Mypage_DownLoad extends LC_Page_Ex
         // ログインチェック
         $objCustomer = new SC_Customer_Ex();
         if (!$objCustomer->isLoginSuccess(true)) {
-            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND,'',true);
+            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND, '', true);
         }
 
         // パラメーターチェック
@@ -90,7 +90,7 @@ class LC_Page_Mypage_DownLoad extends LC_Page_Ex
         $objFormParam->setParam($_GET);
         $this->arrErr = $this->lfCheckError($objFormParam);
         if (count($this->arrErr)!=0) {
-            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND,'',true);
+            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND, '', true);
         }
 
     }
@@ -112,24 +112,23 @@ class LC_Page_Mypage_DownLoad extends LC_Page_Ex
         // パラメーター取得
         $customer_id = $_SESSION['customer']['customer_id'];
         $order_id = $_GET['order_id'];
-        $product_id = $_GET['product_id'];
         $product_class_id = $_GET['product_class_id'];
 
         //DBから商品情報の読込
-        $arrForm = $this->lfGetRealFileName($customer_id, $order_id, $product_id, $product_class_id);
+        $arrForm = $this->lfGetRealFileName($customer_id, $order_id, $product_class_id);
 
         //ファイル情報が無い場合はNG
         if ($arrForm['down_realfilename'] == '') {
-            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND,'',true);
+            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND, '', true);
         }
         //ファイルそのものが無い場合もとりあえずNG
         $realpath = DOWN_SAVE_REALDIR . $arrForm['down_realfilename'];
         if (!file_exists($realpath)) {
-            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND,'',true);
+            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND, '', true);
         }
         //ファイル名をエンコードする Safariの対策はUTF-8で様子を見る
         $encoding = 'Shift_JIS';
-        if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'],'Safari')) {
+        if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari')) {
             $encoding = 'UTF-8';
         }
         $sdown_filename = mb_convert_encoding($arrForm['down_filename'], $encoding, 'auto');
@@ -142,14 +141,14 @@ class LC_Page_Mypage_DownLoad extends LC_Page_Ex
             // キャリアがAUのモバイル端末はさらにダウンロード方法が異なる
             if (SC_MobileUserAgent::getCarrier() == 'ezweb') {
                 // AUモバイル
-                $this->lfMobileAuDownload($realpath,$sdown_filename);
+                $this->lfMobileAuDownload($realpath, $sdown_filename);
             } else {
                 // AU以外のモバイル
-                $this->lfMobileDownload($realpath,$sdown_filename);
+                $this->lfMobileDownload($realpath, $sdown_filename);
             }
         } else {
             // PC、スマフォ
-            $this->lfDownload($realpath,$sdown_filename);
+            $this->lfDownload($realpath, $sdown_filename);
         }
     }
 
@@ -158,37 +157,29 @@ class LC_Page_Mypage_DownLoad extends LC_Page_Ex
      *
      * @param  integer $customer_id      会員ID
      * @param  integer $order_id         受注ID
-     * @param  integer $product_id       商品ID
      * @param  integer $product_class_id 商品規格ID
      * @return array   商品情報の配列
      */
-    public function lfGetRealFileName($customer_id, $order_id, $product_id, $product_class_id)
+    public function lfGetRealFileName($customer_id, $order_id, $product_class_id)
     {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
         $col = <<< __EOS__
-            pc.product_id AS product_id,
-            pc.product_class_id AS product_class_id,
             pc.down_realfilename AS down_realfilename,
-            pc.down_filename AS down_filename,
-            o.order_id AS order_id,
-            o.customer_id AS customer_id,
-            o.payment_date AS payment_date,
-            o.status AS status
+            pc.down_filename AS down_filename
 __EOS__;
 
         $table = <<< __EOS__
-            dtb_products_class pc,
-            dtb_order_detail od,
-            dtb_order o
+            dtb_order AS o
+            JOIN dtb_order_detail AS od USING(order_id)
+            JOIN dtb_products_class AS pc USING(product_id, product_class_id)
 __EOS__;
 
         $dbFactory = SC_DB_DBFactory_Ex::getInstance();
-        $where = 'o.customer_id = ? AND o.order_id = ? AND pc.product_id = ? AND pc.product_class_id = ?';
-        $where .= ' AND od.product_id = ? AND od.product_class_id = ?';
+        $where = 'o.customer_id = ? AND o.order_id = ? AND od.product_class_id = ?';
         $where .= ' AND ' . $dbFactory->getDownloadableDaysWhereSql('o');
         $where .= ' = 1';
-        $arrRet = $objQuery->select($col, $table, $where,
-                                    array($customer_id, $order_id, $product_id, $product_class_id, $product_id, $product_class_id));
+        $arrWhereVal = array($customer_id, $order_id, $product_class_id);
+        $arrRet = $objQuery->select($col, $table, $where, $arrWhereVal);
 
         return $arrRet[0];
     }
@@ -196,10 +187,9 @@ __EOS__;
     /* パラメーター情報の初期化 */
     public function lfInitParam(&$objFormParam)
     {
-        $objFormParam->addParam('customer_id', 'customer_id', INT_LEN, 'n', array('EXIST_CHECK','NUM_CHECK'));
+        $objFormParam->addParam('customer_id', 'customer_id', INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK'));
         $objFormParam->addParam('order_id', 'order_id', INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK'));
-        $objFormParam->addParam('product_id', 'product_id', INT_LEN, 'n', array('EXIST_CHECK','NUM_CHECK'));
-        $objFormParam->addParam('product_class_id', 'product_class_id', INT_LEN, 'n', array('EXIST_CHECK','NUM_CHECK'));
+        $objFormParam->addParam('product_class_id', 'product_class_id', INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK'));
     }
 
     /* 入力内容のチェック */
@@ -217,7 +207,7 @@ __EOS__;
      * @param string $realpath       ダウンロードファイルパス
      * @param string $sdown_filename ダウンロード時の指定ファイル名
      */
-    public function lfMobileHeader($realpath,$sdown_filename)
+    public function lfMobileHeader($realpath, $sdown_filename)
     {
         $objHelperMobile = new SC_Helper_Mobile_Ex();
         //ファイルの拡張子からコンテンツタイプを取得する
@@ -235,10 +225,10 @@ __EOS__;
      * @param string $realpath       ダウンロードファイルパス
      * @param string $sdown_filename ダウンロード時の指定ファイル名
      */
-    public function lfMobileAuDownload($realpath,$sdown_filename)
+    public function lfMobileAuDownload($realpath, $sdown_filename)
     {
         //モバイル用ヘッダー出力
-        $this->lfMobileHeader($realpath,$sdown_filename);
+        $this->lfMobileHeader($realpath, $sdown_filename);
         //ファイルサイズを取得する
         $file_size = filesize($realpath);
         //読み込み
@@ -257,7 +247,7 @@ __EOS__;
             $content_length = $file_size;
             header('Content-Length: ' . $content_length);
         }
-        echo fread($fp, $content_length) ;
+        echo fread($fp, $content_length);
         SC_Utils_Ex::sfFlush();
     }
 
@@ -267,10 +257,10 @@ __EOS__;
      * @param string $realpath       ダウンロードファイルパス
      * @param string $sdown_filename ダウンロード時の指定ファイル名
      */
-    public function lfMobileDownload($realpath,$sdown_filename)
+    public function lfMobileDownload($realpath, $sdown_filename)
     {
         //モバイル用ヘッダー出力
-        $this->lfMobileHeader($realpath,$sdown_filename);
+        $this->lfMobileHeader($realpath, $sdown_filename);
         //ファイルサイズを取得する
         $file_size = filesize($realpath);
 
@@ -280,8 +270,8 @@ __EOS__;
         //HTTP_RANGEがセットされていた場合
         if (isset($_SERVER['HTTP_RANGE'])) {
             // 二回目以降のリクエスト
-            list($a, $range) = explode('=',$_SERVER['HTTP_RANGE'],2);
-            list($range) = explode(',',$range,2);
+            list($a, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+            list($range) = explode(',', $range, 2);
             list($range, $range_end) = explode('-', $range);
             $range=intval($range);
 
@@ -326,7 +316,7 @@ __EOS__;
      * @param string $realpath       ダウンロードファイルパス
      * @param string $sdown_filename ダウンロード時の指定ファイル名
      */
-    public function lfDownload($realpath,$sdown_filename)
+    public function lfDownload($realpath, $sdown_filename)
     {
         // 拡張子を取得
         $extension = pathinfo($realpath, PATHINFO_EXTENSION);
@@ -352,7 +342,7 @@ __EOS__;
         //ファイル読み込み
         $handle = fopen($realpath, 'rb');
         if ($handle === false) {
-            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND,'',true);
+            SC_Utils_Ex::sfDispSiteError(DOWNFILE_NOT_FOUND, '', true);
             SC_Response_Ex::actionExit();
         }
         while (!feof($handle)) {

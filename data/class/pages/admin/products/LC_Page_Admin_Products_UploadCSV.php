@@ -347,13 +347,13 @@ class LC_Page_Admin_Products_UploadCSV extends LC_Page_Admin_Ex
             }
             // パラメーター登録
             $objFormParam->addParam(
-                    $item['disp_name']
-                    , $col
-                    , constant($item['size_const_type'])
-                    , $item['mb_convert_kana_option']
-                    , $arrErrorCheckTypes
-                    , $item['default']
-                    , $item['rw_flg'] != CSV_COLUMN_RW_FLG_READ_ONLY
+                    $item['disp_name'],
+                    $col,
+                    constant($item['size_const_type']),
+                    $item['mb_convert_kana_option'],
+                    $arrErrorCheckTypes,
+                    $item['default'],
+                    $item['rw_flg'] != CSV_COLUMN_RW_FLG_READ_ONLY
                     );
         }
     }
@@ -638,13 +638,11 @@ class LC_Page_Admin_Products_UploadCSV extends LC_Page_Admin_Ex
                 if (!$upload_flg or ($upload_flg and array_key_exists('stock', $sqlval))) {
                     $sqlval['stock_unlimited'] = UNLIMITED_FLG_UNLIMITED;
                 }
-            }
             // 在庫数を入力している場合、在庫無制限フラグ = 制限有り
-            elseif (strlen($sqlval['stock']) >= 1) {
+            } elseif (strlen($sqlval['stock']) >= 1) {
                 $sqlval['stock_unlimited'] = UNLIMITED_FLG_LIMITED;
-            }
             // いずれにも該当しない場合、例外エラー
-            else {
+            } else {
                 trigger_error('', E_USER_ERROR);
             }
         }
@@ -673,8 +671,8 @@ class LC_Page_Admin_Products_UploadCSV extends LC_Page_Admin_Ex
             if ($item['product_id'] == '') {
                 $arrErr['product_class_id'] = '※ 商品規格ID指定時には商品IDの指定が必須です。';
             } else {
-                if (!$this->objDb->sfIsRecord('dtb_products_class', 'product_id, product_class_id'
-                        , array($item['product_id'], $item['product_class_id']))
+                if (!$this->objDb->sfIsRecord('dtb_products_class', 'product_id, product_class_id',
+                        array($item['product_id'], $item['product_class_id']))
                 ) {
                     $arrErr['product_class_id'] = '※ 指定の商品IDと商品規格IDの組合せは正しくありません。';
                 }
@@ -686,7 +684,7 @@ class LC_Page_Admin_Products_UploadCSV extends LC_Page_Admin_Ex
                 if ($product_class_id && $product_class_id != $item['product_class_id']) {
                     $arrErr['product_class_id'] = '※ 指定の商品ID/規格分類と、商品規格IDの組合せは正しくありません。';
                 }
-             }
+            }
         }
         // 表示ステータスの存在チェック
         if (!$this->lfIsArrayRecord($this->arrDISP, 'status', $item)) {

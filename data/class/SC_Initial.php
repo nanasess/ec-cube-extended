@@ -35,7 +35,7 @@ class SC_Initial
     public function __construct()
     {
         /** EC-CUBEのバージョン */
-        define('ECCUBE_VERSION', '2.13.0-dev');
+        define('ECCUBE_VERSION', '2.13.3-dev');
     }
 
     /**
@@ -154,9 +154,7 @@ class SC_Initial
     public function defineDirectoryIndex()
     {
         // DirectoryIndex の実ファイル名
-        if (!defined('DIR_INDEX_FILE')) {
-            define('DIR_INDEX_FILE', 'index.php');
-        }
+        SC_Initial_Ex::defineIfNotDefined('DIR_INDEX_FILE', 'index.php');
 
         $useFilenameDirIndex = is_bool(USE_FILENAME_DIR_INDEX)
             ? USE_FILENAME_DIR_INDEX

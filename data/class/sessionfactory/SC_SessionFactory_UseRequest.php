@@ -34,6 +34,7 @@
  */
 class SC_SessionFactory_UseRequest extends SC_SessionFactory_Ex
 {
+    /** @var LC_UseRequest_State_Mobile|LC_UseRequest_State_PC  */
     public $state = null;
 
     /**
@@ -175,8 +176,7 @@ class SC_SessionFactory_UseRequest extends SC_SessionFactory_Ex
         }
 
         // セッションIDの存在をチェックする。
-        $objSession = new SC_Helper_Session_Ex();
-        if ($objSession->sfSessRead($sessionId) === null) {
+        if ($this->sfSessRead($sessionId) === null) {
             GC_Utils_Ex::gfPrintLog("Non-existent session id : sid=$sessionId");
 
             return false;
@@ -192,6 +192,8 @@ class SC_SessionFactory_UseRequest extends SC_SessionFactory_Ex
      */
     public function initSession()
     {
+        parent::initSession();
+
         // セッションIDの受け渡しにクッキーを使用しない。
         ini_set('session.use_cookies', '0');
         ini_set('session.use_trans_sid', '1');
@@ -254,7 +256,9 @@ class LC_UseRequest_State
      * @return string
      */
     public function getNameSpace()
-    { return $this->namespace; }
+    {
+        return $this->namespace;
+    }
 
     /**
      * 有効期間を取得する
@@ -262,7 +266,9 @@ class LC_UseRequest_State
      * @return integer
      */
     public function getLifeTime()
-    { return $this->lifetime; }
+    {
+        return $this->lifetime;
+    }
 
     /**
      * セッションデータが設定されているかを判定する.

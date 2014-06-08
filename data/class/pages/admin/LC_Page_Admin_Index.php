@@ -100,7 +100,7 @@ class LC_Page_Admin_Index extends LC_Page_Admin_Ex
     public function lfInitParam(&$objFormParam)
     {
         $objFormParam->addParam('ID', 'login_id', ID_MAX_LEN, '', array('EXIST_CHECK', 'ALNUM_CHECK' ,'MAX_LENGTH_CHECK'));
-        $objFormParam->addParam('PASSWORD', 'password', ID_MAX_LEN, '', array('EXIST_CHECK', 'ALNUM_CHECK', 'MAX_LENGTH_CHECK'));
+        $objFormParam->addParam('PASSWORD', 'password', ID_MAX_LEN, '', array('EXIST_CHECK', 'GRAPH_CHECK', 'MAX_LENGTH_CHECK'));
     }
 
     /**
@@ -186,7 +186,7 @@ class LC_Page_Admin_Index extends LC_Page_Admin_Ex
     public function lfSetLoginSession($member_id, $login_id, $authority, $login_name, $last_login)
     {
         // Session Fixation対策
-        SC_Session_Ex::regenerateSID();
+        SC_Helper_Session_Ex::regenerateSID();
 
         $objSess = new SC_Session_Ex();
         // 認証済みの設定

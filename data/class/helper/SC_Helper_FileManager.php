@@ -263,10 +263,11 @@ class SC_Helper_FileManager
     public function sfDownloadFile($file)
     {
         // ファイルの場合はダウンロードさせる
-        Header('Content-disposition: attachment; filename='.basename($file));
-        Header('Content-type: application/octet-stream; name='.basename($file));
-        Header('Cache-Control: ');
-        Header('Pragma: ');
+        $file_name = basename($file);
+        header('Content-disposition: attachment; filename=' . $file_name);
+        header('Content-type: application/octet-stream; name=' . $file_name);
+        header('Cache-Control: ');
+        header('Pragma: ');
         echo ($this->sfReadFile($file));
     }
 
@@ -321,7 +322,7 @@ class SC_Helper_FileManager
         if (!is_dir(dirname($filename))) {
             SC_Utils_Ex::recursiveMkdir(dirname($filename), 0777);
         }
-        $fp = fopen($filename,'w');
+        $fp = fopen($filename, 'w');
         if ($fp === false) {
             return false;
         }
@@ -409,7 +410,7 @@ class SC_Helper_FileManager
      * @param  boolean $del_myself $pathそのものを削除するか. true なら削除する.
      * @return void
      */
-    public function deleteFile($path, $del_myself = true)
+    public static function deleteFile($path, $del_myself = true)
     {
         $flg = false;
         // 対象が存在するかを検証.

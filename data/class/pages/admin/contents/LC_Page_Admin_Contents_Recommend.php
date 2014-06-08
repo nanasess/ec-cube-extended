@@ -87,12 +87,11 @@ class LC_Page_Admin_Contents_Recommend extends LC_Page_Admin_Ex
                 break;
 
             case 'regist': // 商品を登録する。
-                $this->arrErr = $this->lfCheckError($objFormParam);
                 $this->arrErr[$arrPost['rank']] = $this->lfCheckError($objFormParam);
                 // 登録処理にエラーがあった場合は商品選択の時と同じ処理を行う。
                 if (SC_Utils_Ex::isBlank($this->arrErr)) {
                     $member_id = $_SESSION['member_id'];
-                    $this->insertRecommendProduct($arrPost,$member_id,$objRecommend);
+                    $this->insertRecommendProduct($arrPost, $member_id, $objRecommend);
                     $arrItems = $this->getRecommendProducts($objRecommend);
                     $this->tpl_onload = "window.alert('編集が完了しました');";
                 } else {
@@ -115,7 +114,6 @@ class LC_Page_Admin_Contents_Recommend extends LC_Page_Admin_Ex
                 break;
             case 'set_item': // 商品を選択する。
                 $this->arrErr = $this->lfCheckError($objFormParam);
-                $arrPost = $objFormParam->getHashArray();
                 if (SC_Utils_Ex::isBlank($this->arrErr['rank']) && SC_Utils_Ex::isBlank($this->arrErr['product_id'])) {
                     $arrItems = $this->setProducts($arrPost, $this->getRecommendProducts($objRecommend));
                     $this->checkRank = $arrPost['rank'];
@@ -194,7 +192,7 @@ class LC_Page_Admin_Contents_Recommend extends LC_Page_Admin_Ex
      * @param Integer $member_id    登録した管理者を示すID
      * @param Object  $objRecommend
      */
-    public function insertRecommendProduct($arrPost,$member_id, SC_Helper_BestProducts_Ex &$objRecommend)
+    public function insertRecommendProduct($arrPost, $member_id, SC_Helper_BestProducts_Ex &$objRecommend)
     {
         $sqlval = array();
         $sqlval['best_id'] = $arrPost['best_id'];
@@ -247,7 +245,7 @@ class LC_Page_Admin_Contents_Recommend extends LC_Page_Admin_Ex
      * @param Array $arrPost  POSTのデータを格納した配列
      * @param Array $arrItems フロントに表示される商品の情報を格納した配列
      */
-    public function setProducts($arrPost,$arrItems)
+    public function setProducts($arrPost, $arrItems)
     {
         $arrProduct = $this->getProduct($arrPost['product_id']);
         if (count($arrProduct) > 0) {

@@ -48,7 +48,7 @@ class LC_Page_Shopping extends LC_Page_Ex
         $this->arrJob = $masterData->getMasterData('mtb_job');
         $this->tpl_onload = 'eccube.toggleDeliveryForm();';
 
-        $objDate = new SC_Date_Ex(BIRTH_YEAR, date('Y',strtotime('now')));
+        $objDate = new SC_Date_Ex(BIRTH_YEAR, date('Y', strtotime('now')));
         $this->arrYear = $objDate->getYear('', START_BIRTH_YEAR, '');
         $this->arrMonth = $objDate->getMonth(true);
         $this->arrDay = $objDate->getDay(true);
@@ -100,15 +100,19 @@ class LC_Page_Shopping extends LC_Page_Ex
                                            $objCustomer, $objPurchase,
                                            $objSiteSess));
             SC_Response_Ex::actionExit();
-        }
         // 非会員かつ, ダウンロード商品の場合はエラー表示
-        else {
+        } else {
             if ($this->cartKey == PRODUCT_TYPE_DOWNLOAD) {
                 $msg = 'ダウンロード商品を含むお買い物は、会員登録が必要です。<br/>'
                      . 'お手数ですが、会員登録をお願いします。';
                 SC_Utils_Ex::sfDispSiteError(FREE_ERROR_MSG, $objSiteSess, false, $msg);
                 SC_Response_Ex::actionExit();
             }
+        }
+
+        // 携帯端末IDが一致する会員が存在するかどうかをチェックする。
+        if (SC_Display_Ex::detectDevice() === DEVICE_TYPE_MOBILE) {
+            $this->tpl_valid_phone_id = $objCustomer->checkMobilePhoneId();
         }
 
         switch ($this->getMode()) {
@@ -138,9 +142,8 @@ class LC_Page_Shopping extends LC_Page_Ex
                             SC_Response_Ex::sendRedirectFromUrlPath('entry/email_mobile.php');
                             SC_Response_Ex::actionExit();
                         }
-                    }
                     // スマートフォンの場合はログイン成功を返す
-                    elseif (SC_Display_Ex::detectDevice() === DEVICE_TYPE_SMARTPHONE) {
+                    } elseif (SC_Display_Ex::detectDevice() === DEVICE_TYPE_SMARTPHONE) {
                         echo SC_Utils_Ex::jsonEncode(array('success' =>
                                                      $this->getNextLocation($this->cartKey, $this->tpl_uniqid,
                                                                             $objCustomer, $objPurchase,
@@ -153,9 +156,8 @@ class LC_Page_Shopping extends LC_Page_Ex
                                                    $objCustomer, $objPurchase,
                                                    $objSiteSess));
                     SC_Response_Ex::actionExit();
-                }
                 // ログインに失敗した場合
-                else {
+                } else {
                     // 仮登録の場合
                     if (SC_Helper_Customer_Ex::checkTempCustomer($objFormParam->getValue('login_email'))) {
                         if (SC_Display_Ex::detectDevice() === DEVICE_TYPE_SMARTPHONE) {
@@ -258,12 +260,6 @@ class LC_Page_Shopping extends LC_Page_Ex
         if (!SC_Utils_Ex::isBlank($this->tpl_login_email)) {
             $this->tpl_login_memory = '1';
         }
-
-        // 携帯端末IDが一致する会員が存在するかどうかをチェックする。
-        if (SC_Display_Ex::detectDevice() === DEVICE_TYPE_MOBILE) {
-            $this->tpl_valid_phone_id = $objCustomer->checkMobilePhoneId();
-        }
-
     }
 
     /**
@@ -299,8 +295,16 @@ class LC_Page_Shopping extends LC_Page_Ex
     public function lfInitLoginFormParam(&$objFormParam)
     {
         $objFormParam->addParam('記憶する', 'login_memory', INT_LEN, 'n', array('MAX_LENGTH_CHECK', 'NUM_CHECK'));
-        $objFormParam->addParam('メールアドレス', 'login_email', '' , 'a', array('EXIST_CHECK', 'EMAIL_CHECK', 'SPTAB_CHECK' ,'EMAIL_CHAR_CHECK'));
+        $objFormParam->addParam('メールアドレス', 'login_email', '', 'a', array('EXIST_CHECK', 'EMAIL_CHECK', 'SPTAB_CHECK', 'EMAIL_CHAR_CHECK'));
         $objFormParam->addParam('パスワード', 'login_pass', PASSWORD_MAX_LEN, '', array('EXIST_CHECK', 'MAX_LENGTH_CHECK', 'SPTAB_CHECK'));
+
+        if ($this->tpl_valid_phone_id) {
+            // 携帯端末IDが登録されている場合、メールアドレス入力欄が省略される
+            $arrCheck4login_email = $objFormParam->getParamSetting('login_email', 'arrCheck');
+            $key = array_search('EXIST_CHECK', $arrCheck4login_email);
+            unset($arrCheck4login_email[$key]);
+            $objFormParam->overwriteParam('login_email', 'arrCheck', $arrCheck4login_email);
+        }
     }
 
     /**

@@ -101,9 +101,9 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
     public function action()
     {
         if (isset($_GET['draw_image']) && $_GET['draw_image'] != '') {
-            define('DRAW_IMAGE' , true);
+            define('DRAW_IMAGE', true);
         } else {
-            define('DRAW_IMAGE' , false);
+            define('DRAW_IMAGE', false);
         }
 
         // パラメーター管理クラス
@@ -273,9 +273,8 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
             list($sdate, $edate) = SC_Utils_Ex::sfTermMonth($arrRet['search_startyear_m'],
                                                             $arrRet['search_startmonth_m'],
                                                             CLOSE_DAY);
-        }
         // 期間集計
-        elseif ($arrRet['search_form'] == 2) {
+        } elseif ($arrRet['search_form'] == 2) {
             $sdate = $arrRet['search_startyear'] . '/' . $arrRet['search_startmonth'] . '/' . $arrRet['search_startday'];
             $edate = $arrRet['search_endyear'] . '/' . $arrRet['search_endmonth'] . '/' . $arrRet['search_endday'];
         }
@@ -319,8 +318,8 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
             $objGraphLine->setYTitle($ytitle);
 
             // メインタイトル作成
-            list($sy, $sm, $sd) = preg_split('|[/ ]|' , $sdate);
-            list($ey, $em, $ed) = preg_split('|[/ ]|' , $edate);
+            list($sy, $sm, $sd) = preg_split('|[/ ]|', $sdate);
+            list($ey, $em, $ed) = preg_split('|[/ ]|', $edate);
             $start_date = $sy . '年' . $sm . '月' . $sd . '日';
             $end_date = $ey . '年' . $em . '月' . $ed . '日';
             $objGraphLine->drawTitle('集計期間：' . $start_date . ' - ' . $end_date);
@@ -364,8 +363,8 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
             $objGraphPie->setLegend(array_keys($arrList));
 
             // メインタイトル作成
-            list($sy, $sm, $sd) = preg_split('|[/ ]|' , $sdate);
-            list($ey, $em, $ed) = preg_split('|[/ ]|' , $edate);
+            list($sy, $sm, $sd) = preg_split('|[/ ]|', $sdate);
+            list($ey, $em, $ed) = preg_split('|[/ ]|', $edate);
             $start_date = $sy . '年' . $sm . '月' . $sd . '日';
             $end_date = $ey . '年' . $em . '月' . $ed . '日';
             $objGraphPie->drawTitle('集計期間：' . $start_date . ' - ' . $end_date);
@@ -414,8 +413,8 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
 
             // メインタイトル作成
             $arrKey = array_keys($arrList);
-            list($sy, $sm, $sd) = preg_split('|[/ ]|' , $sdate);
-            list($ey, $em, $ed) = preg_split('|[/ ]|' , $edate);
+            list($sy, $sm, $sd) = preg_split('|[/ ]|', $sdate);
+            list($ey, $em, $ed) = preg_split('|[/ ]|', $edate);
             $start_date = $sy . '年' . $sm . '月' . $sd . '日';
             $end_date = $ey . '年' . $em . '月' . $ed . '日';
             $objGraphBar->drawTitle('集計期間：' . $start_date . ' - ' . $end_date);
@@ -438,9 +437,9 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
     public function lfGetGraphPng($keyname)
     {
         if ($_POST['search_startyear_m'] != '') {
-            $pngname = sprintf('%s_%02d%02d.png', $keyname, substr($_POST['search_startyear_m'],2), $_POST['search_startmonth_m']);
+            $pngname = sprintf('%s_%02d%02d.png', $keyname, substr($_POST['search_startyear_m'], 2), $_POST['search_startmonth_m']);
         } else {
-            $pngname = sprintf('%s_%02d%02d%02d_%02d%02d%02d.png', $keyname, substr($_POST['search_startyear'], 2), $_POST['search_startmonth'], $_POST['search_startday'], substr($_POST['search_endyear'],2), $_POST['search_endmonth'], $_POST['search_endday']);
+            $pngname = sprintf('%s_%02d%02d%02d_%02d%02d%02d.png', $keyname, substr($_POST['search_startyear'], 2), $_POST['search_startmonth'], $_POST['search_startday'], substr($_POST['search_endyear'], 2), $_POST['search_endmonth'], $_POST['search_endday']);
         }
 
         return $pngname;
@@ -462,7 +461,7 @@ class LC_Page_Admin_Total extends LC_Page_Admin_Ex
             if ($where != '') {
                 $where.= ' AND ';
             }
-            $edate = date('Y/m/d',strtotime('1 day' ,strtotime($edate)));
+            $edate = date('Y/m/d', strtotime('1 day', strtotime($edate)));
             $where.= " $col_date < date('" . $edate ."')";
         }
 
@@ -554,14 +553,8 @@ __EOS__;
 
         $from = 'dtb_order_detail JOIN dtb_order ON dtb_order_detail.order_id = dtb_order.order_id';
 
-        /*
-        if ($mode != 'csv') {
-            $sql.= 'LIMIT ' . PRODUCTS_TOTAL_MAX;
-        }*/
-
-        // 要index
+        // FIXME グループを副問い合わせにして無駄な処理を減らす
         $objQuery->setGroupBy('product_id, product_name, product_code, price');
-        //$objQuery->setGroupBy('product_id');
         $objQuery->setOrder('total DESC');
         $arrTotalResults = $objQuery->select($col, $from, $where, $arrWhereVal);
 
@@ -748,7 +741,7 @@ __EOS__;
         }
 
         if ($type == 'hour') {
-            $arrDateList = array('00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23');
+            $arrDateList = array('00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16',  '17', '18', '19', '20', '21', '22', '23');
         } else {
             $arrDateList = array();
             $tmp    = strtotime($st);

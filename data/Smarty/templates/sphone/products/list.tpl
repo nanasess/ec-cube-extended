@@ -96,9 +96,9 @@
                     <span class="price">
                         <span id="price02_default_<!--{$id}-->">
                             <!--{if $arrProduct.price02_min_inctax == $arrProduct.price02_max_inctax}-->
-                                <!--{$arrProduct.price02_min_inctax|number_format}-->
+                                <!--{$arrProduct.price02_min_inctax|n2s}-->
                             <!--{else}-->
-                                <!--{$arrProduct.price02_min_inctax|number_format}-->～<!--{$arrProduct.price02_max_inctax|number_format}-->
+                                <!--{$arrProduct.price02_min_inctax|n2s}-->～<!--{$arrProduct.price02_max_inctax|n2s}-->
                             <!--{/if}-->
                         </span><span id="price02_dynamic_<!--{$id}-->">
                         </span>円
@@ -131,7 +131,7 @@
     var statusImagePath = "<!--{$TPL_URLPATH}-->";
 
     function getProducts(limit) {
-        $.mobile.showPageLoadingMsg();
+        eccube.showLoading();
         var i = limit;
         //送信データを準備
         var postData = {};
@@ -149,7 +149,7 @@
             dataType: "json",
             error: function(XMLHttpRequest, textStatus, errorThrown){
                 alert(textStatus);
-                $.mobile.hidePageLoadingMsg();
+                eccube.hideLoading();
             },
             success: function(result){
                 var productStatus = result.productStatus;
@@ -211,7 +211,7 @@
                 if (parseInt($("#productscount").text()) <= $(".list_area").length) {
                     $("#btn_more_product").hide();
                 }
-                $.mobile.hidePageLoadingMsg();
+                eccube.hideLoading();
             }
         });
     }

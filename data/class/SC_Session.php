@@ -67,7 +67,7 @@ class SC_Session
     /* 認証成功の判定 */
     public function IsSuccess()
     {
-       if ($this->cert == CERT_STRING) {
+        if ($this->cert == CERT_STRING) {
             $masterData = new SC_DB_MasterData_Ex();
             $admin_path = strtolower(preg_replace('/\/+/', '/', $_SERVER['SCRIPT_NAME']));            
             $arrPERMISSION = array_change_key_case($masterData->getMasterData('mtb_permission'));
@@ -132,15 +132,5 @@ class SC_Session
         SC_Helper_Session_Ex::destroyToken();
         // ログに記録する
         GC_Utils_Ex::gfPrintLog('logout : user='.$this->login_id.' auth='.$this->authority.' sid='.$this->sid);
-    }
-
-    /**
-     * セッションIDを新しいIDに書き換える
-     *
-     * @return bool
-     */
-    public function regenerateSID()
-    {
-        return session_regenerate_id(true);
     }
 }

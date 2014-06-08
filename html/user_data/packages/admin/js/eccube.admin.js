@@ -47,24 +47,24 @@
         var startname = "";
         var ret;
         var name;
-        max = document["form1"].elements.length;
+        max = document.form1.elements.length;
         eccube.checkedRadios = [max];
         for(cnt = 0; cnt < max; cnt++) {
-            if(document["form1"].elements[cnt].type === 'radio') {
-                name = document["form1"].elements[cnt].name;
+            if(document.form1.elements[cnt].type === 'radio') {
+                name = document.form1.elements[cnt].name;
                 /* radioボタンは同じ名前が２回続けて検出されるので、
                  最初の名前の検出であるかどうかの判定 */
                 // 1回目の検出
                 if(startname !== name) {
                     startname = name;
-                    ret = document["form1"].elements[cnt].checked;
+                    ret = document.form1.elements[cnt].checked;
                     if(ret === true){
                         // 稼働がチェックされている。
                         eccube.checkedRadios[name] = 1;
                     }
                     // 2回目の検出
                 } else {
-                    ret = document["form1"].elements[cnt].checked;
+                    ret = document.form1.elements[cnt].checked;
                     if(ret === true){
                         // 非稼働がチェックされている。
                         eccube.checkedRadios[name] = 0;
@@ -104,7 +104,7 @@
 
     // 項目に入った値をクリアする。
     eccube.clearValue = function(name) {
-        document["form1"][name].value = "";
+        document.form1[name].value = "";
     };
 
     // 規格分類登録へ移動
@@ -133,17 +133,17 @@
         var name;
         for(var cnt = 1; cnt <= max; cnt++) {
             name = "fee" + cnt;
-            document["form1"][name].value = document["form1"]['fee_all'].value;
+            document.form1[name].value = document.form1.fee_all.value;
         }
     };
 
     // 在庫数制限判定
     eccube.checkStockLimit = function(icolor) {
-        if(document["form1"]['stock_unlimited']) {
+        if(document.form1.stock_unlimited) {
             var list = ['stock'];
-            if(document["form1"]['stock_unlimited'].checked) {
+            if(document.form1.stock_unlimited.checked) {
                 eccube.changeDisabled(list, icolor);
-                document["form1"]['stock'].value = "";
+                document.form1.stock.value = "";
             } else {
                 eccube.changeDisabled(list, '');
             }
@@ -173,11 +173,11 @@
 
     //制限数判定
     eccube.checkLimit = function(elem1, elem2, icolor) {
-        if(document["form1"][elem2]) {
+        if(document.form1[elem2]) {
             var list = [elem1];
-            if(document["form1"][elem2].checked) {
+            if(document.form1[elem2].checked) {
                 eccube.changeDisabled(list, icolor);
-                document["form1"][elem1].value = "";
+                document.form1[elem1].value = "";
             } else {
                 eccube.changeDisabled(list, '');
             }
@@ -237,18 +237,18 @@
             // 階層画像の表示・非表示処理
             if(arrTree[i][4]) {
                 if(arrTree[i][1] === '_parent') {
-                    rank_img = eccube.fileManager["IMG_MINUS"];
+                    rank_img = eccube.fileManager.IMG_MINUS;
                 } else {
-                    rank_img = eccube.fileManager["IMG_NORMAL"];
+                    rank_img = eccube.fileManager.IMG_NORMAL;
                 }
                 // 開き状態を保持
                 eccube.fileManager.arrTreeStatus.push(arrTree[i][2]);
                 display = 'block';
             } else {
                 if(arrTree[i][1] === '_parent') {
-                    rank_img = eccube.fileManager["IMG_PLUS"];
+                    rank_img = eccube.fileManager.IMG_PLUS;
                 } else {
-                    rank_img = eccube.fileManager["IMG_NORMAL"];
+                    rank_img = eccube.fileManager.IMG_NORMAL;
                 }
                 display = 'none';
             }
@@ -258,14 +258,14 @@
 
             // フォルダの画像を選択
             if(arrTree[i][2] === openFolder) {
-                folder_img = eccube.fileManager["IMG_FOLDER_OPEN"];
+                folder_img = eccube.fileManager.IMG_FOLDER_OPEN;
                 file_name = "<b>" + file_name + "</b>";
             } else {
-                folder_img = eccube.fileManager["IMG_FOLDER_CLOSE"];
+                folder_img = eccube.fileManager.IMG_FOLDER_CLOSE;
             }
 
             // 階層画像に子供がいたらオンクリック処理をつける
-            if(rank_img !== eccube.fileManager["IMG_NORMAL"]) {
+            if(rank_img !== eccube.fileManager.IMG_NORMAL) {
                 eccube.fileManager.tree += '<a href="javascript:eccube.fileManager.toggleTreeMenu(\'tree'+ i +'\',\'rank_img'+ i +'\',\''+ arrTree[i][2] +'\')"><img src="'+ rank_img +'" border="0" name="rank_img'+ i +'" id="rank_img'+ i +'">';
             } else {
                 eccube.fileManager.tree += '<img src="'+ rank_img +'" border="0" name="rank_img'+ i +'" id="rank_img'+ i +'">';
@@ -286,7 +286,7 @@
             }
             tree_status += eccube.fileManager.arrTreeStatus[i];
         }
-        document["form1"][name].value = tree_status;
+        document.form1[name].value = tree_status;
     };
 
     // 階層ツリーメニュー表示・非表示処理
@@ -294,15 +294,15 @@
         var tMenu = $("#" + tName);
 
         if(tMenu.css("display") === 'none') {
-            $("#" +imgName).attr("src", eccube.fileManager["IMG_MINUS"]);
+            $("#" +imgName).attr("src", eccube.fileManager.IMG_MINUS);
             tMenu.show();
             // 階層の開いた状態を保持
             eccube.fileManager.arrTreeStatus.push(path);
         } else {
-            $("#" +imgName).attr("src", eccube.fileManager["IMG_PLUS"]);
+            $("#" +imgName).attr("src", eccube.fileManager.IMG_PLUS);
             tMenu.hide();
             // 閉じ状態を保持
-            eccube.fileManager["fnDelTreeStatus"](path);
+            eccube.fileManager.fnDelTreeStatus(path);
         }
     };
 
@@ -343,7 +343,7 @@
     // フォルダオープン処理
     eccube.fileManager.openFolder = function(path) {
         // クリックしたフォルダ情報を保持
-        document["form1"][eccube.fileManager.selectFileHidden].value = path;
+        document.form1[eccube.fileManager.selectFileHidden].value = path;
         // treeの状態をセット
         eccube.fileManager.setTreeStatus(eccube.fileManager.treeStatusHidden);
         // submit
@@ -355,6 +355,43 @@
         eccube.fileManager.old_select_id = id;
     };
 
+    eccube.navi = {};
+
+    // クリックを無視するフラグ
+    eccube.navi.ignore_click = false;
+
+    /**
+     * 対象を指定してメニューを開く
+     */
+    eccube.navi.openMenu = function($target) {
+        $target
+            // 対象を開く
+            .addClass('sfhover')
+            // 対象以外を閉じる
+            .siblings('li')
+                .removeClass('sfhover')
+                .find('li').removeClass('sfhover');
+    };
+
+    /**
+     * 全てのメニューを閉じる
+     */
+    eccube.navi.closeAllMenu = function() {
+        $("#navi")
+            .removeClass('active')
+            .find('li')
+                .removeClass('sfhover');
+    };
+
+    /**
+     * 一時的にクリックイベントを無視する
+     */
+    eccube.navi.setIgnoreClick = function(milliseconds) { // FIXME: 関数名
+        if (milliseconds === null) milliseconds = 100;
+        eccube.navi.ignore_click = true;
+        setTimeout(function(){eccube.navi.ignore_click = false;}, milliseconds);
+    };
+
     // グローバルに使用できるようにする
     window.eccube = eccube;
 
@@ -362,15 +399,43 @@
      * Initialize.
      */
     $(function() {
+        var naviClicked = false;
         // ヘッダナビゲーション
-        $("#navi").find("li").hover(
-            function(){
-                $(this).addClass("sfhover");
-            },
-            function(){
-                $(this).removeClass("sfhover");
+        $("#navi").find("div").click(function(){
+            // タブレットでの二重イベント発生を回避
+            if (eccube.navi.ignore_click) return false;
+
+            naviClicked = true;
+            $("#navi").addClass('active');
+
+            var parent = $(this).parent('li');
+
+            // 開閉を切り替え.
+            if (!parent.hasClass('sfhover')) {
+                eccube.navi.openMenu(parent);
+            } else {
+                if (parent.hasClass('on_level1')) {
+                    eccube.navi.closeAllMenu();
+                } else {
+                    parent.removeClass('sfhover');
+                }
             }
-        );
+        });
+        // ナビゲーションがアクティブであれば、マウスオーバーを有効に.
+        $("#navi").find('li').hover(function(){
+            if ($("#navi").hasClass('active')) {
+                eccube.navi.openMenu($(this));
+                eccube.navi.setIgnoreClick();
+            }
+        });
+        // ナビゲーション以外をクリックしたらナビを閉じる.
+        $(document).click(function(){
+            if (!naviClicked) {
+                eccube.navi.closeAllMenu();
+            } else {
+                naviClicked = false;
+            }
+        });
     });
 })(window);
 
@@ -402,9 +467,9 @@
                     $node.append(o.delimiter_node);
                 }
 
-                var anchor = o.anchor_node.replace(/{category_id}/ig, o.bread_crumbs[i]["category_id"]);
+                var anchor = o.anchor_node.replace(/{category_id}/ig, o.bread_crumbs[i].category_id);
                 $(anchor)
-                    .text(o.bread_crumbs[i]["category_name"])
+                    .text(o.bread_crumbs[i].category_name)
                     .appendTo($node);
 
                 if (i > 0) {

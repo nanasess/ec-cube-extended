@@ -58,10 +58,10 @@
                                     <!--{$item.productsClass.class_name2}-->：<!--{$item.productsClass.classcategory_name2}--><br />
                                 <!--{/if}-->
 
-                        <em>単価：&nbsp;</em><!--{$item.price|sfCalcIncTax:$tpl_arrOrderData.order_tax_rate:$tpl_arrOrderData.order_tax_rule|number_format}-->円<br />
+                        <em>単価：&nbsp;</em><!--{$item.price|sfCalcIncTax:$tpl_arrOrderData.order_tax_rate:$tpl_arrOrderData.order_tax_rule|n2s}-->円<br />
                         <em>数量：&nbsp;</em><!--{$item.quantity}--><br />
                         <!--{* XXX 購入小計と誤差が出るためコメントアウト
-                        <em>小計</em><!--{$item.total_inctax|number_format}-->円
+                        <em>小計</em><!--{$item.total_inctax|n2s}-->円
                         *}-->
                         <br />
                     <!--{/foreach}-->
@@ -102,7 +102,7 @@
                                     <!--→金額-->
                                     <!--{assign var=price value=`$orderDetail.price`}-->
                                     <!--{assign var=quantity value=`$orderDetail.quantity`}-->
-                                    <span class="mini">価格:</span><!--{$price|number_format|h}-->円<!--←金額-->
+                                    <span class="mini">価格:</span><!--{$price|n2s|h}-->円<!--←金額-->
                                 </p>
 
                                 <!--→商品種別-->
@@ -125,7 +125,7 @@
                             <!--{assign var=tax_rule value=`$orderDetail.tax_rule`}-->
                             <ul>
                                 <li><span class="mini">数量：</span><!--{$quantity|h}--></li>
-                                <li class="result"><span class="mini">小計：</span><!--{$price|sfCalcIncTax:$tax_rate:$tax_rule|sfMultiply:$quantity|number_format}-->円</li>
+                                <li class="result"><span class="mini">小計：</span><!--{$price|sfCalcIncTax:$tax_rate:$tax_rule|sfMultiply:$quantity|n2s}-->円</li>
                             </ul>
                         </div>
                     </div>
@@ -136,17 +136,17 @@
             <!--▲ カートの中の商品一覧 -->
 
             <div class="total_area">
-                <div><span class="mini">小計：</span><!--{$tpl_arrOrderData.subtotal|number_format}-->円</div>
+                <div><span class="mini">小計：</span><!--{$tpl_arrOrderData.subtotal|n2s}-->円</div>
                 <!--{if $tpl_arrOrderData.use_point > 0}-->
-                    <div><span class="mini">ポイント値引き：</span>&minus;<!--{$tpl_arrOrderData.use_point|number_format}-->円</div>
+                    <div><span class="mini">ポイント値引き：</span>&minus;<!--{$tpl_arrOrderData.use_point|n2s}-->円</div>
                 <!--{/if}-->
                 <!--{if $tpl_arrOrderData.discount != '' && $tpl_arrOrderData.discount > 0}-->
-                    <div><span class="mini">値引き：</span>&minus;<!--{$tpl_arrOrderData.discount|number_format}-->円</div>
+                    <div><span class="mini">値引き：</span>&minus;<!--{$tpl_arrOrderData.discount|n2s}-->円</div>
                 <!--{/if}-->
-                <div><span class="mini">送料：</span><!--{$tpl_arrOrderData.deliv_fee|number_format}-->円</div>
-                <div><span class="mini">手数料：</span><!--{$tpl_arrOrderData.charge|number_format}-->円</div>
-                <div><span class="mini">合計：</span><span class="price fb"><!--{$tpl_arrOrderData.payment_total|number_format}-->円</span></div>
-                <div><span class="mini">今回加算ポイント：</span><!--{$tpl_arrOrderData.add_point|number_format|default:0}-->Pt</div>
+                <div><span class="mini">送料：</span><!--{$tpl_arrOrderData.deliv_fee|n2s}-->円</div>
+                <div><span class="mini">手数料：</span><!--{$tpl_arrOrderData.charge|n2s}-->円</div>
+                <div><span class="mini">合計：</span><span class="price fb"><!--{$tpl_arrOrderData.payment_total|n2s}-->円</span></div>
+                <div><span class="mini">今回加算ポイント：</span><!--{$tpl_arrOrderData.add_point|n2s|default:0}-->Pt</div>
             </div>
         </div><!-- /.formBox -->
 
@@ -179,7 +179,7 @@
 
 <script>
     function getMailDetail(send_id) {
-        $.mobile.showPageLoadingMsg();
+        eccube.showLoading();
         $.ajax({
             type: "GET",
             url: "<!--{$smarty.const.ROOT_URLPATH}-->mypage/mail_view.php",
@@ -188,22 +188,36 @@
             dataType: "json",
             error: function(XMLHttpRequest, textStatus, errorThrown){
                 alert(textStatus);
-                $.mobile.hidePageLoadingMsg();
+                eccube.hideLoading();
             },
             success: function(result){
-                var maxCnt = 0;
-                $("#windowcolumn h2").text('メール詳細');
-                $("#windowcolumn a[data-rel=back]").text('購入履歴詳細にもどる');
-                $($("#windowcolumn dl.view_detail dt").get(maxCnt)).text(result[0].subject);
-                $($("#windowcolumn dl.view_detail dd").get(maxCnt)).html(result[0].mail_body.replace(/\n/g,"<br />"));
-                $("#windowcolumn dl.view_detail dd").css('font-family', 'monospace');
-                $.mobile.changePage('#windowcolumn', {transition: "slideup"});
-                //ダイアログが開き終わるまで待機
-                setTimeout( function() {
-                                loadingState = 0;
-                                $.mobile.hidePageLoadingMsg();
-                }, 1000);
+                var dialog = $("#mail-dialog");
+
+                //件名をセット
+                $("#mail-dialog-title").remove();
+                dialog.find(".dialog-content").append(
+                    $('<h3 id="mail-dialog-title">').text(result[0].subject)
+                );
+
+                //本文をセット
+                $("#mail-dialog-body").remove();
+                dialog.find(".dialog-content").append(
+                    $('<div id="mail-dialog-body">')
+                        .html(result[0].mail_body.replace(/\n/g,"<br />"))
+                        .css('font-family', 'monospace')
+                );
+
+                //ダイアログをモーダルウィンドウで表示
+                $.colorbox({inline: true, href: dialog, onOpen: function(){
+                    dialog.show().css('width', String($('body').width() * 0.9) + 'px');
+                }, onComplete: function(){
+                    eccube.hideLoading();
+                }, onClosed: function(){
+                    dialog.hide();
+                }});
             }
         });
     }
 </script>
+
+<!--{include file="`$smarty.const.SMARTPHONE_TEMPLATE_REALDIR`frontparts/dialog_modal.tpl" dialog_id="mail-dialog" dialog_title="メール詳細"}-->

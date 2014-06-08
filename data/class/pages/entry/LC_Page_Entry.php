@@ -48,7 +48,7 @@ class LC_Page_Entry extends LC_Page_Ex
         $this->arrMAILMAGATYPE = $masterData->getMasterData('mtb_mail_magazine_type');
 
         // 生年月日選択肢の取得
-        $objDate            = new SC_Date_Ex(BIRTH_YEAR, date('Y',strtotime('now')));
+        $objDate            = new SC_Date_Ex(BIRTH_YEAR, date('Y', strtotime('now')));
         $this->arrYear      = $objDate->getYear('', START_BIRTH_YEAR, '');
         $this->arrMonth     = $objDate->getMonth(true);
         $this->arrDay       = $objDate->getDay(true);
@@ -246,15 +246,15 @@ class LC_Page_Entry extends LC_Page_Ex
 
         $objMail = new SC_SendMail_Ex();
         $objMail->setItem(
-            ''                    // 宛先
-            , $subject              // サブジェクト
-            , $toCustomerMail       // 本文
-            , $CONF['email03']      // 配送元アドレス
-            , $CONF['shop_name']    // 配送元 名前
-            , $CONF['email03']      // reply_to
-            , $CONF['email04']      // return_path
-            , $CONF['email04']      // Errors_to
-            , $CONF['email01']      // Bcc
+            '',                     // 宛先
+            $subject,               // サブジェクト
+            $toCustomerMail,        // 本文
+            $CONF['email03'],       // 配送元アドレス
+            $CONF['shop_name'],     // 配送元 名前
+            $CONF['email03'],       // reply_to
+            $CONF['email04'],       // return_path
+            $CONF['email04'],       // Errors_to
+            $CONF['email01']        // Bcc
         );
         // 宛先の設定
         $objMail->setTo($arrForm['email'],

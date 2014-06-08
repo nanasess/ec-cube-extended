@@ -38,7 +38,7 @@ class SC_Plugin_Util
         if (in_array('priority', $arrCols)) {
             $objQuery->setOrder('priority DESC, plugin_id ASC');
         }
-        $arrRet = $objQuery->select($col,$table,$where);
+        $arrRet = $objQuery->select($col, $table, $where);
 
         // プラグインフックポイントを取得.
         $max = count($arrRet);
@@ -66,7 +66,7 @@ class SC_Plugin_Util
         if (in_array('priority', $arrCols)) {
             $objQuery->setOrder('plugin_id ASC');
         }
-        $arrRet = $objQuery->select($col,$table);
+        $arrRet = $objQuery->select($col, $table);
 
         return $arrRet;
     }
@@ -155,15 +155,15 @@ class SC_Plugin_Util
         switch ($use_type) {
             case 1:
                 $where .= ' AND use_flg = 1';
-            break;
+                break;
 
             case 2:
                 $where .= ' AND use_flg = 0';
-            break;
+                break;
 
             case 3:
             default:
-            break;
+                break;
         }
 
         return $objQuery->select($cols, $from, $where, array($plugin_id));
@@ -184,16 +184,16 @@ class SC_Plugin_Util
         switch ($use_type) {
             case 1:
                 $where = 'enable = 1 AND use_flg = 1';
-            break;
+                break;
 
             case 2:
                 $where = 'enable = 1 AND use_flg = 0';
-            break;
+                break;
 
             case 3:
             default:
                 $where = '';
-            break;
+                break;
         }
 
         return $objQuery->select($cols, $from, $where);

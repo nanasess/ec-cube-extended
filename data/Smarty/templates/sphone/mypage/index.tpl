@@ -55,7 +55,7 @@
                                     <em>注文番号：</em><span class="order_id"><!--{$arrOrder[cnt].order_id}--><!--{assign var=payment_id value="`$arrOrder[cnt].payment_id`"}--></span><br />
                                     <em>購入日時：</em><span class="create_date"><!--{$arrOrder[cnt].create_date|sfDispDBDate}--></span><br />
                                     <em>お支払い方法：</em><span class="payment_id"><!--{$arrPayment[$payment_id]|h}--></span><br />
-                                    <em>合計金額：</em><span class="payment_total"><!--{$arrOrder[cnt].payment_total|number_format}--></span>円<br />
+                                    <em>合計金額：</em><span class="payment_total"><!--{$arrOrder[cnt].payment_total|n2s}--></span>円<br />
                                     <!--{if $smarty.const.MYPAGE_ORDER_STATUS_DISP_FLAG }-->
                                     <em>ご注文状況：</em>
                                         <!--{assign var=order_status_id value="`$arrOrder[cnt].status`"}-->
@@ -97,7 +97,7 @@
     var arrCustomerOrderStatus = <!--{$json_customer_order_status}-->
 
     function getHistory(limit) {
-        $.mobile.showPageLoadingMsg();
+        eccube.showLoading();
         var i = limit;
         //送信データを準備
         var postData = {};
@@ -116,7 +116,7 @@
             dataType: "json",
             error: function(XMLHttpRequest, textStatus, errorThrown){
                 alert(textStatus);
-                $.mobile.hidePageLoadingMsg();
+                eccube.hideLoading();
             },
             success: function(result){
                 for (var j = 0; j < i; j++) {
@@ -157,7 +157,7 @@
                 if (parseInt($("#historycount").text()) <= $(".arrowBox").length) {
                     $("#btn_more_history").hide();
                 }
-                $.mobile.hidePageLoadingMsg();
+                eccube.hideLoading();
             }
         });
     }
