@@ -109,11 +109,8 @@ class LC_Page_Admin_System_Log extends LC_Page_Admin_Ex
     {
         $index = 0;
         $arrLogs = array();
-        for ($gen = 0 ; $gen <= MAX_LOG_QUANTITY; $gen++) {
-            $path = $log_path_base;
-            if ($gen != 0) {
-                $path .= ".$gen";
-            }
+        $arrPaths = glob(str_replace('.log', '', $log_path_base) . '*.log*');
+        foreach ($arrPaths as $path) {
 
             // ファイルが存在しない場合、前世代のログへ
             if (!file_exists($path)) continue;
@@ -145,6 +142,11 @@ class LC_Page_Admin_System_Log extends LC_Page_Admin_Ex
             }
         }
 
+        $arrDate = array();
+        foreach ($arrLogs as $key => $val) {
+            $arrDate[$key] = $val['date'];
+        }
+        array_multisort($arrDate, SORT_DESC, SORT_STRING, $arrLogs);
         return $arrLogs;
     }
 
