@@ -24,7 +24,6 @@ if (file_exists($define_php)) {
         preg_match("|/\\*\\s*mysql://([^:]*):([^@]*)@([^/]*)/([^;]*);\\*/|", $subject, $matches);
         list($all, $db_user, $db_password, $db_server, $db_name) = $matches;
 
-        define('ECCUBE_INSTALL', 'ON');
         define('HTTP_URL', $http_location);
         define('HTTPS_URL', $https_location);
         define('DOMAIN_NAME', '');
