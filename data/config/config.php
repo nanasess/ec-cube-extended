@@ -14,6 +14,10 @@ else {
     $https_location = $http_location;
 }
 
+define('HTTP_URL', $http_location);
+define('HTTPS_URL', $https_location);
+define('DOMAIN_NAME', '');
+
 $define_php = $realpath . './define.php';
 $webmatrix_php = $realpath . './webmatrix.php';
 if (file_exists($define_php)) {
@@ -24,9 +28,6 @@ if (file_exists($define_php)) {
         preg_match("|/\\*\\s*mysql://([^:]*):([^@]*)@([^/]*)/([^;]*);\\*/|", $subject, $matches);
         list($all, $db_user, $db_password, $db_server, $db_name) = $matches;
 
-        define('HTTP_URL', $http_location);
-        define('HTTPS_URL', $https_location);
-        define('DOMAIN_NAME', '');
         define('DB_TYPE', 'mysql');
         define('DB_USER', $db_user);
         define('DB_PASSWORD', $db_password);
