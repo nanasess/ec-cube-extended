@@ -22,11 +22,11 @@
 <script type="text/javascript">
 $(function() {
     // $('.option').hide();
-    if ($('input[name=mail_backend]').val() == 'smtp') {
-        $('.smtp').attr('disabled', false);
-    } else {
-        $('.smtp').attr('disabled', true);
-    }
+    // if ($('input[name=mail_backend]').val() == 'smtp') {
+    //     $('.smtp').attr('disabled', false);
+    // } else {
+    //     $('.smtp').attr('disabled', true);
+    // }
     $('#options').click(function() {
         $('.option').slideToggle();
     });
