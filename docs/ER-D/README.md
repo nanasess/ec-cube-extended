@@ -13,7 +13,11 @@ Eclipse のプラグインですので、「Eclipse Modeling Tools」などを�
 
 ER-D ディレクトリが Eclipse のプロジェクトとなっていますので、Import -> General -> Existing Projects into Workspace でインポートしてください。
 
+### 変更履歴について
+
+ERMaster に変更履歴を記録する機能がありますが、ファイルが巨大になるため使用せず、 VCS の変更履歴を活用しましょう。
+
 ### See Also.
 
-* [http://www.eclipse.org/downloads/]
-* [http://ermaster.sourceforge.net/content/manual/ja/index.html#3.1]
+* <http://www.eclipse.org/downloads/>
+* <http://ermaster.sourceforge.net/content/manual/ja/index.html#3.1>
