@@ -113,7 +113,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                 case 'auto':
                     $this->lfAutoCommitZip();
                     break;
-                // DB手動登録
+                    // DB手動登録
                 case 'manual':
                     $this->insertMtbZip($this->arrForm['startRowNum']);
                     break;
@@ -133,7 +133,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                 $this->tpl_mode = null;
                 break;
 
-            // 郵便番号CSV更新
+                // 郵便番号CSV更新
             case 'update_csv':
                 $this->lfDownloadZipFileFromJp();
                 $this->lfExtractZipFile();
@@ -142,8 +142,8 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                 $this->tpl_mode = null;
                 break;
 
-            // 自動登録時の郵便番号CSV更新
-            // XXX iframe内にエラー表示しない様、ここでlfDownloadZipFileFromJp()を呼ぶ。
+                // 自動登録時の郵便番号CSV更新
+                // XXX iframe内にエラー表示しない様、ここでlfDownloadZipFileFromJp()を呼ぶ。
             case 'auto':
                 if (!$this->tpl_skip_update_csv) {
                     $this->lfDownloadZipFileFromJp();
@@ -371,12 +371,12 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
     {
         // Proxy経由を可能とする。
         // TODO Proxyの設定は「data/module/HTTP/Request.php」内の「function HTTP_Request」へ記述する。いずれは、外部設定としたい。
-        $req = new HTTP_Request();
+        $req = new HTTP_Request2();
 
         $req->setURL(ZIP_DOWNLOAD_URL);
 
         // 郵便番号CSVをdownloadする。
-        $res = $req->sendRequest();
+        $res = $req->send();
         if (!$res || strlen($res) > 1) {
             trigger_error(ZIP_DOWNLOAD_URL . ' の取得に失敗しました。', E_USER_ERROR);
         }
@@ -386,7 +386,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
         if (!$fp) {
             trigger_error($this->zip_csv_temp_realfile . ' を開けません。', E_USER_ERROR);
         }
-        $res = fwrite($fp, $req->getResponseBody());
+        $res = fwrite($fp, $res->getBody());
         if (!$res) {
             trigger_error($this->zip_csv_temp_realfile . ' への書き込みに失敗しました。', E_USER_ERROR);
         }
