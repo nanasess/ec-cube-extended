@@ -113,7 +113,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                 case 'auto':
                     $this->lfAutoCommitZip();
                     break;
-                    // DB手動登録
+                // DB手動登録
                 case 'manual':
                     $this->insertMtbZip($this->arrForm['startRowNum']);
                     break;
@@ -133,7 +133,7 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                 $this->tpl_mode = null;
                 break;
 
-                // 郵便番号CSV更新
+            // 郵便番号CSV更新
             case 'update_csv':
                 $this->lfDownloadZipFileFromJp();
                 $this->lfExtractZipFile();
@@ -142,8 +142,8 @@ class LC_Page_Admin_Basis_ZipInstall extends LC_Page_Admin_Ex
                 $this->tpl_mode = null;
                 break;
 
-                // 自動登録時の郵便番号CSV更新
-                // XXX iframe内にエラー表示しない様、ここでlfDownloadZipFileFromJp()を呼ぶ。
+            // 自動登録時の郵便番号CSV更新
+            // XXX iframe内にエラー表示しない様、ここでlfDownloadZipFileFromJp()を呼ぶ。
             case 'auto':
                 if (!$this->tpl_skip_update_csv) {
                     $this->lfDownloadZipFileFromJp();
