@@ -370,7 +370,7 @@ __EOS__;
      */
     public function initObjQuery(SC_Query &$objQuery)
     {
-        if ($objQuery->conn->getConnection()->server_version >= 50750) {
+        if ($objQuery->conn->getConnection()->server_version >= 50705) {
             $objQuery->exec('SET SESSION default_storage_engine = InnoDB');
         } else {
             $objQuery->exec('SET SESSION storage_engine = InnoDB');
