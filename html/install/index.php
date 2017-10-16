@@ -851,7 +851,7 @@ function lfExecuteSQL($filepath, $arrDsn, $disp_err = true)
             // MySQL 用の初期化
             // XXX SC_Query を使うようにすれば、この処理は不要となる
             if ($arrDsn['phptype'] === 'mysqli') {
-                if ($objDB->getConnection()->server_version >= 50750) {
+                if ($objDB->getConnection()->server_version >= 50705) {
                     $objDB->exec('SET SESSION defaut_storage_engine = InnoDB');
                 } else {
                     $objDB->exec('SET SESSION storage_engine = InnoDB');
